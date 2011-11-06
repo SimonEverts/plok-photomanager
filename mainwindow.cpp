@@ -8,6 +8,7 @@
 #include <QImageReader>
 #include <QElapsedTimer>
 #include <QDebug>
+#include <QDeclarativeContext>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -27,8 +28,15 @@ void MainWindow::on_fileOpenButton_clicked()
     m_currentPath = QFileDialog::getExistingDirectory(this, "Select image directory");
     ui->fileEdit->setText( m_currentPath );
 
-    QDir dir (m_currentPath);
+    loadDirectory (m_currentPath);
+    loadDirectoryThumbnails( m_currentPath );
+}
+
+void MainWindow::loadDirectory (QString dirName)
+{
+    QDir dir (dirName);
     dir.setFilter( QDir::Files );
+    dir.setNameFilters(QStringList() << "*.jpg");
 
     QList <QFileInfo> file_info_list = dir.entryInfoList();
     QList <QFileInfo>::iterator it;
@@ -39,8 +47,36 @@ void MainWindow::on_fileOpenButton_clicked()
 
         m_captureList.push_back( file_name );
 
+        //
         ui->captureListWidget->addItem( file_name );
     }
+}
+
+void MainWindow::loadDirectoryThumbnails (QString dirName)
+{
+    QDir dir (dirName);
+    dir.setFilter( QDir::Files );
+    dir.setNameFilters(QStringList() << "*.jpg");
+
+    QList <QFileInfo> file_info_list = dir.entryInfoList();
+    QList <QFileInfo>::iterator it;
+
+    QList<QObject*> modelList;
+    m_thumbnailModel.clear();
+
+    for (it = file_info_list.begin(); it != file_info_list.end(); it++)
+    {
+        QString file_name = it->fileName();
+        QString file_path = QString ("file://") + it->filePath();
+
+        QSharedPointer <ThumbnailModelItem> model_item (new ThumbnailModelItem( file_name, file_path ));
+
+        m_thumbnailModel.push_back( model_item );
+        modelList.append( &(*model_item) );
+    }
+
+    QDeclarativeContext *context = ui->thumbnailView->rootContext();
+    context->setContextProperty("thumbnailViewModel", QVariant::fromValue<QList<QObject*> >(modelList));
 }
 
 void MainWindow::loadImage (QString fileName)
@@ -52,7 +88,7 @@ void MainWindow::loadImage (QString fileName)
 
     QSize image_size = image_reader.size();
 
-    int scale = image_size.width() / 400;
+    int scale = image_size.width() / 800;
 
     QSize scaled_size( image_size.width() / scale, image_size.height() / scale);
 
@@ -63,10 +99,6 @@ void MainWindow::loadImage (QString fileName)
     qDebug () << "image loading: " << timer.elapsed();
 
     ui->imageView->setImage (image);
-
-//    m_pixmapItem = m_scene.addPixmap( QPixmap::fromImage( image ));
-
-//    ui->graphicsView->fitInView( static_cast <QGraphicsItem*> (m_pixmapItem), Qt::KeepAspectRatio);
 
     qDebug () << "drawing: " << timer.elapsed();
 }

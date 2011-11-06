@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/standard">
+        <file>thumbnailView.qml</file>
+    </qresource>
+</RCC>

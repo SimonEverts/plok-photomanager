@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui declarative
 
 TARGET = plok-photomanager
 TEMPLATE = app
@@ -12,11 +12,23 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    imageview.cpp
+    imageview.cpp \
+    thumbnailmodelitem.cpp
 
 HEADERS  += mainwindow.h \
-    imageview.h
+    imageview.h \
+    thumbnailmodelitem.h
 
 FORMS    += mainwindow.ui
+
+OTHER_FILES += \
+    thumbnailView.qml
+
+RESOURCES += \
+    gui.qrc
+
+
+
+
 
 
