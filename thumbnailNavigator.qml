@@ -1,8 +1,10 @@
 import QtQuick 1.1
 
-Item {
+Rectangle {
+    id: root
+
     width: 800
-    height: 600
+    height: 200
 
     Component {
         id: thumbnailDelegate
@@ -34,50 +36,25 @@ Item {
                 id: thumbnail_mousearea
                 anchors.fill: parent
                 onClicked: {
-                    thumbnailView.currentIndex = index
+                    thumbnailNavigator.currentIndex = index
 
                 }
             }
         }
     }
 
-    GridView {
-        id: thumbnailView
+    ListView {
+        id: thumbnailNavigator
         cacheBuffer: 400
 
         anchors.fill: parent
-        flow: GridView.LeftToRight
 
-        cellHeight: 130
-        cellWidth: 160
+        orientation: ListView.Horizontal
 
         maximumFlickVelocity: 2000
         flickDeceleration: 2000
 
-//        delegate: Item {
-
-//            height: 100
-
-//            Column {
-//                spacing: 5
-//                Image {
-//                    width: 150
-//                    height: 100
-//                    source: path
-//                    anchors.horizontalCenter: parent.horizontalCenter
-
-//                    asynchronous: true
-//                    sourceSize.width: 150
-//                    sourceSize.height: 100
-//                }
-
-//                Text {
-//                    text: name
-//                    anchors.horizontalCenter: parent.horizontalCenter
-//                    font.bold: true
-//                }
-//            }
-//        }
+        spacing: 8
 
         model: thumbnailViewModel
         delegate: thumbnailDelegate
@@ -88,4 +65,7 @@ Item {
     }
 
     focus: true
+
+    Keys.onLeftPressed: thumbnailNavigator.decrementCurrentIndex()
+    Keys.onRightPressed: thumbnailNavigator.incrementCurrentIndex()
 }

@@ -22,7 +22,8 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui
 
 OTHER_FILES += \
-    thumbnailView.qml
+    thumbnailView.qml \
+    thumbnailNavigator.qml
 
 RESOURCES += \
     gui.qrc

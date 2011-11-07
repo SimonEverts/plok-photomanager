@@ -9,6 +9,7 @@
 #include <QElapsedTimer>
 #include <QDebug>
 #include <QDeclarativeContext>
+#include <QDeclarativeItem>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -28,28 +29,7 @@ void MainWindow::on_fileOpenButton_clicked()
     m_currentPath = QFileDialog::getExistingDirectory(this, "Select image directory");
     ui->fileEdit->setText( m_currentPath );
 
-    loadDirectory (m_currentPath);
     loadDirectoryThumbnails( m_currentPath );
-}
-
-void MainWindow::loadDirectory (QString dirName)
-{
-    QDir dir (dirName);
-    dir.setFilter( QDir::Files );
-    dir.setNameFilters(QStringList() << "*.jpg");
-
-    QList <QFileInfo> file_info_list = dir.entryInfoList();
-    QList <QFileInfo>::iterator it;
-
-    for (it = file_info_list.begin(); it != file_info_list.end(); it++)
-    {
-        QString file_name = it->fileName();
-
-        m_captureList.push_back( file_name );
-
-        //
-        ui->captureListWidget->addItem( file_name );
-    }
 }
 
 void MainWindow::loadDirectoryThumbnails (QString dirName)
@@ -77,6 +57,11 @@ void MainWindow::loadDirectoryThumbnails (QString dirName)
 
     QDeclarativeContext *context = ui->thumbnailView->rootContext();
     context->setContextProperty("thumbnailViewModel", QVariant::fromValue<QList<QObject*> >(modelList));
+    context->setContextProperty("mainWindow", this);
+
+    QDeclarativeContext *nav_context = ui->thumbnailNavigator->rootContext();
+    nav_context->setContextProperty("thumbnailViewModel", QVariant::fromValue<QList<QObject*> >(modelList));
+    nav_context->setContextProperty("mainWindow", this);
 }
 
 void MainWindow::loadImage (QString fileName)
@@ -85,6 +70,8 @@ void MainWindow::loadImage (QString fileName)
     timer.start();
 
     QImageReader image_reader (fileName);
+    if (!image_reader.canRead())
+        return;
 
     QSize image_size = image_reader.size();
 
@@ -103,9 +90,12 @@ void MainWindow::loadImage (QString fileName)
     qDebug () << "drawing: " << timer.elapsed();
 }
 
-void MainWindow::on_captureListWidget_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
+void MainWindow::currentIndexChanged (int currentIndex)
 {
-    QString image_file_name = m_currentPath + '/' + current->text();
+    QString image_file_name = QUrl (m_thumbnailModel.at( currentIndex )->path()).toString(QUrl::RemoveScheme);
+    qDebug() << QUrl(m_thumbnailModel.at( currentIndex)->path()).toString(QUrl::RemoveScheme);
 
     loadImage (image_file_name);
+
+    ui->mainTabWidget->setCurrentWidget(ui->imageViewPage);
 }

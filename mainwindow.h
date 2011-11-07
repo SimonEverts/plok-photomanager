@@ -26,13 +26,13 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    void currentIndexChanged (int currentIndex);
+
 private slots:
     void on_fileOpenButton_clicked();
 
-    void on_captureListWidget_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
-
 private:
-    void loadDirectory (QString dirName);
     void loadDirectoryThumbnails (QString dirName);
 
     void loadImage (QString fileName);
@@ -40,12 +40,8 @@ private:
     Ui::MainWindow *ui;
 
     QString m_currentPath;
-    std::deque <QString> m_captureList;
 
     QList <QSharedPointer< ThumbnailModelItem > > m_thumbnailModel;
-
-    QGraphicsScene m_scene;
-    QGraphicsPixmapItem* m_pixmapItem;
 };
 
 #endif // MAINWINDOW_H
