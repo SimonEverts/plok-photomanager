@@ -32,6 +32,22 @@ void MainWindow::on_fileOpenButton_clicked()
     loadDirectoryThumbnails( m_currentPath );
 }
 
+void MainWindow::on_actionUpload_images_triggered( bool checked )
+{
+    qDebug () << "Upload image";
+
+    QList <QSharedPointer< ThumbnailModelItem > >::iterator it;
+    for (it = m_thumbnailModel.begin(); it != m_thumbnailModel.end(); it++)
+    {
+        if ((*it)->selected())
+        {
+            qDebug () << "Uploading: " << (*it)->path();
+
+            uploadImage( (*it)->path() );
+        }
+    }
+}
+
 void MainWindow::loadDirectoryThumbnails (QString dirName)
 {
     QDir dir (dirName);
@@ -73,6 +89,10 @@ void MainWindow::loadImage (QString fileName)
     if (!image_reader.canRead())
         return;
 
+    image_reader.setQuality(25);
+
+    m_currentImage = fileName;
+
     QSize image_size = image_reader.size();
 
     int scale = image_size.width() / 800;
@@ -90,12 +110,118 @@ void MainWindow::loadImage (QString fileName)
     qDebug () << "drawing: " << timer.elapsed();
 }
 
-void MainWindow::currentIndexChanged (int currentIndex)
+void MainWindow::uploadImage (QString fileName)
 {
-    QString image_file_name = QUrl (m_thumbnailModel.at( currentIndex )->path()).toString(QUrl::RemoveScheme);
-    qDebug() << QUrl(m_thumbnailModel.at( currentIndex)->path()).toString(QUrl::RemoveScheme);
+    QElapsedTimer timer;
+    timer.start();
 
-    loadImage (image_file_name);
+//    QImageReader image_reader (fileName);
+//    if (!image_reader.canRead())
+//        return;
+
+//    image_reader.setQuality(100);
+
+//    m_currentImage = fileName;
+
+//    QSize image_size = image_reader.size();
+
+//    QImage image = image_reader.read();
+
+
+    QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+
+    QHttpPart uuidPart;
+    uuidPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"uuid\""));
+    uuidPart.setBody("");
+
+    QHttpPart filenamePart;
+    filenamePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"filename\""));
+    filenamePart.setBody( QFileInfo(fileName).fileName().toAscii() );
+
+    qDebug() << QFileInfo(fileName).fileName();
+
+    QHttpPart imagePart;
+    imagePart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("image/jpeg"));
+    imagePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"datafile\""));
+
+    QFile *file = new QFile( QUrl(fileName).toString(QUrl::RemoveScheme) );
+    file->open(QIODevice::ReadOnly);
+    imagePart.setBodyDevice(file);
+
+    file->setParent(multiPart); // we cannot delete the file now, so delete it with the multiPart
+
+    multiPart->append(uuidPart);
+    multiPart->append(filenamePart);
+    multiPart->append(imagePart);
+
+    QUrl url("http://plok.org:8282/plokmc-1.0-SNAPSHOT/fileUpload");
+    QNetworkRequest request(url);
+
+    QNetworkReply *reply = m_networkAccessManager.post(request, multiPart);
+    multiPart->setParent(reply); // delete the multiPart with the reply
+    // here connect signals etc.
+
+    connect( reply, SIGNAL( error(QNetworkReply::NetworkError)), this, SLOT(uploadError(QNetworkReply::NetworkError)));
+    connect( reply, SIGNAL( uploadProgress (qint64, qint64)), this, SLOT(uploadProgress (qint64, qint64)));
+    connect( reply, SIGNAL( finished()), this, SLOT(uploadFinished()));
+
+    qDebug () << "uploading time: " << timer.elapsed();
+}
+
+void MainWindow::currentImageChanged (int currentIndex)
+{
+    m_currentPath = QUrl (m_thumbnailModel.at( currentIndex )->path()).toString(QUrl::RemoveScheme);
+    m_currentImage = m_thumbnailModel.at( currentIndex )->name();
+
+    qDebug() << m_currentPath;
+
+    loadImage (m_currentPath);
 
     ui->mainTabWidget->setCurrentWidget(ui->imageViewPage);
 }
+
+void MainWindow::currentSelectionChanged (int currentIndex)
+{
+    m_thumbnailModel.at( currentIndex )->toggleSelected();
+}
+
+void MainWindow::doubleClickOnThumbnail( int currentIndex )
+{
+    m_currentPath = QUrl (m_thumbnailModel.at( currentIndex )->path()).toString(QUrl::RemoveScheme);
+    m_currentImage = m_thumbnailModel.at( currentIndex )->name();
+
+    qDebug() << m_currentPath;
+
+    loadImage (m_currentPath);
+
+
+    QObject* view_object= ui->thumbnailView->rootObject();
+    QObject* thumbnailView = view_object->findChild<QObject*> ("thumbnailView");
+    if (thumbnailView)
+        thumbnailView->setProperty("currentIndex", currentIndex);
+
+    QObject* nav_object = ui->thumbnailNavigator->rootObject();
+    QObject* thumbnailNavigator = nav_object->findChild<QObject*> ("thumbnailNavigator");
+    if (thumbnailNavigator)
+        thumbnailNavigator->setProperty("currentIndex", currentIndex);
+
+    ui->mainTabWidget->setCurrentWidget(ui->imageViewPage);
+}
+
+void MainWindow::uploadError (QNetworkReply::NetworkError code)
+{
+    QString error_string;
+
+    qDebug() << "Upload error: " << code;
+}
+
+void MainWindow::uploadProgress (qint64 bytesSent, qint64 bytesTotal )
+{
+    qDebug() << "Bytes send: " << bytesSent << "\t Bytes total: " << bytesTotal;
+}
+
+void MainWindow::uploadFinished (void)
+{
+    qDebug() << "Upload finished!";
+}
+

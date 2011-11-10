@@ -21,7 +21,8 @@ public:
     void setPath (QString path) {m_path = path; emit pathChanged (path);}
 
     bool selected (void) {return m_selected;}
-    void setSelected (bool selected) {m_selected = selected;}
+    void setSelected (bool selected) {m_selected = selected; emit selectedChanged( m_selected );}
+    void toggleSelected (void) {m_selected = !m_selected; emit selectedChanged( m_selected );}
 
 signals:
     void nameChanged (QString name);

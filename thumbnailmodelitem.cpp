@@ -7,7 +7,8 @@ ThumbnailModelItem::ThumbnailModelItem (QObject* parent) :
 
 ThumbnailModelItem::ThumbnailModelItem( QString name, QString path) :
     m_name( name ),
-    m_path( path )
+    m_path( path ),
+    m_selected (false)
 {
 
 }

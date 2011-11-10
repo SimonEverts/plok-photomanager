@@ -1,91 +1,34 @@
 import QtQuick 1.1
 
-Item {
+Rectangle {
     width: 800
     height: 600
 
-    Component {
-        id: thumbnailDelegate
-        Item {
-            width: 150
-            height: 130
-
-            Column {
-                spacing: 5
-                Image {
-                    width: 150
-                    height: 100
-                    source: path
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    asynchronous: true
-                    sourceSize.width: 150
-                    sourceSize.height: 100
-                }
-
-                Text {
-                    text: name
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    font.bold: true
-                }
-            }
-
-            MouseArea {
-                id: thumbnail_mousearea
-                anchors.fill: parent
-                onClicked: {
-                    thumbnailView.currentIndex = index
-
-                }
-            }
-        }
-    }
+    color: "darkgrey"
 
     GridView {
         id: thumbnailView
+        objectName: "thumbnailView"
+
         cacheBuffer: 400
+
+        //: "darkgray"
 
         anchors.fill: parent
         flow: GridView.LeftToRight
 
-        cellHeight: 130
-        cellWidth: 160
+        cellHeight: 140
+        cellWidth: 170
 
         maximumFlickVelocity: 2000
-        flickDeceleration: 2000
-
-//        delegate: Item {
-
-//            height: 100
-
-//            Column {
-//                spacing: 5
-//                Image {
-//                    width: 150
-//                    height: 100
-//                    source: path
-//                    anchors.horizontalCenter: parent.horizontalCenter
-
-//                    asynchronous: true
-//                    sourceSize.width: 150
-//                    sourceSize.height: 100
-//                }
-
-//                Text {
-//                    text: name
-//                    anchors.horizontalCenter: parent.horizontalCenter
-//                    font.bold: true
-//                }
-//            }
-//        }
+        flickDeceleration: 500
 
         model: thumbnailViewModel
-        delegate: thumbnailDelegate
+        delegate: ThumbnailDelegate {}
 
-        highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
-
-        onCurrentIndexChanged: mainWindow.currentIndexChanged (currentIndex)
+        highlight: Rectangle {
+            border.width: 3
+            border.color: "black"
+            color: "lightsteelblue"; radius: 5 }
     }
-
-    focus: true
 }

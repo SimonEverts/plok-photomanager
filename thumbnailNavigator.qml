@@ -6,45 +6,12 @@ Rectangle {
     width: 800
     height: 200
 
-    Component {
-        id: thumbnailDelegate
-        Item {
-            width: 150
-            height: 130
-
-            Column {
-                spacing: 5
-                Image {
-                    width: 150
-                    height: 100
-                    source: path
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    asynchronous: true
-                    sourceSize.width: 150
-                    sourceSize.height: 100
-                }
-
-                Text {
-                    text: name
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    font.bold: true
-                }
-            }
-
-            MouseArea {
-                id: thumbnail_mousearea
-                anchors.fill: parent
-                onClicked: {
-                    thumbnailNavigator.currentIndex = index
-
-                }
-            }
-        }
-    }
+    color: "#808080"
 
     ListView {
         id: thumbnailNavigator
+        objectName: "thumbnailNavigator"
+
         cacheBuffer: 400
 
         anchors.fill: parent
@@ -57,11 +24,10 @@ Rectangle {
         spacing: 8
 
         model: thumbnailViewModel
-        delegate: thumbnailDelegate
+        delegate: ThumbnailDelegate {}
 
         highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
-
-        onCurrentIndexChanged: mainWindow.currentIndexChanged (currentIndex)
+        highlightMoveDuration: 300
     }
 
     focus: true

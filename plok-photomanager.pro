@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui declarative
+QT       += core gui declarative network
 
 TARGET = plok-photomanager
 TEMPLATE = app
@@ -23,10 +23,14 @@ FORMS    += mainwindow.ui
 
 OTHER_FILES += \
     thumbnailView.qml \
-    thumbnailNavigator.qml
+    thumbnailNavigator.qml \
+    ThumbnailDelegate.qml
 
-RESOURCES += \
-    gui.qrc
+#RESOURCES += \
+#    gui.qrc
+
+
+
 
 
 

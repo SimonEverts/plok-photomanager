@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1084</width>
-    <height>589</height>
+    <height>791</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -79,7 +79,7 @@
               </property>
               <property name="source">
                <url>
-                <string>qrc:/standard/thumbnailNavigator.qml</string>
+                <string>file:///home/simon/projects/plok-photomanager/plok-photomanager/thumbnailNavigator.qml</string>
                </url>
               </property>
              </widget>
@@ -109,7 +109,7 @@
             </property>
             <property name="source">
              <url>
-              <string>qrc:/standard/thumbnailView.qml</string>
+              <string>file:///home/simon/projects/plok-photomanager/plok-photomanager/thumbnailView.qml</string>
              </url>
             </property>
            </widget>
@@ -131,6 +131,19 @@
      <height>20</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuTool">
+    <property name="title">
+     <string>Tool</string>
+    </property>
+    <addaction name="actionUpload_images"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuTool"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -141,6 +154,11 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionUpload_images">
+   <property name="text">
+    <string>Upload image</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
