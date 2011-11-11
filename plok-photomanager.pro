@@ -13,11 +13,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     imageview.cpp \
-    thumbnailmodelitem.cpp
+    thumbnailmodelitem.cpp \
+    imageuploader.cpp
 
 HEADERS  += mainwindow.h \
     imageview.h \
-    thumbnailmodelitem.h
+    thumbnailmodelitem.h \
+    imageuploader.h
 
 FORMS    += mainwindow.ui
 
@@ -28,6 +30,8 @@ OTHER_FILES += \
 
 RESOURCES += \
     gui.qrc
+
+
 
 
 

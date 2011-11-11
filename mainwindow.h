@@ -3,6 +3,7 @@
 
 // Project includes
 #include "thumbnailmodelitem.h"
+#include "imageuploader.h"
 
 // Qt includes
 #include <QMainWindow>
@@ -10,10 +11,6 @@
 #include <QString>
 #include <QListWidgetItem>
 #include <QList>
-
-#include <QNetworkAccessManager>
-#include <QHttpMultiPart>
-#include <QNetworkReply>
 
 // stl includes
 #include <deque>
@@ -41,27 +38,21 @@ private slots:
 
     void on_actionUpload_images_triggered( bool checked );
 
-    void uploadError (QNetworkReply::NetworkError code);
-    void uploadProgress (qint64 bytesSent, qint64 bytesTotal );
-    void uploadFinished (void);
-
 private:
     void loadDirectoryThumbnails (QString dirName);
 
     void loadImage (QString fileName);
 
-    void uploadImage (QString fileName);
-
     Ui::MainWindow *ui;
     QObject* m_thumbnailNavigator;
     QObject* m_thumbnailView;
+
+    ImageUploader m_imageUploader;
 
     QString m_currentPath;
     QString m_currentImage;
 
     QList <QSharedPointer< ThumbnailModelItem > > m_thumbnailModel;
-
-    QNetworkAccessManager m_networkAccessManager;
 };
 
 #endif // MAINWINDOW_H
