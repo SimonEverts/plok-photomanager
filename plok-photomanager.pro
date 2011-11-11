@@ -26,8 +26,8 @@ OTHER_FILES += \
     thumbnailNavigator.qml \
     ThumbnailDelegate.qml
 
-#RESOURCES += \
-#    gui.qrc
+RESOURCES += \
+    gui.qrc
 
 
 

@@ -14,9 +14,19 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
+    m_thumbnailNavigator (0),
+    m_thumbnailView (0),
     m_currentPath (".")
 {
     ui->setupUi(this);
+
+//    m_thumbnailView = ui->thumbnailView->rootObject()->findChild<QObject*> ("thumbnailView");
+//    if (m_thumbnailView)
+//        connect( thumbnailView, SIGNAL(loadNewImage(int)), this, SLOT(currentImageChanged(int)));
+
+    m_thumbnailNavigator = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("thumbnailNavigator");
+    if (m_thumbnailNavigator)
+        connect( thumbnailNavigator, SIGNAL(loadNewImage(int)), this, SLOT(currentImageChanged(int)));
 }
 
 MainWindow::~MainWindow()
@@ -112,22 +122,6 @@ void MainWindow::loadImage (QString fileName)
 
 void MainWindow::uploadImage (QString fileName)
 {
-    QElapsedTimer timer;
-    timer.start();
-
-//    QImageReader image_reader (fileName);
-//    if (!image_reader.canRead())
-//        return;
-
-//    image_reader.setQuality(100);
-
-//    m_currentImage = fileName;
-
-//    QSize image_size = image_reader.size();
-
-//    QImage image = image_reader.read();
-
-
     QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 
     QHttpPart uuidPart;
@@ -164,8 +158,6 @@ void MainWindow::uploadImage (QString fileName)
     connect( reply, SIGNAL( error(QNetworkReply::NetworkError)), this, SLOT(uploadError(QNetworkReply::NetworkError)));
     connect( reply, SIGNAL( uploadProgress (qint64, qint64)), this, SLOT(uploadProgress (qint64, qint64)));
     connect( reply, SIGNAL( finished()), this, SLOT(uploadFinished()));
-
-    qDebug () << "uploading time: " << timer.elapsed();
 }
 
 void MainWindow::currentImageChanged (int currentIndex)
@@ -194,16 +186,11 @@ void MainWindow::doubleClickOnThumbnail( int currentIndex )
 
     loadImage (m_currentPath);
 
+    if (m_thumbnailView)
+        m_thumbnailView->setProperty("currentIndex", currentIndex);
 
-    QObject* view_object= ui->thumbnailView->rootObject();
-    QObject* thumbnailView = view_object->findChild<QObject*> ("thumbnailView");
-    if (thumbnailView)
-        thumbnailView->setProperty("currentIndex", currentIndex);
-
-    QObject* nav_object = ui->thumbnailNavigator->rootObject();
-    QObject* thumbnailNavigator = nav_object->findChild<QObject*> ("thumbnailNavigator");
-    if (thumbnailNavigator)
-        thumbnailNavigator->setProperty("currentIndex", currentIndex);
+    if (m_thumbnailNavigator)
+        m_thumbnailNavigator->setProperty("currentIndex", currentIndex);
 
     ui->mainTabWidget->setCurrentWidget(ui->imageViewPage);
 }

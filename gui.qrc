@@ -1,3 +1,7 @@
 <RCC>
-    <qresource prefix="/standard"/>
+    <qresource prefix="/standard">
+        <file>thumbnailNavigator.qml</file>
+        <file>thumbnailView.qml</file>
+        <file>ThumbnailDelegate.qml</file>
+    </qresource>
 </RCC>

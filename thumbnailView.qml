@@ -12,8 +12,6 @@ Rectangle {
 
         cacheBuffer: 400
 
-        //: "darkgray"
-
         anchors.fill: parent
         flow: GridView.LeftToRight
 

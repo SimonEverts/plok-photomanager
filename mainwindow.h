@@ -53,6 +53,8 @@ private:
     void uploadImage (QString fileName);
 
     Ui::MainWindow *ui;
+    QObject* m_thumbnailNavigator;
+    QObject* m_thumbnailView;
 
     QString m_currentPath;
     QString m_currentImage;

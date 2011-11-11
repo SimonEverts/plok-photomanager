@@ -28,6 +28,10 @@ Rectangle {
 
         highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
         highlightMoveDuration: 300
+
+        onCurrentIndexChanged: loadNewImage( currentIndex );
+
+        signal loadNewImage (int index);
     }
 
     focus: true

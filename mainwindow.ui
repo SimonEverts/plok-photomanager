@@ -79,7 +79,7 @@
               </property>
               <property name="source">
                <url>
-                <string>file:///home/simon/projects/plok-photomanager/plok-photomanager/thumbnailNavigator.qml</string>
+                <string>qrc:/standard/thumbnailNavigator.qml</string>
                </url>
               </property>
              </widget>
@@ -109,7 +109,7 @@
             </property>
             <property name="source">
              <url>
-              <string>file:///home/simon/projects/plok-photomanager/plok-photomanager/thumbnailView.qml</string>
+              <string>qrc:/standard/thumbnailView.qml</string>
              </url>
             </property>
            </widget>
