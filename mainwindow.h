@@ -4,6 +4,7 @@
 // Project includes
 #include "thumbnailmodelitem.h"
 #include "imageuploader.h"
+#include "capture.h"
 
 // Qt includes
 #include <QMainWindow>
@@ -11,6 +12,8 @@
 #include <QString>
 #include <QListWidgetItem>
 #include <QList>
+
+#include <QFileSystemModel>
 
 // stl includes
 #include <deque>
@@ -33,19 +36,28 @@ public slots:
 
     void doubleClickOnThumbnail( int currentIndex );
 
-private slots:
-    void on_fileOpenButton_clicked();
+protected slots:
+    void on_fileBrowserTreeView_clicked ( const QModelIndex& index);
 
+private slots:
     void on_actionUpload_images_triggered( bool checked );
 
 private:
-    void loadDirectoryThumbnails (QString dirName);
+    void loadThumbnailsFromDir (QString dirName);
+    void loadThumbnailsFromCaptures (void);
+
+    void importCapturesFromDir (QString dirName);
 
     void loadImage (QString fileName);
+    void loadPreviewImage (QString fileName);
 
     Ui::MainWindow *ui;
     QObject* m_thumbnailNavigator;
     QObject* m_thumbnailView;
+
+    QList<QObject*> m_modelList;
+
+    QFileSystemModel* m_fileSystemModel;
 
     ImageUploader m_imageUploader;
 
@@ -53,6 +65,8 @@ private:
     QString m_currentImage;
 
     QList <QSharedPointer< ThumbnailModelItem > > m_thumbnailModel;
+
+    QList <Capture> m_captures;
 };
 
 #endif // MAINWINDOW_H

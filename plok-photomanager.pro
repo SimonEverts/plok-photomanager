@@ -14,12 +14,16 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     imageview.cpp \
     thumbnailmodelitem.cpp \
-    imageuploader.cpp
+    imageuploader.cpp \
+    capture.cpp \
+    photo.cpp
 
 HEADERS  += mainwindow.h \
     imageview.h \
     thumbnailmodelitem.h \
-    imageuploader.h
+    imageuploader.h \
+    capture.h \
+    photo.h
 
 FORMS    += mainwindow.ui
 
@@ -29,7 +33,17 @@ OTHER_FILES += \
     ThumbnailDelegate.qml
 
 RESOURCES += \
-    gui.qrc
+    gui.qrc \
+    icons.qrc
+
+
+
+
+
+
+
+
+
 
 
 

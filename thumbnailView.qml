@@ -24,9 +24,7 @@ Rectangle {
         model: thumbnailViewModel
         delegate: ThumbnailDelegate {}
 
-        highlight: Rectangle {
-            border.width: 3
-            border.color: "black"
-            color: "lightsteelblue"; radius: 5 }
+        highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
+        highlightMoveDuration: 300
     }
 }

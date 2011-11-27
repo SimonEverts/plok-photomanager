@@ -8,6 +8,7 @@
 #include <QImageReader>
 #include <QElapsedTimer>
 #include <QDebug>
+#include <QDateTime>
 #include <QDeclarativeContext>
 #include <QDeclarativeItem>
 
@@ -26,20 +27,50 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_thumbnailNavigator = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("thumbnailNavigator");
     if (m_thumbnailNavigator)
-        connect( m_thumbnailNavigator, SIGNAL(loadNewImage(int)), this, SLOT(currentImageChanged(int)));
+        connect( m_thumbnailNavigator, SIGNAL(loadNewImage(int)), this, SLOT(currentImageChanged(int)), Qt::QueuedConnection);
+
+    m_fileSystemModel = new QFileSystemModel();
+    m_fileSystemModel->setRootPath(QDir::currentPath());
+
+    ui->fileBrowserTreeView->setModel( m_fileSystemModel );
+    ui->fileBrowserTreeView->setColumnHidden(1, true);
+    ui->fileBrowserTreeView->setColumnHidden(2, true);
+    ui->fileBrowserTreeView->setColumnHidden(3, true);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+
+    delete m_fileSystemModel;
 }
 
-void MainWindow::on_fileOpenButton_clicked()
-{
-    m_currentPath = QFileDialog::getExistingDirectory(this, "Select image directory");
-    ui->fileEdit->setText( m_currentPath );
+//void MainWindow::on_fileOpenButton_clicked()
+//{
+//    m_currentPath = QFileDialog::getExistingDirectory(this, "Select image directory");
+//    ui->fileEdit->setText( m_currentPath );
 
-    loadDirectoryThumbnails( m_currentPath );
+//    importCapturesFromDir( m_currentPath );
+//    loadThumbnailsFromCaptures();
+//}
+
+void MainWindow::on_fileBrowserTreeView_clicked( const QModelIndex& index )
+{
+    QString path = m_fileSystemModel->filePath( index );
+
+    QFileInfo file_info ( path );
+
+    if (file_info.isDir())
+    {
+        importCapturesFromDir( path );
+        loadThumbnailsFromCaptures();
+    } else
+    {
+        loadImage( path );
+
+        importCapturesFromDir( file_info.absolutePath() );
+        loadThumbnailsFromCaptures();
+    }
 }
 
 void MainWindow::on_actionUpload_images_triggered( bool checked )
@@ -58,7 +89,7 @@ void MainWindow::on_actionUpload_images_triggered( bool checked )
     }
 }
 
-void MainWindow::loadDirectoryThumbnails (QString dirName)
+void MainWindow::loadThumbnailsFromDir (QString dirName)
 {
     QDir dir (dirName);
     dir.setFilter( QDir::Files );
@@ -90,7 +121,98 @@ void MainWindow::loadDirectoryThumbnails (QString dirName)
     nav_context->setContextProperty("mainWindow", this);
 }
 
+void MainWindow::loadThumbnailsFromCaptures (void)
+{
+    QList <Capture>::iterator it;
+
+    m_thumbnailModel.clear();
+    m_modelList.clear();
+
+    for (it = m_captures.begin(); it != m_captures.end(); it++)
+    {
+        QString name = it->name();
+        QString path = it->previewPhoto();
+
+        QSharedPointer <ThumbnailModelItem> model_item (new ThumbnailModelItem( name, path ));
+
+        m_thumbnailModel.push_back( model_item );
+        m_modelList.append( &(*model_item) );
+    }
+
+    QDeclarativeContext *context = ui->thumbnailView->rootContext();
+    context->setContextProperty("thumbnailViewModel", QVariant::fromValue<QList<QObject*> >(m_modelList));
+    context->setContextProperty("mainWindow", this);
+
+    QDeclarativeContext *nav_context = ui->thumbnailNavigator->rootContext();
+    nav_context->setContextProperty("thumbnailViewModel", QVariant::fromValue<QList<QObject*> >(m_modelList));
+    nav_context->setContextProperty("mainWindow", this);
+}
+
+void MainWindow::importCapturesFromDir (QString dirName)
+{
+    QDir dir (dirName);
+    dir.setFilter( QDir::Files );
+    dir.setSorting( QDir::Name );
+    dir.setNameFilters(QStringList() << "*.jpg" << "*.JPG" << "*.arw" << "*.ARW");
+
+    QList <QFileInfo> file_info_list = dir.entryInfoList();
+
+//    QSharedPointer <Capture> current_capture = QSharedPointer <Capture> ( new Capture() );
+
+    m_captures.clear();
+
+    Capture current_capture;
+
+    QList <QFileInfo>::iterator it = file_info_list.begin();
+    while( it != file_info_list.end() )
+    {
+        QString base_name = it->baseName();
+        QString file_path = QString ("file://") + it->filePath();
+
+        QDateTime capture_time = it->created();
+
+        //qDebug() << file_path << capture_time;
+
+        //int capture_time_diff = abs( capture_time.secsTo( current_capture.captureTime() ));
+
+        if (!current_capture.name().isEmpty() && base_name != current_capture.name())
+        {
+            m_captures.push_back (current_capture);
+
+            current_capture.setName("");
+            current_capture.clear();
+        }
+
+        current_capture.setName( base_name );
+        current_capture.addPhoto( file_path );
+        current_capture.setCaptureTime( capture_time );
+
+        it++;
+    }
+
+}
+
 void MainWindow::loadImage (QString fileName)
+{
+    QElapsedTimer timer;
+    timer.start();
+
+    QImageReader image_reader (fileName);
+    if (!image_reader.canRead())
+        return;
+
+    m_currentImage = fileName;
+
+    QImage image = image_reader.read();
+
+    qDebug () << "image loading: " << timer.elapsed();
+
+    ui->imageView->setImage (image);
+
+    qDebug () << "drawing: " << timer.elapsed();
+}
+
+void MainWindow::loadPreviewImage (QString fileName)
 {
     QElapsedTimer timer;
     timer.start();
@@ -120,18 +242,19 @@ void MainWindow::loadImage (QString fileName)
     qDebug () << "drawing: " << timer.elapsed();
 }
 
-
-
 void MainWindow::currentImageChanged (int currentIndex)
 {
-    m_currentPath = QUrl (m_thumbnailModel.at( currentIndex )->path()).toString(QUrl::RemoveScheme);
-    m_currentImage = m_thumbnailModel.at( currentIndex )->name();
+    if (currentIndex < m_thumbnailModel.size() && m_thumbnailModel.size())
+    {
+        m_currentPath = QUrl (m_thumbnailModel.at( currentIndex )->path()).toString(QUrl::RemoveScheme);
+        m_currentImage = m_thumbnailModel.at( currentIndex )->name();
 
-    qDebug() << m_currentPath;
+        qDebug() << m_currentPath;
 
-    loadImage (m_currentPath);
+//        ui->mainTabWidget->setCurrentWidget(ui->imageViewPage);
 
-    ui->mainTabWidget->setCurrentWidget(ui->imageViewPage);
+        loadImage (m_currentPath);
+    }
 }
 
 void MainWindow::currentSelectionChanged (int currentIndex)
@@ -146,8 +269,6 @@ void MainWindow::doubleClickOnThumbnail( int currentIndex )
 
     qDebug() << m_currentPath;
 
-    loadImage (m_currentPath);
-
     if (m_thumbnailView)
         m_thumbnailView->setProperty("currentIndex", currentIndex);
 
@@ -155,6 +276,8 @@ void MainWindow::doubleClickOnThumbnail( int currentIndex )
         m_thumbnailNavigator->setProperty("currentIndex", currentIndex);
 
     ui->mainTabWidget->setCurrentWidget(ui->imageViewPage);
+
+    loadImage (m_currentPath);
 }
 
 

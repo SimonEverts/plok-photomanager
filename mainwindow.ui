@@ -16,30 +16,63 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLineEdit" name="fileEdit">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="fileOpenButton">
-        <property name="text">
-         <string>Open</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QTabWidget" name="mainTabWidget">
         <property name="currentIndex">
          <number>0</number>
         </property>
+        <widget class="QWidget" name="fileBrowserPage">
+         <attribute name="title">
+          <string>File browser</string>
+         </attribute>
+         <widget class="QSplitter" name="splitter">
+          <property name="geometry">
+           <rect>
+            <x>4</x>
+            <y>4</y>
+            <width>1054</width>
+            <height>697</height>
+           </rect>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="QTreeView" name="fileBrowserTreeView">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+          <widget class="QDeclarativeView" name="thumbnailView">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="backgroundBrush">
+            <brush brushstyle="NoBrush">
+             <color alpha="255">
+              <red>128</red>
+              <green>128</green>
+              <blue>128</blue>
+             </color>
+            </brush>
+           </property>
+           <property name="resizeMode">
+            <enum>QDeclarativeView::SizeRootObjectToView</enum>
+           </property>
+           <property name="source">
+            <url>
+             <string>qrc:/standard/thumbnailView.qml</string>
+            </url>
+           </property>
+          </widget>
+         </widget>
+        </widget>
         <widget class="QWidget" name="imageViewPage">
          <attribute name="title">
           <string>Image View</string>
@@ -88,33 +121,10 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="mainTabWidgetPage2">
+        <widget class="QWidget" name="tab">
          <attribute name="title">
-          <string>Thumbnail View</string>
+          <string>Thumbnails</string>
          </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
-           <widget class="QDeclarativeView" name="thumbnailView">
-            <property name="backgroundBrush">
-             <brush brushstyle="NoBrush">
-              <color alpha="255">
-               <red>128</red>
-               <green>128</green>
-               <blue>128</blue>
-              </color>
-             </brush>
-            </property>
-            <property name="resizeMode">
-             <enum>QDeclarativeView::SizeRootObjectToView</enum>
-            </property>
-            <property name="source">
-             <url>
-              <string>qrc:/standard/thumbnailView.qml</string>
-             </url>
-            </property>
-           </widget>
-          </item>
-         </layout>
         </widget>
        </widget>
       </item>

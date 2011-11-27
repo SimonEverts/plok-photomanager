@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/standard">
+        <file>icons/application-epub+zip.png</file>
+        <file>icons/camera-photo.png</file>
+        <file>icons/folder.png</file>
+    </qresource>
+</RCC>
