@@ -3,5 +3,10 @@
         <file>icons/application-epub+zip.png</file>
         <file>icons/camera-photo.png</file>
         <file>icons/folder.png</file>
+        <file>icons/22x22/archive-insert.png</file>
+        <file>icons/22x22/archive-remove.png</file>
+        <file>icons/22x22/view-list-details.png</file>
+        <file>icons/22x22/view-list-icons.png</file>
+        <file>icons/22x22/view-preview.png</file>
     </qresource>
 </RCC>

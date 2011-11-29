@@ -281,3 +281,91 @@ void MainWindow::doubleClickOnThumbnail( int currentIndex )
 }
 
 
+
+void MainWindow::on_actionCombine_triggered()
+{
+    QStringList selected_items;
+
+    QList <QSharedPointer< ThumbnailModelItem > >::iterator thumb_it;
+    for (thumb_it = m_thumbnailModel.begin(); thumb_it != m_thumbnailModel.end(); thumb_it++)
+    {
+        if ((*thumb_it)->selected())
+            selected_items << (*thumb_it)->name();
+    }
+
+    Capture new_capture;
+    QList <QString> new_photo_list;
+
+    if (selected_items.size())
+    {
+        new_capture.setName(selected_items.first());
+
+        QList <Capture>::iterator after_first_match;
+
+        QList <Capture>::iterator it = m_captures.begin();
+        while( it != m_captures.end() )
+        {
+            if (selected_items.contains(it->name()))
+            {
+                QList <QString> photo_list = it->photoList();
+
+                new_photo_list.append( photo_list );
+
+                it = m_captures.erase(it);
+                after_first_match = it;
+            } else
+                it++;
+        }
+
+        new_capture.setPhotos( new_photo_list );
+        m_captures.insert(after_first_match, new_capture);
+
+        loadThumbnailsFromCaptures();
+    }
+}
+
+void MainWindow::on_actionSplit_triggered()
+{
+    QStringList selected_items;
+
+    QList <QSharedPointer< ThumbnailModelItem > >::iterator thumb_it;
+    for (thumb_it = m_thumbnailModel.begin(); thumb_it != m_thumbnailModel.end(); thumb_it++)
+    {
+        if ((*thumb_it)->selected())
+            selected_items << (*thumb_it)->name();
+    }
+
+    if (selected_items.size())
+    {
+//        new_capture.setName(selected_items.first());
+
+//        QList <Capture>::iterator after_first_match;
+
+        QList <Capture>::iterator it = m_captures.begin();
+        while( it != m_captures.end() )
+        {
+            if (selected_items.contains(it->name()))
+            {
+                QList <QString> photo_list = it->photoList();
+                it = m_captures.erase(it);
+
+                QList <QString>::iterator photo_it;
+                for (photo_it = photo_list.begin(); photo_it != photo_list.end(); photo_it++)
+                {
+                    Capture new_capture;
+                    new_capture.setName( QFileInfo(*photo_it).fileName() );
+
+                    QList <QString> new_list;
+                    new_list.push_back( *photo_it );
+                    new_capture.setPhotos( new_list );
+
+                    it = m_captures.insert( it, new_capture );
+                }
+
+            } else
+                it++;
+        }
+
+        loadThumbnailsFromCaptures();
+    }
+}

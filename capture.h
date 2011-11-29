@@ -21,6 +21,9 @@ public:
 
     void addPhoto (QString path);
 
+    void setPhotos (QList<QString> photos);
+    QList <QString> photoList (void);
+
     QString previewPhoto (void);
 
     void clear (void);

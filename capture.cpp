@@ -36,6 +36,16 @@ void Capture::addPhoto (QString path)
     m_photos.push_back( path );
 }
 
+void Capture::setPhotos (QList<QString> photos)
+{
+    m_photos = photos;
+}
+
+QList <QString> Capture::photoList (void)
+{
+    return m_photos;
+}
+
 QString Capture::previewPhoto (void)
 {
     QString result;

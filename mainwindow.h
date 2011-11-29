@@ -42,6 +42,10 @@ protected slots:
 private slots:
     void on_actionUpload_images_triggered( bool checked );
 
+    void on_actionCombine_triggered();
+
+    void on_actionSplit_triggered();
+
 private:
     void loadThumbnailsFromDir (QString dirName);
     void loadThumbnailsFromCaptures (void);

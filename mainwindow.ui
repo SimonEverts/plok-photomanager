@@ -156,17 +156,101 @@
    <addaction name="menuTool"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
+   <property name="iconSize">
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionFiles"/>
+   <addaction name="actionAlbums"/>
+   <addaction name="separator"/>
+   <addaction name="actionThumbnails"/>
+   <addaction name="actionPreview"/>
+   <addaction name="actionInfo"/>
+   <addaction name="separator"/>
+   <addaction name="actionCombine"/>
+   <addaction name="actionSplit"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionUpload_images">
    <property name="text">
     <string>Upload image</string>
+   </property>
+  </action>
+  <action name="actionFiles">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/standard/icons/folder.png</normaloff>:/standard/icons/folder.png</iconset>
+   </property>
+   <property name="text">
+    <string>Files</string>
+   </property>
+   <property name="toolTip">
+    <string>Files</string>
+   </property>
+  </action>
+  <action name="actionAlbums">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/standard/icons/application-epub+zip.png</normaloff>:/standard/icons/application-epub+zip.png</iconset>
+   </property>
+   <property name="text">
+    <string>Albums</string>
+   </property>
+  </action>
+  <action name="actionThumbnails">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/standard/icons/22x22/view-list-icons.png</normaloff>:/standard/icons/22x22/view-list-icons.png</iconset>
+   </property>
+   <property name="text">
+    <string>Thumbnails</string>
+   </property>
+  </action>
+  <action name="actionPreview">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/standard/icons/22x22/view-preview.png</normaloff>:/standard/icons/22x22/view-preview.png</iconset>
+   </property>
+   <property name="text">
+    <string>Preview</string>
+   </property>
+  </action>
+  <action name="actionInfo">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/standard/icons/22x22/view-list-details.png</normaloff>:/standard/icons/22x22/view-list-details.png</iconset>
+   </property>
+   <property name="text">
+    <string>Info</string>
+   </property>
+  </action>
+  <action name="actionCombine">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/standard/icons/22x22/archive-insert.png</normaloff>:/standard/icons/22x22/archive-insert.png</iconset>
+   </property>
+   <property name="text">
+    <string>Combine</string>
+   </property>
+  </action>
+  <action name="actionSplit">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/standard/icons/22x22/archive-remove.png</normaloff>:/standard/icons/22x22/archive-remove.png</iconset>
+   </property>
+   <property name="text">
+    <string>Split</string>
    </property>
   </action>
  </widget>
@@ -184,6 +268,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections/>
 </ui>
