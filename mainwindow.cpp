@@ -25,14 +25,24 @@ MainWindow::MainWindow(QWidget *parent) :
 //    if (m_thumbnailView)
 //        connect( thumbnailView, SIGNAL(loadNewImage(int)), this, SLOT(currentImageChanged(int)));
 
+    m_imageViewActionGroup = new QActionGroup (this);
+    m_imageViewActionGroup->addAction (ui->actionThumbnails);
+    m_imageViewActionGroup->addAction (ui->actionPreview);
+
+    m_sourceActionGroup = new QActionGroup (this);
+    m_sourceActionGroup->addAction (ui->actionFiles);
+    m_sourceActionGroup->addAction (ui->actionAlbums);
+
+
     m_thumbnailNavigator = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("thumbnailNavigator");
     if (m_thumbnailNavigator)
         connect( m_thumbnailNavigator, SIGNAL(loadNewImage(int)), this, SLOT(currentImageChanged(int)), Qt::QueuedConnection);
 
     m_fileSystemModel = new QFileSystemModel();
-    m_fileSystemModel->setRootPath(QDir::currentPath());
+    m_fileSystemModel->setRootPath(QDir::homePath());
 
     ui->fileBrowserTreeView->setModel( m_fileSystemModel );
+    ui->fileBrowserTreeView->setCurrentIndex( m_fileSystemModel->index(QDir::homePath()));
     ui->fileBrowserTreeView->setColumnHidden(1, true);
     ui->fileBrowserTreeView->setColumnHidden(2, true);
     ui->fileBrowserTreeView->setColumnHidden(3, true);
@@ -41,6 +51,9 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+
+    delete m_imageViewActionGroup;
+    delete m_sourceActionGroup;
 
     delete m_fileSystemModel;
 }
@@ -54,7 +67,7 @@ MainWindow::~MainWindow()
 //    loadThumbnailsFromCaptures();
 //}
 
-void MainWindow::on_fileBrowserTreeView_clicked( const QModelIndex& index )
+void MainWindow::on_fileBrowserTreeView_activated ( const QModelIndex & index )
 {
     QString path = m_fileSystemModel->filePath( index );
 
@@ -66,10 +79,13 @@ void MainWindow::on_fileBrowserTreeView_clicked( const QModelIndex& index )
         loadThumbnailsFromCaptures();
     } else
     {
-        loadImage( path );
+        if (QFileInfo(path).absolutePath() != QFileInfo(m_currentPath).absolutePath())
+        {
+            importCapturesFromDir( file_info.absolutePath() );
+            loadThumbnailsFromCaptures();
+        }
 
-        importCapturesFromDir( file_info.absolutePath() );
-        loadThumbnailsFromCaptures();
+        loadImage( path );
     }
 }
 
@@ -201,7 +217,8 @@ void MainWindow::loadImage (QString fileName)
 //    if (!image_reader.canRead())
 //        return;
 
-//    m_currentImage = fileName;
+    m_currentPath = fileName;
+    m_currentImage = fileName;
 
 //    QImage image = image_reader.read();
 
@@ -209,10 +226,13 @@ void MainWindow::loadImage (QString fileName)
 
 //    //ui->imageView->setImage (image);
 
-//    QObject* image_view = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("previewImage");
+    QObject* image_view = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("previewImage");
 
-//    if (image_view)
-//        image_view->setProperty("source", QString("file:") + fileName);
+    if (image_view)
+        image_view->setProperty("source", QString("file:") + fileName);
+
+    ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
+
 
 //    qDebug () << "drawing: " << timer.elapsed();
 }
@@ -256,7 +276,7 @@ void MainWindow::currentImageChanged (int currentIndex)
 
 //        qDebug() << m_currentPath;
 
-////        ui->mainTabWidget->setCurrentWidget(ui->imageViewPage);
+////
 
 //        loadImage (m_currentPath);
 //    }

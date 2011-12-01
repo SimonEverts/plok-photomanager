@@ -12,6 +12,7 @@
 #include <QString>
 #include <QListWidgetItem>
 #include <QList>
+#include <QActionGroup>
 
 #include <QFileSystemModel>
 
@@ -37,7 +38,7 @@ public slots:
     void doubleClickOnThumbnail( int currentIndex );
 
 protected slots:
-    void on_fileBrowserTreeView_clicked ( const QModelIndex& index);
+    void on_fileBrowserTreeView_activated ( const QModelIndex & index );
 
 private slots:
     void on_actionUpload_images_triggered( bool checked );
@@ -62,6 +63,9 @@ private:
     Ui::MainWindow *ui;
     QObject* m_thumbnailNavigator;
     QObject* m_thumbnailView;
+
+    QActionGroup* m_sourceActionGroup;
+    QActionGroup* m_imageViewActionGroup;
 
     QList<QObject*> m_modelList;
 

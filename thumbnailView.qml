@@ -19,7 +19,7 @@ Rectangle {
         cellWidth: 170
 
         maximumFlickVelocity: 2000
-        flickDeceleration: 500
+        flickDeceleration: 2000
 
         model: thumbnailViewModel
         delegate: ThumbnailDelegate {}

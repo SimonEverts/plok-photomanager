@@ -14,7 +14,7 @@ Rectangle {
 
         Image {
             width: parent.width
-            height: parent.height - thumbnailNavigator.height
+            height: parent.height - thumbnailNavigator.height - 5
 
             id: previewImage
             objectName: "previewImage"
