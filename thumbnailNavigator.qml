@@ -4,38 +4,61 @@ Rectangle {
     id: root
 
     width: 800
-    height: 200
+    height: 600
 
     color: "#808080"
 
-    ListView {
-        id: thumbnailNavigator
-        objectName: "thumbnailNavigator"
-
-        cacheBuffer: 400
+    Column {
 
         anchors.fill: parent
 
-        orientation: ListView.Horizontal
+        Image {
+            width: parent.width
+            height: parent.height - thumbnailNavigator.height
 
-        maximumFlickVelocity: 2000
-        flickDeceleration: 2000
+            id: previewImage
+            objectName: "previewImage"
 
-        spacing: 8
+            fillMode: Image.PreserveAspectFit
 
-        model: thumbnailViewModel
-        delegate: ThumbnailDelegate {}
+            sourceSize.width: 1920
+        }
 
-        highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
-        highlightMoveDuration: 300
+        ListView {
+            id: thumbnailNavigator
+            objectName: "thumbnailNavigator"
 
-        onCurrentIndexChanged: loadNewImage( currentIndex );
+            cacheBuffer: 400
 
-        signal loadNewImage (int index);
+            width: parent.width
+            height: 130
+            anchors.top: previewImage.bottom
+            //anchors.fill: parent
+
+            orientation: ListView.Horizontal
+
+            maximumFlickVelocity: 2000
+            flickDeceleration: 2000
+
+            spacing: 8
+
+            model: thumbnailViewModel
+            delegate: ThumbnailDelegate {}
+
+            highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
+            highlightMoveDuration: 300
+
+            onCurrentIndexChanged: {
+                previewImage.source = thumbnailViewModel[currentIndex].path;
+                //loadNewImage( currentIndex );
+            }
+
+            signal loadNewImage (int index);
+        }
+
+        focus: true
+
+        Keys.onLeftPressed: thumbnailNavigator.decrementCurrentIndex()
+        Keys.onRightPressed: thumbnailNavigator.incrementCurrentIndex()
     }
-
-    focus: true
-
-    Keys.onLeftPressed: thumbnailNavigator.decrementCurrentIndex()
-    Keys.onRightPressed: thumbnailNavigator.incrementCurrentIndex()
 }

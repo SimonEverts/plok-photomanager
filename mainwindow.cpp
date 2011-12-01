@@ -194,67 +194,72 @@ void MainWindow::importCapturesFromDir (QString dirName)
 
 void MainWindow::loadImage (QString fileName)
 {
-    QElapsedTimer timer;
-    timer.start();
+//    QElapsedTimer timer;
+//    timer.start();
 
-    QImageReader image_reader (fileName);
-    if (!image_reader.canRead())
-        return;
+//    QImageReader image_reader (fileName);
+//    if (!image_reader.canRead())
+//        return;
 
-    m_currentImage = fileName;
+//    m_currentImage = fileName;
 
-    QImage image = image_reader.read();
+//    QImage image = image_reader.read();
 
-    qDebug () << "image loading: " << timer.elapsed();
+//    qDebug () << "image loading: " << timer.elapsed();
 
-    ui->imageView->setImage (image);
+//    //ui->imageView->setImage (image);
 
-    qDebug () << "drawing: " << timer.elapsed();
+//    QObject* image_view = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("previewImage");
+
+//    if (image_view)
+//        image_view->setProperty("source", QString("file:") + fileName);
+
+//    qDebug () << "drawing: " << timer.elapsed();
 }
 
 void MainWindow::loadPreviewImage (QString fileName)
 {
-    QElapsedTimer timer;
-    timer.start();
+//    QElapsedTimer timer;
+//    timer.start();
 
-    QImageReader image_reader (fileName);
-    if (!image_reader.canRead())
-        return;
+//    QImageReader image_reader (fileName);
+//    if (!image_reader.canRead())
+//        return;
 
-    image_reader.setQuality(25);
+//    image_reader.setQuality(25);
 
-    m_currentImage = fileName;
+//    m_currentImage = fileName;
 
-    QSize image_size = image_reader.size();
+//    QSize image_size = image_reader.size();
 
-    int scale = image_size.width() / 800;
+//    int scale = image_size.width() / 800;
 
-    QSize scaled_size( image_size.width() / scale, image_size.height() / scale);
+//    QSize scaled_size( image_size.width() / scale, image_size.height() / scale);
 
-    image_reader.setScaledSize ( scaled_size);
+//    image_reader.setScaledSize ( scaled_size);
 
-    QImage image = image_reader.read();
+//    QImage image = image_reader.read();
 
-    qDebug () << "image loading: " << timer.elapsed();
+//    qDebug () << "image loading: " << timer.elapsed();
 
-    ui->imageView->setImage (image);
+//    ui->imageView->setImage (image);
 
-    qDebug () << "drawing: " << timer.elapsed();
+//    qDebug () << "drawing: " << timer.elapsed();
 }
 
 void MainWindow::currentImageChanged (int currentIndex)
 {
-    if (currentIndex < m_thumbnailModel.size() && m_thumbnailModel.size())
-    {
-        m_currentPath = QUrl (m_thumbnailModel.at( currentIndex )->path()).toString(QUrl::RemoveScheme);
-        m_currentImage = m_thumbnailModel.at( currentIndex )->name();
+//    if (currentIndex < m_thumbnailModel.size() && m_thumbnailModel.size())
+//    {
+//        m_currentPath = QUrl (m_thumbnailModel.at( currentIndex )->path()).toString(QUrl::RemoveScheme);
+//        m_currentImage = m_thumbnailModel.at( currentIndex )->name();
 
-        qDebug() << m_currentPath;
+//        qDebug() << m_currentPath;
 
-//        ui->mainTabWidget->setCurrentWidget(ui->imageViewPage);
+////        ui->mainTabWidget->setCurrentWidget(ui->imageViewPage);
 
-        loadImage (m_currentPath);
-    }
+//        loadImage (m_currentPath);
+//    }
 }
 
 void MainWindow::currentSelectionChanged (int currentIndex)
@@ -275,7 +280,7 @@ void MainWindow::doubleClickOnThumbnail( int currentIndex )
     if (m_thumbnailNavigator)
         m_thumbnailNavigator->setProperty("currentIndex", currentIndex);
 
-    ui->mainTabWidget->setCurrentWidget(ui->imageViewPage);
+    ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
 
     loadImage (m_currentPath);
 }
@@ -368,4 +373,14 @@ void MainWindow::on_actionSplit_triggered()
 
         loadThumbnailsFromCaptures();
     }
+}
+
+void MainWindow::on_actionThumbnails_triggered()
+{
+    ui->mainStackedWidget->setCurrentWidget(ui->mainStackedThumbnailPage);
+}
+
+void MainWindow::on_actionPreview_triggered()
+{
+    ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
 }

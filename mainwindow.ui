@@ -14,38 +14,30 @@
    <string>Plok Photo Manager</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QTabWidget" name="mainTabWidget">
-        <property name="currentIndex">
-         <number>0</number>
-        </property>
-        <widget class="QWidget" name="fileBrowserPage">
-         <attribute name="title">
-          <string>File browser</string>
-         </attribute>
-         <widget class="QSplitter" name="splitter">
-          <property name="geometry">
-           <rect>
-            <x>4</x>
-            <y>4</y>
-            <width>1054</width>
-            <height>697</height>
-           </rect>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <widget class="QTreeView" name="fileBrowserTreeView">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QTreeView" name="fileBrowserTreeView">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+      <widget class="QStackedWidget" name="mainStackedWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>3</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <widget class="QWidget" name="mainStackedThumbnailPage" native="true">
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
           <widget class="QDeclarativeView" name="thumbnailView">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -71,64 +63,46 @@
             </url>
            </property>
           </widget>
-         </widget>
-        </widget>
-        <widget class="QWidget" name="imageViewPage">
-         <attribute name="title">
-          <string>Image View</string>
-         </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_2">
-            <item>
-             <widget class="ImageView" name="imageView" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDeclarativeView" name="thumbnailNavigator">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>150</height>
-               </size>
-              </property>
-              <property name="interactive">
-               <bool>true</bool>
-              </property>
-              <property name="resizeMode">
-               <enum>QDeclarativeView::SizeRootObjectToView</enum>
-              </property>
-              <property name="source">
-               <url>
-                <string>qrc:/standard/thumbnailNavigator.qml</string>
-               </url>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="tab">
-         <attribute name="title">
-          <string>Thumbnails</string>
-         </attribute>
-        </widget>
+         </item>
+        </layout>
        </widget>
-      </item>
-     </layout>
+       <widget class="QWidget" name="mainStackedPreviewPage" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="QDeclarativeView" name="thumbnailNavigator">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>150</height>
+              </size>
+             </property>
+             <property name="interactive">
+              <bool>true</bool>
+             </property>
+             <property name="resizeMode">
+              <enum>QDeclarativeView::SizeRootObjectToView</enum>
+             </property>
+             <property name="source">
+              <url>
+               <string>qrc:/standard/thumbnailNavigator.qml</string>
+              </url>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -209,6 +183,9 @@
    </property>
   </action>
   <action name="actionThumbnails">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="icons.qrc">
      <normaloff>:/standard/icons/22x22/view-list-icons.png</normaloff>:/standard/icons/22x22/view-list-icons.png</iconset>
@@ -218,6 +195,9 @@
    </property>
   </action>
   <action name="actionPreview">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="icons.qrc">
      <normaloff>:/standard/icons/22x22/view-preview.png</normaloff>:/standard/icons/22x22/view-preview.png</iconset>
@@ -260,12 +240,6 @@
    <class>QDeclarativeView</class>
    <extends>QGraphicsView</extends>
    <header>QtDeclarative/QDeclarativeView</header>
-  </customwidget>
-  <customwidget>
-   <class>ImageView</class>
-   <extends>QWidget</extends>
-   <header>imageview.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

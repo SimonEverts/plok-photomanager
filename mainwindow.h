@@ -46,6 +46,10 @@ private slots:
 
     void on_actionSplit_triggered();
 
+    void on_actionThumbnails_triggered();
+
+    void on_actionPreview_triggered();
+
 private:
     void loadThumbnailsFromDir (QString dirName);
     void loadThumbnailsFromCaptures (void);
