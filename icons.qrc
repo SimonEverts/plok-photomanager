@@ -8,5 +8,6 @@
         <file>icons/22x22/view-list-details.png</file>
         <file>icons/22x22/view-list-icons.png</file>
         <file>icons/22x22/view-preview.png</file>
+        <file>icons/22x22/trash-empty.png</file>
     </qresource>
 </RCC>

@@ -11,6 +11,8 @@
 #include <QDateTime>
 #include <QDeclarativeContext>
 #include <QDeclarativeItem>
+#include <QProcessEnvironment>
+#include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -403,4 +405,67 @@ void MainWindow::on_actionThumbnails_triggered()
 void MainWindow::on_actionPreview_triggered()
 {
     ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
+}
+
+void MainWindow::on_actionDelete_triggered()
+{
+    QStringList selected_items;
+
+    QList <QSharedPointer< ThumbnailModelItem > >::iterator thumb_it;
+    for (thumb_it = m_thumbnailModel.begin(); thumb_it != m_thumbnailModel.end(); thumb_it++)
+    {
+        if ((*thumb_it)->selected())
+            selected_items << (*thumb_it)->name();
+    }
+
+
+    if (selected_items.size())
+    {
+        QString xdb_data_home = QProcessEnvironment::systemEnvironment().value("XDG_DATA_HOME", "");
+        if (!xdb_data_home.isEmpty())
+        {
+            QList <Capture>::iterator it = m_captures.begin();
+            while( it != m_captures.end() )
+            {
+                if (selected_items.contains(it->name()))
+                {
+                    QList <QString> photo_list = it->photoList();
+                    it = m_captures.erase(it);
+
+                    QList <QString>::iterator photo_it;
+                    for (photo_it = photo_list.begin(); photo_it != photo_list.end(); photo_it++)
+                    {
+                        QString file_path = QUrl(*photo_it).toString(QUrl::RemoveScheme);
+
+                        QFile file( file_path );
+
+                        if (file.exists())
+                        {
+                            QDir dir (xdb_data_home + "/Trash/files/");
+
+                            qDebug() << xdb_data_home + "/Trash/files/";
+
+                            if (dir.exists())
+                            {
+                                qDebug() << "moving " << file_path << " to " << dir.absolutePath() + "/" + QFileInfo(file_path).fileName();
+
+                                QTextFile trash_info (xdb_data_home + "/Trash/info/" + "/" + QFileInfo(file_path).fileName() + ".trashinfo", QSettings::IniFormat);
+                                trash_info.setIniCodec("UTF-8");
+                                trash_info.beginGroup("Trash Info");
+                                trash_info.setValue("Path", file_path);
+                                trash_info.setValue("DeletionDate", QDateTime::currentDateTime());
+
+                                bool result = file.rename(dir.absolutePath() + "/" + QFileInfo(file_path).fileName() );
+                                if (!result)
+                                    qDebug() << file.errorString();
+                            }
+                        }
+                    }
+                } else
+                    it++;
+            }
+        }
+
+        loadThumbnailsFromCaptures();
+    }
 }

@@ -51,6 +51,8 @@ private slots:
 
     void on_actionPreview_triggered();
 
+    void on_actionDelete_triggered();
+
 private:
     void loadThumbnailsFromDir (QString dirName);
     void loadThumbnailsFromCaptures (void);
