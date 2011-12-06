@@ -24,7 +24,7 @@ Component {
             Image {
                 width: 150
                 height: 100
-                source: path
+                source: "image://imageprovider/" + path
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 asynchronous: true

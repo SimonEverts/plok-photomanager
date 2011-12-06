@@ -3,6 +3,7 @@
 
 // Project includes
 #include "thumbnailmodelitem.h"
+#include "imageloader.h"
 #include "imageuploader.h"
 #include "capture.h"
 

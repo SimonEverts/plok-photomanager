@@ -16,14 +16,18 @@ SOURCES += main.cpp\
     thumbnailmodelitem.cpp \
     imageuploader.cpp \
     capture.cpp \
-    photo.cpp
+    photo.cpp \
+    imageloader.cpp \
+    imageprovider.cpp
 
 HEADERS  += mainwindow.h \
     imageview.h \
     thumbnailmodelitem.h \
     imageuploader.h \
     capture.h \
-    photo.h
+    photo.h \
+    imageloader.h \
+    imageprovider.h
 
 FORMS    += mainwindow.ui
 
@@ -35,6 +39,12 @@ OTHER_FILES += \
 RESOURCES += \
     gui.qrc \
     icons.qrc
+
+LIBS += -lraw -lgomp
+
+
+
+
 
 
 

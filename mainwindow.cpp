@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include "imageview.h"
+#include "imageprovider.h"
 
 // Qt includes
 #include <QFileDialog>
@@ -11,8 +12,7 @@
 #include <QDateTime>
 #include <QDeclarativeContext>
 #include <QDeclarativeItem>
-#include <QProcessEnvironment>
-#include <QSettings>
+#include <QDeclarativeEngine>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -37,6 +37,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     m_thumbnailNavigator = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("thumbnailNavigator");
+
+    ui->thumbnailNavigator->engine()->addImageProvider(QLatin1String("imageprovider"), new ImageProvider);
+    ui->thumbnailView->engine()->addImageProvider(QLatin1String("imageprovider"), new ImageProvider);
+
     if (m_thumbnailNavigator)
         connect( m_thumbnailNavigator, SIGNAL(loadNewImage(int)), this, SLOT(currentImageChanged(int)), Qt::QueuedConnection);
 
@@ -111,7 +115,7 @@ void MainWindow::loadThumbnailsFromDir (QString dirName)
 {
     QDir dir (dirName);
     dir.setFilter( QDir::Files );
-    dir.setNameFilters(QStringList() << "*.jpg");
+    dir.setNameFilters(QStringList() << "*.jpg" << "*.JPG" << "*.arw" << "*.ARW" << "*.CR2" << "*.cr2");
 
     QList <QFileInfo> file_info_list = dir.entryInfoList();
     QList <QFileInfo>::iterator it;
@@ -122,7 +126,7 @@ void MainWindow::loadThumbnailsFromDir (QString dirName)
     for (it = file_info_list.begin(); it != file_info_list.end(); it++)
     {
         QString file_name = it->fileName();
-        QString file_path = QString ("file://") + it->filePath();
+        QString file_path = it->filePath();
 
         QSharedPointer <ThumbnailModelItem> model_item (new ThumbnailModelItem( file_name, file_path ));
 
@@ -171,7 +175,7 @@ void MainWindow::importCapturesFromDir (QString dirName)
     QDir dir (dirName);
     dir.setFilter( QDir::Files );
     dir.setSorting( QDir::Name );
-    dir.setNameFilters(QStringList() << "*.jpg" << "*.JPG" << "*.arw" << "*.ARW");
+    dir.setNameFilters(QStringList() << "*.jpg" << "*.JPG" << "*.arw" << "*.ARW" << "*.CR2" << "*.cr2");
 
     QList <QFileInfo> file_info_list = dir.entryInfoList();
 
@@ -185,7 +189,7 @@ void MainWindow::importCapturesFromDir (QString dirName)
     while( it != file_info_list.end() )
     {
         QString base_name = it->baseName();
-        QString file_path = QString ("file://") + it->filePath();
+        QString file_path = it->filePath();
 
         QDateTime capture_time = it->created();
 
@@ -230,8 +234,13 @@ void MainWindow::loadImage (QString fileName)
 
     QObject* image_view = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("previewImage");
 
+//    if (image_view)
+//        image_view->setProperty("source", QString("file:") + fileName);
+
+    qDebug() << QString("image://imageprovider/") + fileName;
+
     if (image_view)
-        image_view->setProperty("source", QString("file:") + fileName);
+        image_view->setProperty("source", QString("image://imageprovider/") + fileName);
 
     ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
 
@@ -421,49 +430,42 @@ void MainWindow::on_actionDelete_triggered()
 
     if (selected_items.size())
     {
-        QString xdb_data_home = QProcessEnvironment::systemEnvironment().value("XDG_DATA_HOME", "");
-        if (!xdb_data_home.isEmpty())
+        QList <Capture>::iterator it = m_captures.begin();
+        while( it != m_captures.end() )
         {
-            QList <Capture>::iterator it = m_captures.begin();
-            while( it != m_captures.end() )
+            if (selected_items.contains(it->name()))
             {
-                if (selected_items.contains(it->name()))
+                QList <QString> photo_list = it->photoList();
+                it = m_captures.erase(it);
+
+                QList <QString>::iterator photo_it;
+                for (photo_it = photo_list.begin(); photo_it != photo_list.end(); photo_it++)
                 {
-                    QList <QString> photo_list = it->photoList();
-                    it = m_captures.erase(it);
+                    QString file_path = QUrl(*photo_it).toString(QUrl::RemoveScheme);
 
-                    QList <QString>::iterator photo_it;
-                    for (photo_it = photo_list.begin(); photo_it != photo_list.end(); photo_it++)
+                    QFile file( file_path );
+
+                    if (file.exists())
                     {
-                        QString file_path = QUrl(*photo_it).toString(QUrl::RemoveScheme);
+                        QDir dir ( QFileInfo (file_path).absolutePath() + "/.trash/");
 
-                        QFile file( file_path );
+                        bool dir_exists = dir.exists();
 
-                        if (file.exists())
+                        if (!dir_exists)
+                            dir_exists = dir.mkpath(QFileInfo (file_path).absolutePath() + "/.trash/");
+
+                        if (dir_exists)
                         {
-                            QDir dir (xdb_data_home + "/Trash/files/");
+                            qDebug() << "moving " << file_path << " to " << dir.absolutePath() + "/" + QFileInfo(file_path).fileName();
 
-                            qDebug() << xdb_data_home + "/Trash/files/";
-
-                            if (dir.exists())
-                            {
-                                qDebug() << "moving " << file_path << " to " << dir.absolutePath() + "/" + QFileInfo(file_path).fileName();
-
-                                QTextFile trash_info (xdb_data_home + "/Trash/info/" + "/" + QFileInfo(file_path).fileName() + ".trashinfo", QSettings::IniFormat);
-                                trash_info.setIniCodec("UTF-8");
-                                trash_info.beginGroup("Trash Info");
-                                trash_info.setValue("Path", file_path);
-                                trash_info.setValue("DeletionDate", QDateTime::currentDateTime());
-
-                                bool result = file.rename(dir.absolutePath() + "/" + QFileInfo(file_path).fileName() );
-                                if (!result)
-                                    qDebug() << file.errorString();
-                            }
+                            bool result = file.rename(dir.absolutePath() + "/" + QFileInfo(file_path).fileName() );
+                            if (!result)
+                                qDebug() << file.errorString();
                         }
                     }
-                } else
-                    it++;
-            }
+                }
+            } else
+                it++;
         }
 
         loadThumbnailsFromCaptures();
