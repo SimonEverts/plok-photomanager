@@ -5,8 +5,6 @@
 #include <QString>
 #include <QImage>
 
-class ImageLoader_p;
-
 class ImageLoader : public QObject
 {
     Q_OBJECT
@@ -14,16 +12,9 @@ public:
     explicit ImageLoader(QObject *parent = 0);
     virtual ~ImageLoader (void);
 
-    void openImage (QString imagePath);
+    virtual void openImage (QString imagePath) = 0;
 
-    QImage loadThumbnail (void);
-signals:
-
-public slots:
-
-private:
-    ImageLoader_p* p;
-
+    virtual QImage loadThumbnail (void) = 0;
 };
 
 #endif // IMAGELOADER_H

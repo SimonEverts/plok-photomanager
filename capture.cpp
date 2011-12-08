@@ -50,13 +50,23 @@ QString Capture::previewPhoto (void)
 {
     QString result;
 
+    // Check if one of the foto's is more suited for a thumbnail
     QList<QString>::iterator it;
     for (it=m_photos.begin(); it != m_photos.end(); it++)
     {
         QFileInfo file_info (*it);
-        if (file_info.suffix() == "jpg" || file_info.suffix() == "JPG")
+        QString suffix = file_info.suffix();
+
+        if (suffix == "RAW" || suffix == "raw" ||
+                suffix == "ARW" || suffix == "arw" ||
+                suffix == "CR2" || suffix == "cr2")
             result = *it;
     }
+
+//    if (it == m_photos.end())
+
+    if (m_photos.size() && result.isEmpty())
+        result = m_photos.first();
 
     return result;
 }

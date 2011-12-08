@@ -155,6 +155,8 @@ void MainWindow::loadThumbnailsFromCaptures (void)
         QString name = it->name();
         QString path = it->previewPhoto();
 
+        qDebug () << path;
+
         QSharedPointer <ThumbnailModelItem> model_item (new ThumbnailModelItem( name, path ));
 
         m_thumbnailModel.push_back( model_item );
@@ -192,8 +194,6 @@ void MainWindow::importCapturesFromDir (QString dirName)
         QString file_path = it->filePath();
 
         QDateTime capture_time = it->created();
-
-        //qDebug() << file_path << capture_time;
 
         //int capture_time_diff = abs( capture_time.secsTo( current_capture.captureTime() ));
 

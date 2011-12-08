@@ -49,7 +49,7 @@ Rectangle {
             highlightMoveDuration: 300
 
             onCurrentIndexChanged: {
-                previewImage.source = thumbnailViewModel[currentIndex].path;
+                //previewImage.source = "image://imageprovider/" + thumbnailViewModel[currentIndex].path;
                 //loadNewImage( currentIndex );
             }
 

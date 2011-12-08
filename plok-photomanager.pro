@@ -18,7 +18,9 @@ SOURCES += main.cpp\
     capture.cpp \
     photo.cpp \
     imageloader.cpp \
-    imageprovider.cpp
+    imageprovider.cpp \
+    imageloader_raw.cpp \
+    imageloader_generic.cpp
 
 HEADERS  += mainwindow.h \
     imageview.h \
@@ -27,7 +29,9 @@ HEADERS  += mainwindow.h \
     capture.h \
     photo.h \
     imageloader.h \
-    imageprovider.h
+    imageprovider.h \
+    imageloader_raw.h \
+    imageloader_generic.h
 
 FORMS    += mainwindow.ui
 
@@ -41,6 +45,10 @@ RESOURCES += \
     icons.qrc
 
 LIBS += -lraw -lgomp
+
+
+
+
 
 
 
