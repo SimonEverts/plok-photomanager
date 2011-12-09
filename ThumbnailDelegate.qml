@@ -33,7 +33,7 @@ Component {
             }
 
             Text {
-                text: name
+                text: (imageCount > 1) ? name + " (" + imageCount + ")" : name
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.bold: true
             }  

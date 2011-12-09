@@ -59,3 +59,8 @@ QImage ImageLoader_generic::loadThumbnail()
 {
     return p->loadThumbnail();
 }
+
+QMap <QString, QVariant> ImageLoader_generic::loadInfo (void)
+{
+    return QMap <QString, QVariant> ();
+}

@@ -24,6 +24,8 @@ public:
     void setPhotos (QList<QString> photos);
     QList <QString> photoList (void);
 
+    int photoCount (void);
+
     QString previewPhoto (void);
 
     void clear (void);

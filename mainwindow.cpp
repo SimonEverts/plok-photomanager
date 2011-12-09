@@ -23,10 +23,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-//    m_thumbnailView = ui->thumbnailView->rootObject()->findChild<QObject*> ("thumbnailView");
-//    if (m_thumbnailView)
-//        connect( thumbnailView, SIGNAL(loadNewImage(int)), this, SLOT(currentImageChanged(int)));
-
     m_imageViewActionGroup = new QActionGroup (this);
     m_imageViewActionGroup->addAction (ui->actionThumbnails);
     m_imageViewActionGroup->addAction (ui->actionPreview);
@@ -35,14 +31,13 @@ MainWindow::MainWindow(QWidget *parent) :
     m_sourceActionGroup->addAction (ui->actionFiles);
     m_sourceActionGroup->addAction (ui->actionAlbums);
 
-
     m_thumbnailNavigator = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("thumbnailNavigator");
 
     ui->thumbnailNavigator->engine()->addImageProvider(QLatin1String("imageprovider"), new ImageProvider);
     ui->thumbnailView->engine()->addImageProvider(QLatin1String("imageprovider"), new ImageProvider);
 
-    if (m_thumbnailNavigator)
-        connect( m_thumbnailNavigator, SIGNAL(loadNewImage(int)), this, SLOT(currentImageChanged(int)), Qt::QueuedConnection);
+    //if (m_thumbnailNavigator)
+    //    connect( m_thumbnailNavigator, SIGNAL(loadNewImage(int)), this, SLOT(currentImageChanged(int)), Qt::QueuedConnection);
 
     m_fileSystemModel = new QFileSystemModel();
     m_fileSystemModel->setRootPath(QDir::homePath());
@@ -63,15 +58,6 @@ MainWindow::~MainWindow()
 
     delete m_fileSystemModel;
 }
-
-//void MainWindow::on_fileOpenButton_clicked()
-//{
-//    m_currentPath = QFileDialog::getExistingDirectory(this, "Select image directory");
-//    ui->fileEdit->setText( m_currentPath );
-
-//    importCapturesFromDir( m_currentPath );
-//    loadThumbnailsFromCaptures();
-//}
 
 void MainWindow::on_fileBrowserTreeView_activated ( const QModelIndex & index )
 {
@@ -128,7 +114,7 @@ void MainWindow::loadThumbnailsFromDir (QString dirName)
         QString file_name = it->fileName();
         QString file_path = it->filePath();
 
-        QSharedPointer <ThumbnailModelItem> model_item (new ThumbnailModelItem( file_name, file_path ));
+        QSharedPointer <ThumbnailModelItem> model_item (new ThumbnailModelItem( file_name, file_path, 1 ));
 
         m_thumbnailModel.push_back( model_item );
         modelList.append( &(*model_item) );
@@ -155,9 +141,9 @@ void MainWindow::loadThumbnailsFromCaptures (void)
         QString name = it->name();
         QString path = it->previewPhoto();
 
-        qDebug () << path;
+        qDebug () << it->photoCount();
 
-        QSharedPointer <ThumbnailModelItem> model_item (new ThumbnailModelItem( name, path ));
+        QSharedPointer <ThumbnailModelItem> model_item (new ThumbnailModelItem( name, path, it->photoCount()));
 
         m_thumbnailModel.push_back( model_item );
         m_modelList.append( &(*model_item) );
@@ -181,8 +167,6 @@ void MainWindow::importCapturesFromDir (QString dirName)
 
     QList <QFileInfo> file_info_list = dir.entryInfoList();
 
-//    QSharedPointer <Capture> current_capture = QSharedPointer <Capture> ( new Capture() );
-
     m_captures.clear();
 
     Capture current_capture;
@@ -194,8 +178,6 @@ void MainWindow::importCapturesFromDir (QString dirName)
         QString file_path = it->filePath();
 
         QDateTime capture_time = it->created();
-
-        //int capture_time_diff = abs( capture_time.secsTo( current_capture.captureTime() ));
 
         if (!current_capture.name().isEmpty() && base_name != current_capture.name())
         {
@@ -212,85 +194,34 @@ void MainWindow::importCapturesFromDir (QString dirName)
         it++;
     }
 
+    if (!current_capture.name().isEmpty())
+        m_captures.push_back (current_capture);
 }
 
 void MainWindow::loadImage (QString fileName)
 {
-//    QElapsedTimer timer;
-//    timer.start();
-
-//    QImageReader image_reader (fileName);
-//    if (!image_reader.canRead())
-//        return;
-
     m_currentPath = fileName;
     m_currentImage = fileName;
 
-//    QImage image = image_reader.read();
-
-//    qDebug () << "image loading: " << timer.elapsed();
-
-//    //ui->imageView->setImage (image);
-
     QObject* image_view = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("previewImage");
 
-//    if (image_view)
-//        image_view->setProperty("source", QString("file:") + fileName);
+    if (QFileInfo(fileName).suffix() != "JPG")
+    {
+        m_imageLoader_raw.openImage(fileName);
+        QMap <QString, QVariant> info = m_imageLoader_raw.loadInfo();
 
-    qDebug() << QString("image://imageprovider/") + fileName;
+        QMap <QString, QVariant>::iterator it;
+
+        QList <QVariant> values = info.values();
+
+        for (it = info.begin(); it != info.end(); it++)
+            qDebug() << it.key() << it.value();
+    }
 
     if (image_view)
         image_view->setProperty("source", QString("image://imageprovider/") + fileName);
 
     ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
-
-
-//    qDebug () << "drawing: " << timer.elapsed();
-}
-
-void MainWindow::loadPreviewImage (QString fileName)
-{
-//    QElapsedTimer timer;
-//    timer.start();
-
-//    QImageReader image_reader (fileName);
-//    if (!image_reader.canRead())
-//        return;
-
-//    image_reader.setQuality(25);
-
-//    m_currentImage = fileName;
-
-//    QSize image_size = image_reader.size();
-
-//    int scale = image_size.width() / 800;
-
-//    QSize scaled_size( image_size.width() / scale, image_size.height() / scale);
-
-//    image_reader.setScaledSize ( scaled_size);
-
-//    QImage image = image_reader.read();
-
-//    qDebug () << "image loading: " << timer.elapsed();
-
-//    ui->imageView->setImage (image);
-
-//    qDebug () << "drawing: " << timer.elapsed();
-}
-
-void MainWindow::currentImageChanged (int currentIndex)
-{
-//    if (currentIndex < m_thumbnailModel.size() && m_thumbnailModel.size())
-//    {
-//        m_currentPath = QUrl (m_thumbnailModel.at( currentIndex )->path()).toString(QUrl::RemoveScheme);
-//        m_currentImage = m_thumbnailModel.at( currentIndex )->name();
-
-//        qDebug() << m_currentPath;
-
-////
-
-//        loadImage (m_currentPath);
-//    }
 }
 
 void MainWindow::currentSelectionChanged (int currentIndex)
@@ -302,8 +233,6 @@ void MainWindow::doubleClickOnThumbnail( int currentIndex )
 {
     m_currentPath = QUrl (m_thumbnailModel.at( currentIndex )->path()).toString(QUrl::RemoveScheme);
     m_currentImage = m_thumbnailModel.at( currentIndex )->name();
-
-    qDebug() << m_currentPath;
 
     if (m_thumbnailView)
         m_thumbnailView->setProperty("currentIndex", currentIndex);
@@ -334,7 +263,7 @@ void MainWindow::on_actionCombine_triggered()
 
     if (selected_items.size())
     {
-        new_capture.setName(selected_items.first());
+        new_capture.setName(QFileInfo(selected_items.first()).baseName());
 
         QList <Capture>::iterator after_first_match;
 

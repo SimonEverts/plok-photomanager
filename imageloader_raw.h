@@ -15,6 +15,8 @@ public:
 
     QImage loadThumbnail (void);
 
+    QMap <QString, QVariant> loadInfo (void);
+
 private:
     ImageLoader_raw_p* p;
 };

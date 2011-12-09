@@ -6,6 +6,7 @@
 #include "imageloader.h"
 #include "imageuploader.h"
 #include "capture.h"
+#include "imageloader_raw.h"
 
 // Qt includes
 #include <QMainWindow>
@@ -33,7 +34,6 @@ public:
     ~MainWindow();
 
 public slots:
-    void currentImageChanged ( int currentIndex );
     void currentSelectionChanged( int currentIndex );
 
     void doubleClickOnThumbnail( int currentIndex );
@@ -61,7 +61,6 @@ private:
     void importCapturesFromDir (QString dirName);
 
     void loadImage (QString fileName);
-    void loadPreviewImage (QString fileName);
 
     Ui::MainWindow *ui;
     QObject* m_thumbnailNavigator;
@@ -78,6 +77,8 @@ private:
 
     QString m_currentPath;
     QString m_currentImage;
+
+    ImageLoader_raw m_imageLoader_raw;
 
     QList <QSharedPointer< ThumbnailModelItem > > m_thumbnailModel;
 

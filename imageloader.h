@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QString>
 #include <QImage>
+#include <QMap>
+#include <QVariant>
 
 class ImageLoader : public QObject
 {
@@ -15,6 +17,8 @@ public:
     virtual void openImage (QString imagePath) = 0;
 
     virtual QImage loadThumbnail (void) = 0;
+
+    virtual QMap <QString, QVariant> loadInfo (void) = 0;
 };
 
 #endif // IMAGELOADER_H

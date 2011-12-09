@@ -10,7 +10,7 @@ Rectangle {
         id: thumbnailView
         objectName: "thumbnailView"
 
-        cacheBuffer: 400
+        cacheBuffer: 1080
 
         anchors.fill: parent
         flow: GridView.LeftToRight

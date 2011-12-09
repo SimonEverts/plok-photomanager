@@ -5,10 +5,11 @@ ThumbnailModelItem::ThumbnailModelItem (QObject* parent) :
 {
 }
 
-ThumbnailModelItem::ThumbnailModelItem( QString name, QString path) :
+ThumbnailModelItem::ThumbnailModelItem( QString name, QString path, int imageCount) :
     m_name( name ),
     m_path( path ),
-    m_selected (false)
+    m_selected (false),
+    m_imageCount (imageCount)
 {
 
 }

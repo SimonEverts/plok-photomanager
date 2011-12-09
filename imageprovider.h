@@ -14,6 +14,7 @@ public:
 
     QImage requestImage ( const QString& id, QSize* size, const QSize& requestedSize );
 
+
 private:
     ImageLoader* m_imageLoader_generic;
     ImageLoader* m_imageLoader_raw;

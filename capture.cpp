@@ -2,6 +2,8 @@
 
 #include <QFileInfo>
 
+#include <QDebug>
+
 Capture::Capture()
 {
 }
@@ -46,9 +48,16 @@ QList <QString> Capture::photoList (void)
     return m_photos;
 }
 
+int Capture::photoCount (void)
+{
+    return m_photos.size();
+}
+
 QString Capture::previewPhoto (void)
 {
     QString result;
+
+    qDebug() << m_photos.size();
 
     // Check if one of the foto's is more suited for a thumbnail
     QList<QString>::iterator it;

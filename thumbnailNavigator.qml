@@ -28,7 +28,7 @@ Rectangle {
             id: thumbnailNavigator
             objectName: "thumbnailNavigator"
 
-            cacheBuffer: 400
+            cacheBuffer: 1920
 
             width: parent.width
             height: 130
@@ -49,7 +49,7 @@ Rectangle {
             highlightMoveDuration: 300
 
             onCurrentIndexChanged: {
-                //previewImage.source = "image://imageprovider/" + thumbnailViewModel[currentIndex].path;
+                previewImage.source = "image://imageprovider/" + thumbnailViewModel[currentIndex].path;
                 //loadNewImage( currentIndex );
             }
 

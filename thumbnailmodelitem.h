@@ -11,8 +11,10 @@ class ThumbnailModelItem : public QObject
     Q_PROPERTY( QString path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY( bool selected READ selected WRITE setSelected NOTIFY selectedChanged)
 
+    Q_PROPERTY( int imageCount READ imageCount WRITE setImageCount NOTIFY imageCountChanged)
+
 public:
-    ThumbnailModelItem( QString name, QString path);
+    ThumbnailModelItem( QString name, QString path, int imageCount);
 
     QString name (void) {return m_name;}
     void setName (QString name) {m_name = name; emit nameChanged (name);}
@@ -24,17 +26,24 @@ public:
     void setSelected (bool selected) {m_selected = selected; emit selectedChanged( m_selected );}
     void toggleSelected (void) {m_selected = !m_selected; emit selectedChanged( m_selected );}
 
+    int imageCount (void) {return m_imageCount;}
+    void setImageCount (int imageCount) {m_imageCount = imageCount; emit imageCountChanged (imageCount);}
+
 signals:
     void nameChanged (QString name);
     void pathChanged (QString path);
 
     void selectedChanged (bool selected);
 
+    void imageCountChanged (int imageCount);
+
 private:
     explicit ThumbnailModelItem(QObject* parent = 0);
 
     QString m_name;
     QString m_path;
+
+    int m_imageCount;
 
     bool m_selected;
 };
