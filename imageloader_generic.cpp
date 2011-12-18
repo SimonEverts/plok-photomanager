@@ -3,14 +3,23 @@
 #include <QImage>
 #include <QImageReader>
 
+#include <QElapsedTimer>
+#include <QDebug>
+
 class ImageLoader_generic_p
 {
 public:
+    ImageLoader_generic_p() {
+        m_random = qrand();
+    }
+
     void openImage (QString imagePath);
 
     QImage loadThumbnail (void);
 private:
     QImageReader m_imageReader;
+
+    int m_random;
 };
 
 
@@ -29,13 +38,20 @@ QImage ImageLoader_generic_p::loadThumbnail ()
     QSize image_size = m_imageReader.size();
 
     int scale = image_size.width() / 800;
+    if (scale < 1)
+        scale = 1;
 
     QSize scaled_size( image_size.width() / scale,
                        image_size.height() / scale);
 
     m_imageReader.setScaledSize ( scaled_size);
 
+    QElapsedTimer stopwatch;
+    stopwatch.start();
+
     QImage image = m_imageReader.read();
+
+    qDebug() << m_random << stopwatch.elapsed();
 
     return image;
 }
@@ -63,4 +79,16 @@ QImage ImageLoader_generic::loadThumbnail()
 QMap <QString, QVariant> ImageLoader_generic::loadInfo (void)
 {
     return QMap <QString, QVariant> ();
+}
+
+QStringList ImageLoader_generic::supportedFormats (void)
+{
+    QStringList filter;
+
+    QList <QByteArray> supported_formats = QImageReader::supportedImageFormats();
+
+    for (int i=0; i<supported_formats.size(); i++)
+        filter << supported_formats.at(i);
+
+    return filter;
 }

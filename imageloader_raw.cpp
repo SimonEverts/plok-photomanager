@@ -38,6 +38,22 @@ QImage ImageLoader_raw_p::loadThumbnail ()
     return image;
 }
 
+//QImage ImageLoader_raw_p::loadImage ()
+//{
+//    m_rawProcessor.unpack();
+
+//    QSize size (m_rawProcessor.imgdata.sizes.width, m_rawProcessor.imgdata.sizes.height);
+
+//    QImage image;
+//    image.loadFromData(
+//                reinterpret_cast <unsigned char*> (m_rawProcessor.imgdata.image),
+//                ,
+//                "JPG");
+
+//    return image;
+//}
+
+
 QMap <QString, QVariant> ImageLoader_raw_p::loadInfo (void)
 {
     QMap <QString, QVariant> info;
@@ -82,4 +98,13 @@ QImage ImageLoader_raw::loadThumbnail()
 QMap <QString, QVariant> ImageLoader_raw::loadInfo (void)
 {
     return p->loadInfo();
+}
+
+QStringList ImageLoader_raw::supportedFormats (void)
+{
+    QStringList filter;
+
+    filter << "arw" << "cr2" << "tif";
+
+    return filter;
 }

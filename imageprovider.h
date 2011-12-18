@@ -6,19 +6,19 @@
 
 class ImageLoader;
 
-class ImageProvider : public QDeclarativeImageProvider
-{    
+class ImageProvider
+{
 public:
     explicit ImageProvider(QObject *parent = 0);
     virtual ~ImageProvider (void);
 
     QImage requestImage ( const QString& id, QSize* size, const QSize& requestedSize );
 
+    ImageLoader* imageLoaderFromFormat (QString format);
 
+    QStringList supportedSuffixes (void);
 private:
-    ImageLoader* m_imageLoader_generic;
-    ImageLoader* m_imageLoader_raw;
-
+    QList <ImageLoader*> m_imageLoaders;
 };
 
 #endif // IMAGEPROVIDER_H

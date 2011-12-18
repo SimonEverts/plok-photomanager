@@ -2,7 +2,8 @@
 #include "ui_mainwindow.h"
 
 #include "imageview.h"
-#include "imageprovider.h"
+
+#include "imageprovider_qml.h"
 
 // Qt includes
 #include <QFileDialog>
@@ -33,8 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_thumbnailNavigator = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("thumbnailNavigator");
 
-    ui->thumbnailNavigator->engine()->addImageProvider(QLatin1String("imageprovider"), new ImageProvider);
-    ui->thumbnailView->engine()->addImageProvider(QLatin1String("imageprovider"), new ImageProvider);
+    ui->thumbnailNavigator->engine()->addImageProvider(QLatin1String("imageprovider"), new ImageProvider_qml(this));
+    ui->thumbnailView->engine()->addImageProvider(QLatin1String("imageprovider"), new ImageProvider_qml(this));
 
     //if (m_thumbnailNavigator)
     //    connect( m_thumbnailNavigator, SIGNAL(loadNewImage(int)), this, SLOT(currentImageChanged(int)), Qt::QueuedConnection);
@@ -101,7 +102,9 @@ void MainWindow::loadThumbnailsFromDir (QString dirName)
 {
     QDir dir (dirName);
     dir.setFilter( QDir::Files );
-    dir.setNameFilters(QStringList() << "*.jpg" << "*.JPG" << "*.arw" << "*.ARW" << "*.CR2" << "*.cr2");
+    dir.setNameFilters( m_imageProvider.supportedSuffixes() );
+
+//    qDebug () << (QStringList() << m_imageLoader_generic.supportedFormatFilter() << "*.arw" << "*.ARW" << "*.CR2" << "*.cr2");
 
     QList <QFileInfo> file_info_list = dir.entryInfoList();
     QList <QFileInfo>::iterator it;
@@ -163,7 +166,11 @@ void MainWindow::importCapturesFromDir (QString dirName)
     QDir dir (dirName);
     dir.setFilter( QDir::Files );
     dir.setSorting( QDir::Name );
-    dir.setNameFilters(QStringList() << "*.jpg" << "*.JPG" << "*.arw" << "*.ARW" << "*.CR2" << "*.cr2");
+    //dir.setNameFilters(QStringList() << "*.jpg" << "*.JPG" << "*.arw" << "*.ARW" << "*.CR2" << "*.cr2");
+
+    dir.setNameFilters( m_imageProvider.supportedSuffixes() ); // << "*.arw" << "*.ARW" << "*.CR2" << "*.cr2");
+
+//    qDebug () << (QStringList() << m_imageLoader_generic.supportedFormatFilter() << "*.arw" << "*.ARW" << "*.CR2" << "*.cr2");
 
     QList <QFileInfo> file_info_list = dir.entryInfoList();
 
@@ -205,18 +212,17 @@ void MainWindow::loadImage (QString fileName)
 
     QObject* image_view = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("previewImage");
 
-    if (QFileInfo(fileName).suffix() != "JPG")
-    {
-        m_imageLoader_raw.openImage(fileName);
-        QMap <QString, QVariant> info = m_imageLoader_raw.loadInfo();
+    ImageLoader* image_loader = m_imageProvider.imageLoaderFromFormat( QFileInfo(fileName).suffix() );
 
-        QMap <QString, QVariant>::iterator it;
+    image_loader->openImage(fileName);
+    QMap <QString, QVariant> info = image_loader->loadInfo();
 
-        QList <QVariant> values = info.values();
+    QMap <QString, QVariant>::iterator it;
 
-        for (it = info.begin(); it != info.end(); it++)
-            qDebug() << it.key() << it.value();
-    }
+    QList <QVariant> values = info.values();
+
+    for (it = info.begin(); it != info.end(); it++)
+        qDebug() << it.key() << it.value();
 
     if (image_view)
         image_view->setProperty("source", QString("image://imageprovider/") + fileName);

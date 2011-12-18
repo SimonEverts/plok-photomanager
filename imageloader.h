@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QString>
+#include <QStringList>
+
 #include <QImage>
 #include <QMap>
 #include <QVariant>
@@ -19,6 +21,8 @@ public:
     virtual QImage loadThumbnail (void) = 0;
 
     virtual QMap <QString, QVariant> loadInfo (void) = 0;
+
+    virtual QStringList supportedFormats (void) = 0;
 };
 
 #endif // IMAGELOADER_H

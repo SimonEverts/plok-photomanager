@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     imageloader.cpp \
     imageprovider.cpp \
     imageloader_raw.cpp \
-    imageloader_generic.cpp
+    imageloader_generic.cpp \
+    imageprovider_qml.cpp
 
 HEADERS  += mainwindow.h \
     imageview.h \
@@ -31,7 +32,8 @@ HEADERS  += mainwindow.h \
     imageloader.h \
     imageprovider.h \
     imageloader_raw.h \
-    imageloader_generic.h
+    imageloader_generic.h \
+    imageprovider_qml.h
 
 FORMS    += mainwindow.ui
 
@@ -44,7 +46,10 @@ RESOURCES += \
     gui.qrc \
     icons.qrc
 
-LIBS += -lraw -lgomp
+INCLUDEPATH += G:\Projects\LibRaw-0.14.4
+LIBS += -LG:\Projects\LibRaw-0.14.4\lib -llibraw
+
+
 
 
 

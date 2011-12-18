@@ -8,17 +8,19 @@
 #include "imageloader_generic.h"
 #include "imageloader_raw.h"
 
-ImageProvider::ImageProvider(QObject *parent) :
-    QDeclarativeImageProvider( QDeclarativeImageProvider::Image )
+ImageProvider::ImageProvider(QObject *parent)
 {
-    m_imageLoader_generic = new ImageLoader_generic();
-    m_imageLoader_raw = new ImageLoader_raw();
+    m_imageLoaders.append( new ImageLoader_generic() );
+    m_imageLoaders.append( new ImageLoader_raw() );
 }
 
 ImageProvider::~ImageProvider ()
 {
-    delete m_imageLoader_generic;
-    delete m_imageLoader_raw;
+    while (m_imageLoaders.size())
+    {
+        delete m_imageLoaders.first();
+        m_imageLoaders.removeFirst();
+    }
 }
 
 QImage ImageProvider::requestImage ( const QString& id, QSize* size, const QSize& requestedSize )
@@ -26,16 +28,19 @@ QImage ImageProvider::requestImage ( const QString& id, QSize* size, const QSize
     QString suffix = QFileInfo (id).suffix();
 
     QImage thumb;
-    if (suffix == "RAW" || suffix == "raw" ||
-            suffix == "ARW" || suffix == "arw" ||
-            suffix == "CR2" || suffix == "cr2")
+//    if (suffix == "RAW" || suffix == "raw" ||
+//            suffix == "ARW" || suffix == "arw" ||
+//            suffix == "CR2" || suffix == "cr2")
+//    {
+//        m_imageLoader_raw->openImage( id );
+//        thumb = m_imageLoader_raw->loadThumbnail();
+//    } else
+
+    ImageLoader* image_loader = imageLoaderFromFormat( suffix );
+    if (image_loader)
     {
-        m_imageLoader_raw->openImage( id );
-        thumb = m_imageLoader_raw->loadThumbnail();
-    } else
-    {
-        m_imageLoader_generic->openImage( id );
-        thumb = m_imageLoader_generic->loadThumbnail();
+        image_loader->openImage( id );
+        thumb = image_loader->loadThumbnail();
     }
 
     *size = thumb.size();
@@ -58,3 +63,31 @@ QImage ImageProvider::requestImage ( const QString& id, QSize* size, const QSize
     return result_image;
 }
 
+ImageLoader* ImageProvider::imageLoaderFromFormat (QString format)
+{
+    ImageLoader* result = NULL;
+
+    for (int i=0; i < m_imageLoaders.size(); i++)
+    {
+        QStringList supported_formats = m_imageLoaders.at(i)->supportedFormats();
+        if (supported_formats.contains( format.toLower() ))
+            result = m_imageLoaders.at(i);
+    }
+
+    return result;
+}
+
+QStringList ImageProvider::supportedSuffixes (void)
+{
+    QStringList result;
+
+    for (int i=0; i < m_imageLoaders.size(); i++)
+    {
+        QStringList supported_formats = m_imageLoaders.at(i)->supportedFormats();
+
+        for (int j=0; j < supported_formats.size(); j++)
+            result << QString("*.") + supported_formats.at(j);
+    }
+
+    return result;
+}

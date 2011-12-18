@@ -6,7 +6,9 @@
 #include "imageloader.h"
 #include "imageuploader.h"
 #include "capture.h"
-#include "imageloader_raw.h"
+
+//#include "imageloader_raw.h"
+#include "imageprovider.h"
 
 // Qt includes
 #include <QMainWindow>
@@ -74,11 +76,10 @@ private:
     QFileSystemModel* m_fileSystemModel;
 
     ImageUploader m_imageUploader;
+    ImageProvider m_imageProvider;
 
     QString m_currentPath;
     QString m_currentImage;
-
-    ImageLoader_raw m_imageLoader_raw;
 
     QList <QSharedPointer< ThumbnailModelItem > > m_thumbnailModel;
 

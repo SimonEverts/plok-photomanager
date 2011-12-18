@@ -17,6 +17,8 @@ public:
 
     QMap <QString, QVariant> loadInfo (void);
 
+    QStringList supportedFormats (void);
+
 private:
     ImageLoader_generic_p* p;
 };
