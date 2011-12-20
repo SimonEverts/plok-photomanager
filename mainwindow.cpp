@@ -48,6 +48,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->fileBrowserTreeView->setColumnHidden(1, true);
     ui->fileBrowserTreeView->setColumnHidden(2, true);
     ui->fileBrowserTreeView->setColumnHidden(3, true);
+
+    m_database.initialize();
 }
 
 MainWindow::~MainWindow()

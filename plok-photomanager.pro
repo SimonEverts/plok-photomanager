@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui declarative network
+QT       += core gui declarative network sql
 
 TARGET = plok-photomanager
 TEMPLATE = app
@@ -21,7 +21,9 @@ SOURCES += main.cpp\
     imageprovider.cpp \
     imageloader_raw.cpp \
     imageloader_generic.cpp \
-    imageprovider_qml.cpp
+    imageprovider_qml.cpp \
+    database.cpp \
+    set.cpp
 
 HEADERS  += mainwindow.h \
     imageview.h \
@@ -33,7 +35,9 @@ HEADERS  += mainwindow.h \
     imageprovider.h \
     imageloader_raw.h \
     imageloader_generic.h \
-    imageprovider_qml.h
+    imageprovider_qml.h \
+    database.h \
+    set.h
 
 FORMS    += mainwindow.ui
 
@@ -46,8 +50,18 @@ RESOURCES += \
     gui.qrc \
     icons.qrc
 
-INCLUDEPATH += G:\Projects\LibRaw-0.14.4
-LIBS += -LG:\Projects\LibRaw-0.14.4\lib -llibraw
+unix {
+    LIBS += -lraw -lgomp
+}
+
+win32 {
+    INCLUDEPATH += G:\Projects\LibRaw-0.14.4
+    LIBS += -LG:\Projects\LibRaw-0.14.4\lib -llibraw
+}
+
+
+
+
 
 
 

@@ -7,8 +7,9 @@
 #include "imageuploader.h"
 #include "capture.h"
 
-//#include "imageloader_raw.h"
 #include "imageprovider.h"
+
+#include "database.h"
 
 // Qt includes
 #include <QMainWindow>
@@ -80,6 +81,8 @@ private:
 
     QString m_currentPath;
     QString m_currentImage;
+
+    Database m_database;
 
     QList <QSharedPointer< ThumbnailModelItem > > m_thumbnailModel;
 
