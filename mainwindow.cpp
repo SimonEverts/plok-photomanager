@@ -4,6 +4,7 @@
 #include "imageview.h"
 
 #include "imageprovider_qml.h"
+#include "toolboxwindow.h"
 
 // Qt includes
 #include <QFileDialog>
@@ -27,7 +28,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_imageViewActionGroup = new QActionGroup (this);
     m_imageViewActionGroup->addAction (ui->actionThumbnails);
     m_imageViewActionGroup->addAction (ui->actionPreview);
-
+    ToolBoxWindow * window = new ToolBoxWindow();
+    window->show();
     m_sourceActionGroup = new QActionGroup (this);
     m_sourceActionGroup->addAction (ui->actionFiles);
     m_sourceActionGroup->addAction (ui->actionAlbums);
@@ -136,6 +138,7 @@ void MainWindow::loadThumbnailsFromDir (QString dirName)
 
 void MainWindow::loadThumbnailsFromCaptures (void)
 {
+
     QList <Capture>::iterator it;
 
     m_thumbnailModel.clear();

@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     imageloader_generic.cpp \
     imageprovider_qml.cpp \
     database.cpp \
-    set.cpp
+    set.cpp \
+    toolboxwindow.cpp
 
 HEADERS  += mainwindow.h \
     imageview.h \
@@ -37,7 +38,8 @@ HEADERS  += mainwindow.h \
     imageloader_generic.h \
     imageprovider_qml.h \
     database.h \
-    set.h
+    set.h \
+    toolboxwindow.h
 
 FORMS    += mainwindow.ui
 
@@ -50,14 +52,26 @@ RESOURCES += \
     gui.qrc \
     icons.qrc
 
+
+DESTDIR = release
+OBJECTS_DIR = release/.obj
+MOC_DIR = release/.moc
+RCC_DIR = release/.rcc
+UI_DIR = release/.ui
+
+
+
 unix {
     LIBS += -lraw -lgomp
 }
+
 
 win32 {
     INCLUDEPATH += G:\Projects\LibRaw-0.14.4
     LIBS += -LG:\Projects\LibRaw-0.14.4\lib -llibraw
 }
+
+
 
 
 

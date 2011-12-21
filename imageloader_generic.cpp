@@ -51,6 +51,14 @@ QImage ImageLoader_generic_p::loadThumbnail ()
 
     QImage image = m_imageReader.read();
 
+    int colorCount = image.colorCount();
+    qDebug() << "colorCount: " << colorCount;
+
+    for (int i = 0 ; i < colorCount ; i++) {
+        QRgb color = image.color(i);
+        qDebug() << color;
+    }
+
     qDebug() << m_random << stopwatch.elapsed();
 
     return image;
