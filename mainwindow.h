@@ -57,7 +57,17 @@ private slots:
 
     void on_actionDelete_triggered();
 
+    void on_actionCreate_set_triggered();
+
+    void on_setBrowser_itemActivated(QListWidgetItem *item);
+
+    void on_actionFiles_triggered();
+
+    void on_actionAlbums_triggered();
+
 private:
+    void loadGUI (void);
+
     void loadThumbnailsFromDir (QString dirName);
     void loadThumbnailsFromCaptures (void);
 

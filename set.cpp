@@ -1,5 +1,7 @@
 #include "set.h"
 
-Set::Set()
+Set::Set( QString name, QString path) :
+    m_name (name),
+    m_path (path)
 {
 }

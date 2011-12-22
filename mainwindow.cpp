@@ -49,7 +49,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->fileBrowserTreeView->setColumnHidden(2, true);
     ui->fileBrowserTreeView->setColumnHidden(3, true);
 
+    ui->navStackedWidget->setCurrentWidget(ui->setBrowserPage);
+
     m_database.initialize();
+
+    loadGUI();
 }
 
 MainWindow::~MainWindow()
@@ -60,6 +64,15 @@ MainWindow::~MainWindow()
     delete m_sourceActionGroup;
 
     delete m_fileSystemModel;
+}
+
+void MainWindow::loadGUI (void)
+{
+    QList <Set> sets = m_database.sets();
+    for (int i=0; i<sets.size(); i++)
+    {
+        ui->setBrowser->addItem(sets.at(i).name());
+    }
 }
 
 void MainWindow::on_fileBrowserTreeView_activated ( const QModelIndex & index )
@@ -407,4 +420,54 @@ void MainWindow::on_actionDelete_triggered()
 
         loadThumbnailsFromCaptures();
     }
+}
+
+void MainWindow::on_actionCreate_set_triggered()
+{
+    QDir dir = QFileInfo(m_currentPath).absoluteDir();
+
+    if (!m_currentPath.isEmpty())
+    {
+        Set set (dir.dirName(), dir.absolutePath());
+
+        m_database.addSet (set);
+    }
+}
+
+void MainWindow::on_setBrowser_itemActivated(QListWidgetItem *item)
+{
+    QList <Set> sets = m_database.sets();
+
+    int index = ui->setBrowser->currentRow();
+
+    QString path = sets.at(index).path();
+
+    QFileInfo file_info ( path );
+
+    if (file_info.isDir())
+    {
+        importCapturesFromDir( path );
+        loadThumbnailsFromCaptures();
+    } else
+    {
+        if (QFileInfo(path).absolutePath() != QFileInfo(m_currentPath).absolutePath())
+        {
+            importCapturesFromDir( file_info.absolutePath() );
+            loadThumbnailsFromCaptures();
+        }
+
+        loadImage( path );
+    }
+
+    ui->mainStackedWidget->setCurrentWidget(ui->mainStackedThumbnailPage);
+}
+
+void MainWindow::on_actionAlbums_triggered()
+{
+    ui->navStackedWidget->setCurrentWidget(ui->setBrowserPage);
+}
+
+void MainWindow::on_actionFiles_triggered()
+{
+    ui->navStackedWidget->setCurrentWidget(ui->fileBrowserPage);
 }
