@@ -49,6 +49,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->fileBrowserTreeView->setColumnHidden(2, true);
     ui->fileBrowserTreeView->setColumnHidden(3, true);
 
+    QDeclarativeContext *nav_context = ui->thumbnailNavigator->rootContext();
+    nav_context->setContextProperty("qml_model", m_fileSystemModel);
+
+
     ui->navStackedWidget->setCurrentWidget(ui->setBrowserPage);
 
     m_database.initialize();
@@ -226,6 +230,7 @@ void MainWindow::loadImage (QString fileName)
     m_currentImage = fileName;
 
     QObject* image_view = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("previewImage");
+    QObject* image_frame = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("imageFrame");
 
     ImageLoader* image_loader = m_imageProvider.imageLoaderFromFormat( QFileInfo(fileName).suffix() );
 
@@ -238,6 +243,9 @@ void MainWindow::loadImage (QString fileName)
 
     for (it = info.begin(); it != info.end(); it++)
         qDebug() << it.key() << it.value();
+
+    if (image_frame)
+        image_frame->setProperty("infoMap", info);
 
     if (image_view)
         image_view->setProperty("source", QString("image://imageprovider/") + fileName);

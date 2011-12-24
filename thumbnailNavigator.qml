@@ -12,16 +12,61 @@ Rectangle {
 
         anchors.fill: parent
 
-        Image {
-            width: parent.width
-            height: parent.height - thumbnailNavigator.height - 5
+        Column {
+            id: imageFrame
+            objectName: "imageFrame"
 
-            id: previewImage
-            objectName: "previewImage"
+            property variant infoMap: { 'iso_speed' : 0, 'aperture': 0, 'shutter' : 0, 'focal_len' : 0}
 
-            fillMode: Image.PreserveAspectFit
+            width: parent.width;
+            height: parent.height - thumbnailNavigator.height - 15
 
-            sourceSize.width: 1920
+            spacing: 4
+
+            Image {
+                width: parent.width
+                height: parent.height - info.height - 4
+
+                anchors.top: imageFrame.top
+
+                id: previewImage
+                objectName: "previewImage"
+
+                fillMode: Image.PreserveAspectFit
+
+                sourceSize.width: 1920
+            }
+
+            Row {
+                height: 16
+
+                anchors.horizontalCenter: previewImage.Center
+
+                spacing: 10
+
+                id: info
+
+                Text {
+                    font.bold: true
+
+                    text: 'ISO' + imageFrame.infoMap.iso_speed
+                }
+                Text {
+                    font.bold: true
+
+                    text: '<i>ƒ</i>/' + imageFrame.infoMap.aperture.toFixed(1)
+                }
+                Text {
+                    font.bold: true
+
+                    text: (imageFrame.infoMap.shutter*1000).toFixed(1) + 'ms'
+                }
+                Text {
+                    font.bold: true
+
+                    text: imageFrame.infoMap.focal_len + 'mm'
+                }
+            }
         }
 
         ListView {
@@ -32,7 +77,7 @@ Rectangle {
 
             width: parent.width
             height: 130
-            anchors.top: previewImage.bottom
+            anchors.top: imageFrame.bottom
             //anchors.fill: parent
 
             orientation: ListView.Horizontal

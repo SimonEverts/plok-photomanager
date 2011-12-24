@@ -47,6 +47,9 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="rootIsDecorated">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
         </layout>
