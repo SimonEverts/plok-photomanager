@@ -28,13 +28,6 @@ QImage ImageProvider::requestImage ( const QString& id, QSize* size, const QSize
     QString suffix = QFileInfo (id).suffix();
 
     QImage thumb;
-//    if (suffix == "RAW" || suffix == "raw" ||
-//            suffix == "ARW" || suffix == "arw" ||
-//            suffix == "CR2" || suffix == "cr2")
-//    {
-//        m_imageLoader_raw->openImage( id );
-//        thumb = m_imageLoader_raw->loadThumbnail();
-//    } else
 
     ImageLoader* image_loader = imageLoaderFromFormat( suffix );
     if (image_loader)

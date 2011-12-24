@@ -46,12 +46,7 @@ QImage ImageLoader_generic_p::loadThumbnail ()
 
     m_imageReader.setScaledSize ( scaled_size);
 
-    QElapsedTimer stopwatch;
-    stopwatch.start();
-
     QImage image = m_imageReader.read();
-
-    qDebug() << m_random << stopwatch.elapsed();
 
     return image;
 }

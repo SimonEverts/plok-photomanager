@@ -40,7 +40,7 @@ Rectangle {
             Row {
                 height: 16
 
-                anchors.horizontalCenter: previewImage.Center
+                anchors.horizontalCenter: parent.horizontalCenter
 
                 spacing: 10
 
@@ -59,7 +59,7 @@ Rectangle {
                 Text {
                     font.bold: true
 
-                    text: (imageFrame.infoMap.shutter*1000).toFixed(1) + 'ms'
+                    text: '1/' + (1/ imageFrame.infoMap.shutter).toFixed(0)
                 }
                 Text {
                     font.bold: true
