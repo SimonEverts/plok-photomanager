@@ -13,5 +13,5 @@ ImageProvider_qml::~ImageProvider_qml ()
 
 QImage ImageProvider_qml::requestImage ( const QString& id, QSize* size, const QSize& requestedSize )
 {
-    return m_imageProvider.requestImage (id, size, requestedSize);
+    return m_imageProvider.requestThumbnail (id, size, requestedSize);
 }

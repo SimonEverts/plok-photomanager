@@ -8,6 +8,7 @@
 #include "capture.h"
 
 #include "imageprovider.h"
+#include "thumbnailer.h"
 
 #include "database.h"
 
@@ -88,6 +89,9 @@ private:
 
     ImageUploader m_imageUploader;
     ImageProvider m_imageProvider;
+
+    // TODO rename to imageThumbnailer
+    Thumbnailer m_imageThumbnailer;
 
     QString m_currentPath;
     QString m_currentImage;

@@ -8,6 +8,8 @@
 #include "imageloader_generic.h"
 #include "imageloader_raw.h"
 
+#include "thumbnailer.h"
+
 ImageProvider::ImageProvider(QObject *parent)
 {
     m_imageLoaders.append( new ImageLoader_generic() );
@@ -23,18 +25,27 @@ ImageProvider::~ImageProvider ()
     }
 }
 
-QImage ImageProvider::requestImage ( const QString& id, QSize* size, const QSize& requestedSize )
+
+// TODO image cache needs a set name
+QImage ImageProvider::requestThumbnail ( const QString& id, QSize* size, const QSize& requestedSize )
 {
-    QString suffix = QFileInfo (id).suffix();
+    // Check for cached thumnail
+    QString cached_name = QFileInfo (id).baseName();
+    QImage thumb = Thumbnailer::getCachedThumbnail(cached_name, "");
 
-    QImage thumb;
-
-    ImageLoader* image_loader = imageLoaderFromFormat( suffix );
-    if (image_loader)
+    if (thumb.isNull())
     {
-        image_loader->openImage( id );
-        thumb = image_loader->loadThumbnail();
-    }
+        // Load normal thumbnail
+        QString suffix = QFileInfo (id).suffix();
+
+        ImageLoader* image_loader = imageLoaderFromFormat( suffix );
+        if (image_loader)
+        {
+            image_loader->openImage( id );
+            thumb = image_loader->loadThumbnail();
+        }
+    } else
+        qDebug() << "using cache: " + cached_name;
 
     *size = thumb.size();
 
@@ -54,6 +65,24 @@ QImage ImageProvider::requestImage ( const QString& id, QSize* size, const QSize
         result_image = thumb;
 
     return result_image;
+}
+
+// TODO this is now used for the thumbnail generation, use a seperate function for this, and make a new one using the cached thumbnail?
+
+QImage ImageProvider::getThumbnail (QString fileName)
+{
+    QString suffix = QFileInfo (fileName).suffix();
+
+    QImage thumb;
+
+    ImageLoader* image_loader = imageLoaderFromFormat( suffix );
+    if (image_loader)
+    {
+        image_loader->openImage( fileName );
+        thumb = image_loader->loadThumbnail();
+    }
+
+    return thumb;
 }
 
 ImageLoader* ImageProvider::imageLoaderFromFormat (QString format)

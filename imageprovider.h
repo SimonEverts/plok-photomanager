@@ -12,7 +12,9 @@ public:
     explicit ImageProvider(QObject *parent = 0);
     virtual ~ImageProvider (void);
 
-    QImage requestImage ( const QString& id, QSize* size, const QSize& requestedSize );
+    QImage requestThumbnail( const QString& id, QSize* size, const QSize& requestedSize );
+
+    QImage getThumbnail (QString fileName);
 
     ImageLoader* imageLoaderFromFormat (QString format);
 

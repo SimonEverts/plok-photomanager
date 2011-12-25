@@ -37,7 +37,7 @@ QImage ImageLoader_generic_p::loadThumbnail ()
 
     QSize image_size = m_imageReader.size();
 
-    int scale = image_size.width() / 800;
+    int scale = image_size.width() / 480;
     if (scale < 1)
         scale = 1;
 

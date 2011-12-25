@@ -1,6 +1,7 @@
 #include "database.h"
 
-#include <QProcessEnvironment>
+#include "miscutils.h"
+
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
@@ -26,9 +27,7 @@ Database::~Database()
 
 void Database::initialize()
 {
-    QProcessEnvironment env = QProcessEnvironment::systemEnvironment ();
-
-    QDir database_dir (env.value("HOME") + "/.plok-pm/");
+    QDir database_dir (MiscUtils::plokpmDir());
 
     if (!database_dir.exists())
         database_dir.mkpath (database_dir.path());

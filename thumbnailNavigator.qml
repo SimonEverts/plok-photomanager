@@ -94,8 +94,8 @@ Rectangle {
             highlightMoveDuration: 300
 
             onCurrentIndexChanged: {
-                previewImage.source = "image://imageprovider/" + thumbnailViewModel[currentIndex].path;
-                //loadNewImage( currentIndex );
+                //previewImage.source = "image://imageprovider/" + thumbnailViewModel[currentIndex].path;
+                loadNewImage( currentIndex );
             }
 
             signal loadNewImage (int index);

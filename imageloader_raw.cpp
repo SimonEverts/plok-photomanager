@@ -35,7 +35,14 @@ QImage ImageLoader_raw_p::loadThumbnail ()
                 m_rawProcessor.imgdata.thumbnail.tlength,
                 "JPG");
 
-    return image;
+    int scale = size.width() / 480;
+    if (scale < 1)
+        scale = 1;
+
+    QSize scaled_size( size.width() / scale,
+                       size.height() / scale);
+
+    return image.scaled (scaled_size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);;
 }
 
 //QImage ImageLoader_raw_p::loadImage ()

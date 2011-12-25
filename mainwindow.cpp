@@ -5,6 +5,8 @@
 
 #include "imageprovider_qml.h"
 
+#include "miscutils.h"
+
 // Qt includes
 #include <QFileDialog>
 #include <QImageReader>
@@ -20,7 +22,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     m_thumbnailNavigator (0),
     m_thumbnailView (0),
-    m_currentPath (".")
+    m_currentPath ("."),
+    m_imageProvider(),
+    m_imageThumbnailer (&m_imageProvider)
 {
     ui->setupUi(this);
 
@@ -37,8 +41,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->thumbnailNavigator->engine()->addImageProvider(QLatin1String("imageprovider"), new ImageProvider_qml(this));
     ui->thumbnailView->engine()->addImageProvider(QLatin1String("imageprovider"), new ImageProvider_qml(this));
 
-    //if (m_thumbnailNavigator)
-    //    connect( m_thumbnailNavigator, SIGNAL(loadNewImage(int)), this, SLOT(currentImageChanged(int)), Qt::QueuedConnection);
+    if (m_thumbnailNavigator)
+        connect( m_thumbnailNavigator, SIGNAL(loadNewImage(int)), this, SLOT(currentImageChanged(int)), Qt::QueuedConnection);
 
     m_fileSystemModel = new QFileSystemModel();
     m_fileSystemModel->setRootPath(QDir::homePath());
@@ -405,12 +409,12 @@ void MainWindow::on_actionDelete_triggered()
 
                     if (file.exists())
                     {
-                        QDir dir ( QFileInfo (file_path).absolutePath() + "/.trash/");
+                        QDir dir ( MiscUtils::plokpmDir() + "/trash/");
 
                         bool dir_exists = dir.exists();
 
                         if (!dir_exists)
-                            dir_exists = dir.mkpath(QFileInfo (file_path).absolutePath() + "/.trash/");
+                            dir_exists = dir.mkpath( MiscUtils::plokpmDir() + "/trash/");
 
                         if (dir_exists)
                         {
@@ -439,6 +443,14 @@ void MainWindow::on_actionCreate_set_triggered()
         Set set (dir.dirName(), dir.absolutePath());
 
         m_database.addSet (set);
+
+        QStringList dir_entry_list = dir.entryList( m_imageProvider.supportedSuffixes() );
+        QStringList absolute_paths;
+        for (int i=0; i<dir_entry_list.size(); i++)
+            absolute_paths.push_back( dir.absolutePath() + "/" + dir_entry_list.at(i) );
+
+        // Generate thumnbails
+        m_imageThumbnailer.generateThumbnails (absolute_paths, "");
     }
 }
 

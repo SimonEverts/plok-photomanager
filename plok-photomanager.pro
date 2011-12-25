@@ -23,7 +23,9 @@ SOURCES += main.cpp\
     imageloader_generic.cpp \
     imageprovider_qml.cpp \
     database.cpp \
-    set.cpp
+    set.cpp \
+    thumbnailer.cpp \
+    miscutils.cpp
 
 HEADERS  += mainwindow.h \
     imageview.h \
@@ -37,7 +39,9 @@ HEADERS  += mainwindow.h \
     imageloader_generic.h \
     imageprovider_qml.h \
     database.h \
-    set.h
+    set.h \
+    thumbnailer.h \
+    miscutils.h
 
 FORMS    += mainwindow.ui
 
