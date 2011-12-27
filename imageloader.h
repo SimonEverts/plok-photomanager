@@ -19,6 +19,7 @@ public:
     virtual void openImage (QString imagePath) = 0;
 
     virtual QImage loadThumbnail (void) = 0;
+    virtual QImage loadImage (void) = 0;
 
     virtual QMap <QString, QVariant> loadInfo (void) = 0;
 

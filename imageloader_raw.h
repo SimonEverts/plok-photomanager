@@ -14,6 +14,7 @@ public:
     void openImage (QString imagePath);
 
     QImage loadThumbnail (void);
+    QImage loadImage (void);
 
     QMap <QString, QVariant> loadInfo (void);
 

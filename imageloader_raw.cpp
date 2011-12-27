@@ -11,6 +11,7 @@ public:
     void openImage (QString imagePath);
 
     QImage loadThumbnail (void);
+    QImage loadImage (void);
 
     QMap <QString, QVariant> loadInfo (void);
 private:
@@ -45,20 +46,21 @@ QImage ImageLoader_raw_p::loadThumbnail ()
     return image.scaled (scaled_size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);;
 }
 
-//QImage ImageLoader_raw_p::loadImage ()
-//{
-//    m_rawProcessor.unpack();
+QImage ImageLoader_raw_p::loadImage ()
+{
+    m_rawProcessor.unpack_thumb();
 
-//    QSize size (m_rawProcessor.imgdata.sizes.width, m_rawProcessor.imgdata.sizes.height);
+    // TODO load raw image
+    QSize size (m_rawProcessor.imgdata.thumbnail.twidth, m_rawProcessor.imgdata.thumbnail.theight);
 
-//    QImage image;
-//    image.loadFromData(
-//                reinterpret_cast <unsigned char*> (m_rawProcessor.imgdata.image),
-//                ,
-//                "JPG");
+    QImage image;
+    image.loadFromData(
+                reinterpret_cast <unsigned char*> (m_rawProcessor.imgdata.thumbnail.thumb),
+                m_rawProcessor.imgdata.thumbnail.tlength,
+                "JPG");
 
-//    return image;
-//}
+    return image;
+}
 
 
 QMap <QString, QVariant> ImageLoader_raw_p::loadInfo (void)
@@ -100,6 +102,11 @@ void ImageLoader_raw::openImage (QString imagePath)
 QImage ImageLoader_raw::loadThumbnail()
 {
     return p->loadThumbnail();
+}
+
+QImage ImageLoader_raw::loadImage()
+{
+    return p->loadImage();
 }
 
 QMap <QString, QVariant> ImageLoader_raw::loadInfo (void)

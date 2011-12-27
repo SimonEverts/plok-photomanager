@@ -38,8 +38,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_thumbnailNavigator = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("thumbnailNavigator");
 
-    ui->thumbnailNavigator->engine()->addImageProvider(QLatin1String("imageprovider"), new ImageProvider_qml(this));
-    ui->thumbnailView->engine()->addImageProvider(QLatin1String("imageprovider"), new ImageProvider_qml(this));
+
+    ImageProvider_qml* image_provider_qml = new ImageProvider_qml(this);
+    image_provider_qml->setImageProvider(&m_imageProvider);
+
+    ui->thumbnailNavigator->engine()->addImageProvider(QLatin1String("imageprovider"), image_provider_qml);
+    ui->thumbnailView->engine()->addImageProvider(QLatin1String("imageprovider"), image_provider_qml);
+
 
     if (m_thumbnailNavigator)
         connect( m_thumbnailNavigator, SIGNAL(loadNewImage(int)), this, SLOT(currentImageChanged(int)), Qt::QueuedConnection);
@@ -62,10 +67,16 @@ MainWindow::MainWindow(QWidget *parent) :
     m_database.initialize();
 
     loadGUI();
+
+    connect (&m_workThread, SIGNAL(photoLoaded()), this, SLOT(updateImage()), Qt::QueuedConnection);
+
+    m_workThread.start();
 }
 
 MainWindow::~MainWindow()
 {
+    m_workThread.stop();
+
     delete ui;
 
     delete m_imageViewActionGroup;
@@ -231,7 +242,7 @@ void MainWindow::importCapturesFromDir (QString dirName)
 void MainWindow::loadImage (QString fileName)
 {
     m_currentPath = fileName;
-    m_currentImage = fileName;
+    m_currentImage = QFileInfo (fileName).baseName();
 
     QObject* image_view = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("previewImage");
     QObject* image_frame = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("imageFrame");
@@ -243,6 +254,8 @@ void MainWindow::loadImage (QString fileName)
 
     QMap <QString, QVariant>::iterator it;
 
+    // TODO move info loading to seperate class
+
     QList <QVariant> values = info.values();
 
     for (it = info.begin(); it != info.end(); it++)
@@ -253,6 +266,27 @@ void MainWindow::loadImage (QString fileName)
 
     if (image_view)
         image_view->setProperty("source", QString("image://imageprovider/") + fileName);
+
+    m_workThread.loadPhotos(QStringList() << fileName);
+
+    ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
+}
+
+void MainWindow::updateImage (void)
+{
+    QList <Photo> photos = m_workThread.photos();
+
+    QObject* image_view = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("previewImage");
+    QObject* image_frame = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("imageFrame");
+
+    for (int i=0; i<photos.size(); i++)
+    {
+        //if (photos.at(i).name() == m_currentImage)
+            m_imageProvider.setCurrentImage (photos.at(i).image());
+    }
+
+    if (image_view)
+        image_view->setProperty("source", QString("image://imageprovider/") + "current");
 
     ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
 }

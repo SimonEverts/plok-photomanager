@@ -12,6 +12,8 @@
 
 #include "database.h"
 
+#include "workthread.h"
+
 // Qt includes
 #include <QMainWindow>
 #include <QGraphicsScene>
@@ -38,6 +40,8 @@ public:
     ~MainWindow();
 
 public slots:
+    void updateImage (void);
+
     void currentSelectionChanged( int currentIndex );
 
     void doubleClickOnThumbnail( int currentIndex );
@@ -46,6 +50,7 @@ protected slots:
     void on_fileBrowserTreeView_activated ( const QModelIndex & index );
 
 private slots:
+
     void on_actionUpload_images_triggered( bool checked );
 
     void on_actionCombine_triggered();
@@ -101,6 +106,8 @@ private:
     QList <QSharedPointer< ThumbnailModelItem > > m_thumbnailModel;
 
     QList <Capture> m_captures;
+
+    WorkThread m_workThread;
 };
 
 #endif // MAINWINDOW_H

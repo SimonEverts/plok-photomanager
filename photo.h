@@ -14,6 +14,11 @@ public:
     virtual ~Photo (void);
 
     void addInfo (QString name, QVariant value);
+
+    QString name() const {return m_name;}
+    QString path() const {return m_path;}
+
+    QImage image() const {return m_image;}
 private:
     QString m_name;
     QString m_path;

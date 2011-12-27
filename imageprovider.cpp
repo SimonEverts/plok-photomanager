@@ -8,7 +8,7 @@
 #include "imageloader_generic.h"
 #include "imageloader_raw.h"
 
-#include "thumbnailer.h"
+#include "thumbnailcache.h"
 
 ImageProvider::ImageProvider(QObject *parent)
 {
@@ -29,9 +29,22 @@ ImageProvider::~ImageProvider ()
 // TODO image cache needs a set name
 QImage ImageProvider::requestThumbnail ( const QString& id, QSize* size, const QSize& requestedSize )
 {
-    // Check for cached thumnail
-    QString cached_name = QFileInfo (id).baseName();
-    QImage thumb = Thumbnailer::getCachedThumbnail(cached_name, "");
+    QImage thumb;
+
+    if (id == "current")
+    {
+        qDebug () << m_currentImage.isNull();
+        thumb = m_currentImage;
+    }
+
+    if (thumb.isNull())
+    {
+        // Check for cached thumnail
+        QString cached_name = QFileInfo (id).baseName();
+        thumb = ThumbnailCache::getCachedThumbnail(cached_name, "");
+
+        qDebug() << "using cache: " + cached_name;
+    }
 
     if (thumb.isNull())
     {
@@ -44,8 +57,7 @@ QImage ImageProvider::requestThumbnail ( const QString& id, QSize* size, const Q
             image_loader->openImage( id );
             thumb = image_loader->loadThumbnail();
         }
-    } else
-        qDebug() << "using cache: " + cached_name;
+    }
 
     *size = thumb.size();
 
@@ -83,6 +95,22 @@ QImage ImageProvider::getThumbnail (QString fileName)
     }
 
     return thumb;
+}
+
+QImage ImageProvider::loadImage (QString fileName)
+{
+    QString suffix = QFileInfo (fileName).suffix();
+
+    QImage image;
+
+    ImageLoader* image_loader = imageLoaderFromFormat( suffix );
+    if (image_loader)
+    {
+        image_loader->openImage( fileName );
+        image = image_loader->loadImage();
+    }
+
+    return image;
 }
 
 ImageLoader* ImageProvider::imageLoaderFromFormat (QString format)

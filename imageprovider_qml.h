@@ -12,10 +12,14 @@ public:
     explicit ImageProvider_qml(QObject *parent = 0);
     virtual ~ImageProvider_qml (void);
 
+    void setImageProvider (ImageProvider* imageProvider) {
+        m_imageProvider = imageProvider;
+    }
+
     QImage requestImage ( const QString& id, QSize* size, const QSize& requestedSize );
 
 private:
-    ImageProvider m_imageProvider;
+    ImageProvider* m_imageProvider;
 };
 
 #endif // IMAGEPROVIDER_QML_H

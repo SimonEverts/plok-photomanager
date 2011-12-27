@@ -16,6 +16,7 @@ public:
     void openImage (QString imagePath);
 
     QImage loadThumbnail (void);
+    QImage loadImage (void);
 private:
     QImageReader m_imageReader;
 
@@ -51,6 +52,22 @@ QImage ImageLoader_generic_p::loadThumbnail ()
     return image;
 }
 
+QImage ImageLoader_generic_p::loadImage ()
+{
+    if (!m_imageReader.canRead())
+        return QImage();
+
+    m_imageReader.setQuality(100);
+
+    QSize image_size = m_imageReader.size();
+
+    m_imageReader.setScaledSize ( image_size);
+
+    QImage image = m_imageReader.read();
+
+    return image;
+}
+
 ImageLoader_generic::ImageLoader_generic (QObject *parent)
 {
     p = new ImageLoader_generic_p();
@@ -69,6 +86,11 @@ void ImageLoader_generic::openImage (QString imagePath)
 QImage ImageLoader_generic::loadThumbnail()
 {
     return p->loadThumbnail();
+}
+
+QImage ImageLoader_generic::loadImage()
+{
+    return p->loadImage();
 }
 
 QMap <QString, QVariant> ImageLoader_generic::loadInfo (void)

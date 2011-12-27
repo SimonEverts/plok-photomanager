@@ -11,8 +11,6 @@ class Thumbnailer
 public:
     Thumbnailer( ImageProvider* imageProvider );
 
-    static QImage getCachedThumbnail (QString fileName, QString thumbnailPath);
-
     void generateThumbnails (QStringList photos, QString thumbnailPath);
 private:
 

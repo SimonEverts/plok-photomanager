@@ -12,19 +12,6 @@ Thumbnailer::Thumbnailer( ImageProvider* imageProvider ) :
 {
 }
 
-QImage Thumbnailer::getCachedThumbnail (QString baseName, QString thumbnailPath)
-{
-    QString thumbnail_path = MiscUtils::plokpmDir() + "/thumbnails/" + thumbnailPath + "/";
-    QDir thumbnail_dir (thumbnail_path);
-
-    bool dir_exists = thumbnail_dir.exists();
-
-    if (!dir_exists)
-        return QImage();
-
-    return QImage (thumbnail_path + baseName);
-}
-
 // TODO use captures instead of filenames
 void Thumbnailer::generateThumbnails (QStringList photos, QString thumbnailPath)
 {

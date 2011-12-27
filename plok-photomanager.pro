@@ -25,7 +25,9 @@ SOURCES += main.cpp\
     database.cpp \
     set.cpp \
     thumbnailer.cpp \
-    miscutils.cpp
+    miscutils.cpp \
+    thumbnailcache.cpp \
+    workthread.cpp
 
 HEADERS  += mainwindow.h \
     imageview.h \
@@ -41,7 +43,9 @@ HEADERS  += mainwindow.h \
     database.h \
     set.h \
     thumbnailer.h \
-    miscutils.h
+    miscutils.h \
+    thumbnailcache.h \
+    workthread.h
 
 FORMS    += mainwindow.ui
 
