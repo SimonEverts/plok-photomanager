@@ -90,7 +90,7 @@ void WorkThread::loadPhotos (QStringList fileNames)
     {
         QMutexLocker locker( &m_mutex );
 
-        m_fileNames.append( fileNames );
+        m_fileNames = fileNames;
     }
 
     wakeup();

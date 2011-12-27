@@ -85,6 +85,17 @@ MainWindow::~MainWindow()
     delete m_fileSystemModel;
 }
 
+void MainWindow::blockSignals (bool block)
+{
+    QList<QWidget*> children = findChildren<QWidget*> ();
+
+    for (int i=0; i<children.size(); i++)
+    {
+        children[i]->blockSignals (block);
+    }
+    QWidget::blockSignals(block);
+}
+
 void MainWindow::loadGUI (void)
 {
     QList <Set> sets = m_database.sets();
@@ -137,8 +148,6 @@ void MainWindow::loadThumbnailsFromDir (QString dirName)
     QDir dir (dirName);
     dir.setFilter( QDir::Files );
     dir.setNameFilters( m_imageProvider.supportedSuffixes() );
-
-//    qDebug () << (QStringList() << m_imageLoader_generic.supportedFormatFilter() << "*.arw" << "*.ARW" << "*.CR2" << "*.cr2");
 
     QList <QFileInfo> file_info_list = dir.entryInfoList();
     QList <QFileInfo>::iterator it;
@@ -198,11 +207,8 @@ void MainWindow::importCapturesFromDir (QString dirName)
     QDir dir (dirName);
     dir.setFilter( QDir::Files );
     dir.setSorting( QDir::Name );
-    //dir.setNameFilters(QStringList() << "*.jpg" << "*.JPG" << "*.arw" << "*.ARW" << "*.CR2" << "*.cr2");
 
-    dir.setNameFilters( m_imageProvider.supportedSuffixes() ); // << "*.arw" << "*.ARW" << "*.CR2" << "*.cr2");
-
-//    qDebug () << (QStringList() << m_imageLoader_generic.supportedFormatFilter() << "*.arw" << "*.ARW" << "*.CR2" << "*.cr2");
+    dir.setNameFilters( m_imageProvider.supportedSuffixes() );
 
     QList <QFileInfo> file_info_list = dir.entryInfoList();
 
@@ -254,10 +260,10 @@ void MainWindow::loadImage (QString fileName)
 
     // TODO move info loading to seperate class
 
-    QList <QVariant> values = info.values();
+//    QList <QVariant> values = info.values();
 
-    for (it = info.begin(); it != info.end(); it++)
-        qDebug() << it.key() << it.value();
+//    for (it = info.begin(); it != info.end(); it++)
+//        qDebug() << it.key() << it.value();
 
     if (image_frame)
         image_frame->setProperty("infoMap", info);
@@ -268,6 +274,8 @@ void MainWindow::loadImage (QString fileName)
     m_workThread.loadPhotos(QStringList() << fileName);
 
     ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
+
+    qDebug() << "loadImage: "  << fileName;
 }
 
 void MainWindow::updateImage (void)
@@ -280,14 +288,23 @@ void MainWindow::updateImage (void)
     for (int i=0; i<photos.size(); i++)
     {
         if (photos.at(i).name() == m_currentImage)
+        {
+            qDebug() << "updateImage: "  << m_currentImage;
+
             m_imageProvider.setCurrentImage (photos.at(i).image());
+
+            blockSignals( true );
+
+            if (image_view)
+                image_view->setProperty("source", QString("image://imageprovider/") + "current");
+
+            blockSignals( false );
+
+            ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
+        }
     }
-
-    if (image_view)
-        image_view->setProperty("source", QString("image://imageprovider/") + "current");
-
-    ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
 }
+
 
 void MainWindow::currentSelectionChanged (int currentIndex)
 {
@@ -299,11 +316,15 @@ void MainWindow::currentImageChanged( int currentIndex )
     m_currentPath = QUrl (m_thumbnailModel.at( currentIndex )->path()).toString(QUrl::RemoveScheme);
     m_currentImage = m_thumbnailModel.at( currentIndex )->name();
 
+    blockSignals( true );
+
     if (m_thumbnailView)
         m_thumbnailView->setProperty("currentIndex", currentIndex);
 
     if (m_thumbnailNavigator)
         m_thumbnailNavigator->setProperty("currentIndex", currentIndex);
+
+    blockSignals( false );
 
     ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
 
@@ -365,10 +386,6 @@ void MainWindow::on_actionSplit_triggered()
 
     if (selected_items.size())
     {
-//        new_capture.setName(selected_items.first());
-
-//        QList <Capture>::iterator after_first_match;
-
         QList <Capture>::iterator it = m_captures.begin();
         while( it != m_captures.end() )
         {
