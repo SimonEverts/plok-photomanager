@@ -271,7 +271,7 @@ void MainWindow::loadImage (QString fileName)
     if (image_view)
         image_view->setProperty("source", QString("image://imageprovider/") + fileName);
 
-    m_workThread.loadPhotos(QStringList() << fileName);
+    m_workThread.loadPictures(QStringList() << fileName);
 
     ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
 
@@ -280,18 +280,18 @@ void MainWindow::loadImage (QString fileName)
 
 void MainWindow::updateImage (void)
 {
-    QList <Photo> photos = m_workThread.photos();
+    QList <Picture> pictures = m_workThread.pictures();
 
     QObject* image_view = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("previewImage");
     QObject* image_frame = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("imageFrame");
 
-    for (int i=0; i<photos.size(); i++)
+    for (int i=0; i<pictures.size(); i++)
     {
-        if (photos.at(i).name() == m_currentImage)
+        if (pictures.at(i).name() == m_currentImage)
         {
             qDebug() << "updateImage: "  << m_currentImage;
 
-            m_imageProvider.setCurrentImage (photos.at(i).image());
+            m_imageProvider.setCurrentImage (pictures.at(i).image());
 
             blockSignals( true );
 

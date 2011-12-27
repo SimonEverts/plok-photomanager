@@ -6,12 +6,12 @@
 #include <QMap>
 #include <QVariant>
 
-class Photo
+class Picture
 {
 public:
-    Photo ();
-    explicit Photo (QString name, QString path, QImage image);
-    virtual ~Photo (void);
+    Picture ();
+    explicit Picture (QString name, QString path, QImage image);
+    virtual ~Picture (void);
 
     void addInfo (QString name, QVariant value);
 

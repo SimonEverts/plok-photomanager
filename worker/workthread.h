@@ -9,7 +9,7 @@
 #include <QStringList>
 #include <QImage>
 
-#include "model/photo.h"
+#include "model/picture.h"
 #include "image/imageprovider.h"
 
 class WorkThread : public QThread
@@ -25,8 +25,8 @@ public:
     void run();
     void wakeup ();
 
-    void loadPhotos (QStringList fileNames);
-    QList <Photo> photos (void);
+    void loadPictures (QStringList fileNames);
+    QList <Picture> pictures (void);
 private:
     QMutex m_mutex;
     QWaitCondition m_conditionChanged;
@@ -36,7 +36,7 @@ private:
     ImageProvider m_imageProvider;
 
     QStringList m_fileNames;
-    QList <Photo> m_photos;
+    QList <Picture> m_pictures;
 
 signals:
      void photoLoaded (void);

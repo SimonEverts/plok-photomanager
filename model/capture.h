@@ -5,7 +5,7 @@
 #include <QList>
 #include <QDateTime>
 
-#include <model/photo.h>
+#include <model/picture.h>
 
 class Capture
 {
@@ -34,7 +34,7 @@ private:
 
     QDateTime m_captureTime;
 
-    QList <QString> m_photos;
+    QList <QString> m_pictures;
 };
 
 #endif // PHOTO_H

@@ -16,7 +16,6 @@ SOURCES += main.cpp\
     gui/thumbnailmodelitem.cpp \
     server/imageuploader.cpp \
     model/capture.cpp \
-    model/photo.cpp \
     image/imageloader.cpp \
     image/imageprovider.cpp \
     image/imageloader_raw.cpp \
@@ -27,14 +26,14 @@ SOURCES += main.cpp\
     common/miscutils.cpp \
     image/thumbnailcache.cpp \
     worker/workthread.cpp \
-    gui/imageprovider_qmlwrapper.cpp
+    gui/imageprovider_qmlwrapper.cpp \
+    model/picture.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/imageview.h \
     gui/thumbnailmodelitem.h \
     server/imageuploader.h \
     model/capture.h \
-    model/photo.h \
     image/imageloader.h \
     image/imageprovider.h \
     image/imageloader_raw.h \
@@ -45,7 +44,8 @@ HEADERS  += gui/mainwindow.h \
     common/miscutils.h \
     image/thumbnailcache.h \
     worker/workthread.h \
-    gui/imageprovider_qmlwrapper.h
+    gui/imageprovider_qmlwrapper.h \
+    model/picture.h
 
 FORMS    += gui/mainwindow.ui
 

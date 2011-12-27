@@ -64,12 +64,12 @@ void WorkThread::run()
             QImage image = m_imageProvider.loadImage (file_name);
             if (!image.isNull())
             {
-                Photo photo (QFileInfo(file_name).baseName (), file_name, image);
+                Picture picture (QFileInfo(file_name).baseName (), file_name, image);
 
                 {
                     QMutexLocker locker( &m_mutex );
 
-                    m_photos.push_back(photo);
+                    m_pictures.push_back(picture);
                 }
 
                 emit photoLoaded();
@@ -85,7 +85,7 @@ void WorkThread::wakeup ()
     m_conditionChanged.wakeOne();
 }
 
-void WorkThread::loadPhotos (QStringList fileNames)
+void WorkThread::loadPictures (QStringList fileNames)
 {
     {
         QMutexLocker locker( &m_mutex );
@@ -96,15 +96,15 @@ void WorkThread::loadPhotos (QStringList fileNames)
     wakeup();
 }
 
-QList <Photo> WorkThread::photos (void)
+QList <Picture> WorkThread::pictures (void)
 {
-    QList <Photo> photo_list;
+    QList <Picture> picture_list;
     {
         QMutexLocker locker( &m_mutex );
 
-        photo_list = m_photos;
-        m_photos.clear();
+        picture_list = m_pictures;
+        m_pictures.clear();
     }
 
-    return photo_list;
+    return picture_list;
 }

@@ -35,33 +35,33 @@ QDateTime Capture::captureTime (void)
 
 void Capture::addPhoto (QString path)
 {
-    m_photos.push_back( path );
+    m_pictures.push_back( path );
 }
 
 void Capture::setPhotos (QList<QString> photos)
 {
-    m_photos = photos;
+    m_pictures = photos;
 }
 
 QList <QString> Capture::photoList (void)
 {
-    return m_photos;
+    return m_pictures;
 }
 
 int Capture::photoCount (void)
 {
-    return m_photos.size();
+    return m_pictures.size();
 }
 
 QString Capture::previewPhoto (void)
 {
     QString result;
 
-    qDebug() << m_photos.size();
+    qDebug() << m_pictures.size();
 
     // Check if one of the foto's is more suited for a thumbnail
     QList<QString>::iterator it;
-    for (it=m_photos.begin(); it != m_photos.end(); it++)
+    for (it=m_pictures.begin(); it != m_pictures.end(); it++)
     {
         QFileInfo file_info (*it);
         QString suffix = file_info.suffix();
@@ -74,13 +74,13 @@ QString Capture::previewPhoto (void)
 
 //    if (it == m_photos.end())
 
-    if (m_photos.size() && result.isEmpty())
-        result = m_photos.first();
+    if (m_pictures.size() && result.isEmpty())
+        result = m_pictures.first();
 
     return result;
 }
 
 void Capture::clear (void)
 {
-    m_photos.clear();
+    m_pictures.clear();
 }
