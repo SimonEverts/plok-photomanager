@@ -3,16 +3,17 @@
 
 // Project includes
 #include "thumbnailmodelitem.h"
-#include "imageloader.h"
-#include "imageuploader.h"
-#include "capture.h"
 
-#include "imageprovider.h"
-#include "thumbnailer.h"
+#include "image/imageloader.h"
+#include "image/imageprovider.h"
+#include "image/thumbnailer.h"
 
-#include "database.h"
+#include "server/imageuploader.h"
 
-#include "workthread.h"
+#include "model/capture.h"
+
+#include "database/database.h"
+#include "worker/workthread.h"
 
 // Qt includes
 #include <QMainWindow>
@@ -44,7 +45,7 @@ public slots:
 
     void currentSelectionChanged( int currentIndex );
 
-    void doubleClickOnThumbnail( int currentIndex );
+    void currentImageChanged( int currentIndex );
 
 protected slots:
     void on_fileBrowserTreeView_activated ( const QModelIndex & index );

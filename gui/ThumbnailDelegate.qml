@@ -46,7 +46,7 @@ Component {
                 mainWindow.currentSelectionChanged (index)
             }
             onDoubleClicked: {
-                mainWindow.doubleClickOnThumbnail (index)
+                mainWindow.currentImageChanged (index)
             }
         }
     }

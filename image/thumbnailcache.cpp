@@ -2,7 +2,7 @@
 
 #include <QDir>
 
-#include "miscutils.h"
+#include "common/miscutils.h"
 
 ThumbnailCache::ThumbnailCache()
 {

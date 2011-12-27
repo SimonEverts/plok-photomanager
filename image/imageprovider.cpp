@@ -32,18 +32,13 @@ QImage ImageProvider::requestThumbnail ( const QString& id, QSize* size, const Q
     QImage thumb;
 
     if (id == "current")
-    {
-        qDebug () << m_currentImage.isNull();
         thumb = m_currentImage;
-    }
 
     if (thumb.isNull())
     {
         // Check for cached thumnail
         QString cached_name = QFileInfo (id).baseName();
         thumb = ThumbnailCache::getCachedThumbnail(cached_name, "");
-
-        qDebug() << "using cache: " + cached_name;
     }
 
     if (thumb.isNull())

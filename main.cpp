@@ -1,9 +1,10 @@
 #include <QtGui/QApplication>
-#include "mainwindow.h"
-
-#include "imageprovider.h"
-
 #include <QDebug>
+
+#include "gui/mainwindow.h"
+
+#include "image/imageprovider.h"
+
 
 int main(int argc, char *argv[])
 {

@@ -4,7 +4,7 @@
 #include <QDeclarativeImageProvider>
 #include <QImage>
 
-#include "imageprovider.h"
+#include "image/imageprovider.h"
 
 class ImageProvider_qmlwrapper : public QDeclarativeImageProvider
 {

@@ -11,51 +11,51 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    imageview.cpp \
-    thumbnailmodelitem.cpp \
-    imageuploader.cpp \
-    capture.cpp \
-    photo.cpp \
-    imageloader.cpp \
-    imageprovider.cpp \
-    imageloader_raw.cpp \
-    imageloader_generic.cpp \
-    database.cpp \
-    set.cpp \
-    thumbnailer.cpp \
-    miscutils.cpp \
-    thumbnailcache.cpp \
-    workthread.cpp \
-    imageprovider_qmlwrapper.cpp
+        gui/mainwindow.cpp \
+    gui/imageview.cpp \
+    gui/thumbnailmodelitem.cpp \
+    server/imageuploader.cpp \
+    model/capture.cpp \
+    model/photo.cpp \
+    image/imageloader.cpp \
+    image/imageprovider.cpp \
+    image/imageloader_raw.cpp \
+    image/imageloader_generic.cpp \
+    database/database.cpp \
+    model/set.cpp \
+    image/thumbnailer.cpp \
+    common/miscutils.cpp \
+    image/thumbnailcache.cpp \
+    worker/workthread.cpp \
+    gui/imageprovider_qmlwrapper.cpp
 
-HEADERS  += mainwindow.h \
-    imageview.h \
-    thumbnailmodelitem.h \
-    imageuploader.h \
-    capture.h \
-    photo.h \
-    imageloader.h \
-    imageprovider.h \
-    imageloader_raw.h \
-    imageloader_generic.h \
-    database.h \
-    set.h \
-    thumbnailer.h \
-    miscutils.h \
-    thumbnailcache.h \
-    workthread.h \
-    imageprovider_qmlwrapper.h
+HEADERS  += gui/mainwindow.h \
+    gui/imageview.h \
+    gui/thumbnailmodelitem.h \
+    server/imageuploader.h \
+    model/capture.h \
+    model/photo.h \
+    image/imageloader.h \
+    image/imageprovider.h \
+    image/imageloader_raw.h \
+    image/imageloader_generic.h \
+    database/database.h \
+    model/set.h \
+    image/thumbnailer.h \
+    common/miscutils.h \
+    image/thumbnailcache.h \
+    worker/workthread.h \
+    gui/imageprovider_qmlwrapper.h
 
-FORMS    += mainwindow.ui
+FORMS    += gui/mainwindow.ui
 
 OTHER_FILES += \
-    thumbnailView.qml \
-    thumbnailNavigator.qml \
-    ThumbnailDelegate.qml
+    gui/thumbnailView.qml \
+    gui/thumbnailNavigator.qml \
+    gui/ThumbnailDelegate.qml
 
 RESOURCES += \
-    gui.qrc \
+    gui/gui.qrc \
     icons.qrc
 
 unix {

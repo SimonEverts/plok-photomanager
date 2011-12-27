@@ -9,8 +9,8 @@
 #include <QStringList>
 #include <QImage>
 
-#include "photo.h"
-#include "imageprovider.h"
+#include "model/photo.h"
+#include "image/imageprovider.h"
 
 class WorkThread : public QThread
 {

@@ -5,7 +5,7 @@
 
 #include "imageprovider_qmlwrapper.h"
 
-#include "miscutils.h"
+#include "common/miscutils.h"
 
 // Qt includes
 #include <QFileDialog>
@@ -178,8 +178,6 @@ void MainWindow::loadThumbnailsFromCaptures (void)
         QString name = it->name();
         QString path = it->previewPhoto();
 
-        qDebug () << it->photoCount();
-
         QSharedPointer <ThumbnailModelItem> model_item (new ThumbnailModelItem( name, path, it->photoCount()));
 
         m_thumbnailModel.push_back( model_item );
@@ -296,7 +294,7 @@ void MainWindow::currentSelectionChanged (int currentIndex)
     m_thumbnailModel.at( currentIndex )->toggleSelected();
 }
 
-void MainWindow::doubleClickOnThumbnail( int currentIndex )
+void MainWindow::currentImageChanged( int currentIndex )
 {
     m_currentPath = QUrl (m_thumbnailModel.at( currentIndex )->path()).toString(QUrl::RemoveScheme);
     m_currentImage = m_thumbnailModel.at( currentIndex )->name();
@@ -311,8 +309,6 @@ void MainWindow::doubleClickOnThumbnail( int currentIndex )
 
     loadImage (m_currentPath);
 }
-
-
 
 void MainWindow::on_actionCombine_triggered()
 {

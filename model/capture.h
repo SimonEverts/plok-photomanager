@@ -5,7 +5,7 @@
 #include <QList>
 #include <QDateTime>
 
-#include <photo.h>
+#include <model/photo.h>
 
 class Capture
 {

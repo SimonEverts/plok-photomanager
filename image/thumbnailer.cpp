@@ -1,7 +1,7 @@
 #include "thumbnailer.h"
 
 #include "imageprovider.h"
-#include "miscutils.h"
+#include "common/miscutils.h"
 
 #include <QFileInfo>
 #include <QDir>

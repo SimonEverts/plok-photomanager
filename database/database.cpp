@@ -1,6 +1,6 @@
 #include "database.h"
 
-#include "miscutils.h"
+#include "common/miscutils.h"
 
 #include <QSqlDatabase>
 #include <QSqlError>

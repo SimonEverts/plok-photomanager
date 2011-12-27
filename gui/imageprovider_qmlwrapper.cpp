@@ -1,6 +1,6 @@
 #include "imageprovider_qmlwrapper.h"
 
-#include "imageprovider.h"
+#include "image/imageprovider.h"
 
 ImageProvider_qmlwrapper::ImageProvider_qmlwrapper(QObject *parent) :
     QDeclarativeImageProvider( QDeclarativeImageProvider::Image )

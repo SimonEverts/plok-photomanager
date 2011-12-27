@@ -3,7 +3,7 @@
 
 #include <QString>
 
-#include "set.h"
+#include "model/set.h"
 
 class QSqlDatabase;
 
