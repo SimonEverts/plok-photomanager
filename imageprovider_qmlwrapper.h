@@ -1,16 +1,16 @@
-#ifndef IMAGEPROVIDER_QML_H
-#define IMAGEPROVIDER_QML_H
+#ifndef IMAGEPROVIDER_QMLWRAPPER_H
+#define IMAGEPROVIDER_QMLWRAPPER_H
 
 #include <QDeclarativeImageProvider>
 #include <QImage>
 
 #include "imageprovider.h"
 
-class ImageProvider_qml : public QDeclarativeImageProvider
+class ImageProvider_qmlwrapper : public QDeclarativeImageProvider
 {
 public:
-    explicit ImageProvider_qml(QObject *parent = 0);
-    virtual ~ImageProvider_qml (void);
+    explicit ImageProvider_qmlwrapper(QObject *parent = 0);
+    virtual ~ImageProvider_qmlwrapper (void);
 
     void setImageProvider (ImageProvider* imageProvider) {
         m_imageProvider = imageProvider;
@@ -22,4 +22,4 @@ private:
     ImageProvider* m_imageProvider;
 };
 
-#endif // IMAGEPROVIDER_QML_H
+#endif // IMAGEPROVIDER_QMLWRAPPER_H

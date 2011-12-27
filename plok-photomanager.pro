@@ -21,13 +21,13 @@ SOURCES += main.cpp\
     imageprovider.cpp \
     imageloader_raw.cpp \
     imageloader_generic.cpp \
-    imageprovider_qml.cpp \
     database.cpp \
     set.cpp \
     thumbnailer.cpp \
     miscutils.cpp \
     thumbnailcache.cpp \
-    workthread.cpp
+    workthread.cpp \
+    imageprovider_qmlwrapper.cpp
 
 HEADERS  += mainwindow.h \
     imageview.h \
@@ -39,13 +39,13 @@ HEADERS  += mainwindow.h \
     imageprovider.h \
     imageloader_raw.h \
     imageloader_generic.h \
-    imageprovider_qml.h \
     database.h \
     set.h \
     thumbnailer.h \
     miscutils.h \
     thumbnailcache.h \
-    workthread.h
+    workthread.h \
+    imageprovider_qmlwrapper.h
 
 FORMS    += mainwindow.ui
 

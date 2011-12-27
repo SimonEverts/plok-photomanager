@@ -3,7 +3,7 @@
 
 #include "imageview.h"
 
-#include "imageprovider_qml.h"
+#include "imageprovider_qmlwrapper.h"
 
 #include "miscutils.h"
 
@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_thumbnailNavigator = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("thumbnailNavigator");
 
 
-    ImageProvider_qml* image_provider_qml = new ImageProvider_qml(this);
+    ImageProvider_qmlwrapper* image_provider_qml = new ImageProvider_qmlwrapper(this);
     image_provider_qml->setImageProvider(&m_imageProvider);
 
     ui->thumbnailNavigator->engine()->addImageProvider(QLatin1String("imageprovider"), image_provider_qml);
@@ -281,7 +281,7 @@ void MainWindow::updateImage (void)
 
     for (int i=0; i<photos.size(); i++)
     {
-        //if (photos.at(i).name() == m_currentImage)
+        if (photos.at(i).name() == m_currentImage)
             m_imageProvider.setCurrentImage (photos.at(i).image());
     }
 
