@@ -51,41 +51,26 @@ QImage ImageLoader_raw_p::loadImage ()
     m_rawProcessor.unpack();
     m_rawProcessor.dcraw_process();
 
-    //m_rawProcessor.raw2image();
-
-    // TODO load raw image
-    QSize size (m_rawProcessor.imgdata.sizes.iwidth, m_rawProcessor.imgdata.sizes.iheight);
-
-    qDebug() << size;
-
-    QImage image (size, QImage::Format_RGB888);
-
-    unsigned char* dest_image_pixels = reinterpret_cast <unsigned char*> (image.bits());
-
     unsigned short int* src_image_pixels = reinterpret_cast <unsigned short int*> (m_rawProcessor.imgdata.image);
 
-    int dest_channels = 3;
-    int dest_bits_per_pixel = 8;
-    int dest_bytes_per_line = size.width() * dest_channels;
+    int mem_height = 0;
+    int mem_width = 0;
+    int mem_channels = 0;
+    int mem_bits_per_pixel = 0;
 
-    int src_channels = 4;
-    int src_bits_per_pixel = 16;
-    int src_bytes_per_line = size.width() * src_channels;
+    m_rawProcessor.get_mem_image_format(&mem_width, &mem_height, &mem_channels, &mem_bits_per_pixel);
 
-    for (int y=0; y<size.height(); y++)
+    QSize size (mem_width, mem_height);
+
+    QImage image;
+    if (mem_channels == 3 && mem_bits_per_pixel == 8)
     {
-        for (int x=0; x<size.width(); x++)
-        {
-            unsigned char* dest_pixel = dest_image_pixels + (y*dest_bytes_per_line) + (x * dest_channels);
-            unsigned short int* src_pixel = src_image_pixels + (y*src_bytes_per_line) + (x * src_channels);
+        image = QImage (size, QImage::Format_RGB888);
 
-            dest_pixel[0] = src_pixel[0] >> 8;
-            dest_pixel[1] = src_pixel[1] >> 8;
-            dest_pixel[2] = src_pixel[2] >> 8;
-        }
+        m_rawProcessor.copy_mem_image(image.bits(), image.bytesPerLine(), 0);
     }
 
-    return image.copy();
+    return image;
 }
 
 
