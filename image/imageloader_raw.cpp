@@ -49,9 +49,28 @@ QImage ImageLoader_raw_p::loadThumbnail ()
 QImage ImageLoader_raw_p::loadImage ()
 {
     m_rawProcessor.unpack();
-    m_rawProcessor.dcraw_process();
 
-    unsigned short int* src_image_pixels = reinterpret_cast <unsigned short int*> (m_rawProcessor.imgdata.image);
+    // Use camera whitebalance
+    m_rawProcessor.imgdata.params.use_camera_wb = 1;
+
+    m_rawProcessor.imgdata.params.no_auto_bright = 0;
+    m_rawProcessor.imgdata.params.bright = 1;
+
+    m_rawProcessor.imgdata.params.gamm[0] = 1.f / 2.4;  // sRGB
+    m_rawProcessor.imgdata.params.gamm[1] = 12.92;      // sRGB
+
+    m_rawProcessor.imgdata.params.output_color = 1; // sRGB
+
+    // Use AHC bayer interpolation
+    m_rawProcessor.imgdata.params.user_qual = 3;
+
+    m_rawProcessor.imgdata.params.threshold = 100;
+    if (m_rawProcessor.imgdata.other.iso_speed)
+        m_rawProcessor.imgdata.params.threshold = m_rawProcessor.imgdata.other.iso_speed / 4; // TODO  /8 beter?
+
+    //m_rawProcessor.imgdata.params.med_passes = 1;
+
+    m_rawProcessor.dcraw_process();
 
     int mem_height = 0;
     int mem_width = 0;
