@@ -14,9 +14,9 @@ public:
 
     QImage requestThumbnail( const QString& id, QSize* size, const QSize& requestedSize );
 
-    QImage getThumbnail (QString fileName);
-
-    QImage loadImage (QString fileName);
+    QImage loadThumbnail (QString fileName);
+    QImage loadPreview (QString fileName);
+    QImage loadMaster (QString fileName);
 
     ImageLoader* imageLoaderFromFormat (QString format);
 

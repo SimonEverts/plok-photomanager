@@ -22,7 +22,7 @@
       </property>
       <widget class="QStackedWidget" name="navStackedWidget">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="setBrowserPage">
         <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -30,7 +30,16 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QListWidget" name="setBrowser"/>
+          <widget class="QDeclarativeView" name="setView">
+           <property name="resizeMode">
+            <enum>QDeclarativeView::SizeRootObjectToView</enum>
+           </property>
+           <property name="source">
+            <url>
+             <string>file:///home/simon/projects/plok-photomanager/plok-photomanager/gui/setview.qml</string>
+            </url>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -230,7 +239,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../icons.qrc">
      <normaloff>:/standard/icons/folder.png</normaloff>:/standard/icons/folder.png</iconset>
    </property>
    <property name="text">
@@ -248,7 +257,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../icons.qrc">
      <normaloff>:/standard/icons/application-epub+zip.png</normaloff>:/standard/icons/application-epub+zip.png</iconset>
    </property>
    <property name="text">
@@ -263,7 +272,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../icons.qrc">
      <normaloff>:/standard/icons/22x22/view-list-icons.png</normaloff>:/standard/icons/22x22/view-list-icons.png</iconset>
    </property>
    <property name="text">
@@ -275,7 +284,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../icons.qrc">
      <normaloff>:/standard/icons/22x22/view-preview.png</normaloff>:/standard/icons/22x22/view-preview.png</iconset>
    </property>
    <property name="text">
@@ -287,7 +296,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../icons.qrc">
      <normaloff>:/standard/icons/22x22/view-list-details.png</normaloff>:/standard/icons/22x22/view-list-details.png</iconset>
    </property>
    <property name="text">
@@ -296,7 +305,7 @@
   </action>
   <action name="actionCombine">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../icons.qrc">
      <normaloff>:/standard/icons/22x22/archive-insert.png</normaloff>:/standard/icons/22x22/archive-insert.png</iconset>
    </property>
    <property name="text">
@@ -305,7 +314,7 @@
   </action>
   <action name="actionSplit">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../icons.qrc">
      <normaloff>:/standard/icons/22x22/archive-remove.png</normaloff>:/standard/icons/22x22/archive-remove.png</iconset>
    </property>
    <property name="text">
@@ -314,7 +323,7 @@
   </action>
   <action name="actionDelete">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../icons.qrc">
      <normaloff>:/standard/icons/22x22/trash-empty.png</normaloff>:/standard/icons/22x22/trash-empty.png</iconset>
    </property>
    <property name="text">
@@ -336,7 +345,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

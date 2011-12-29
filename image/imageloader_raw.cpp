@@ -11,7 +11,8 @@ public:
     void openImage (QString imagePath);
 
     QImage loadThumbnail (void);
-    QImage loadImage (void);
+    QImage loadPreview (void);
+    QImage loadMaster (void);
 
     QMap <QString, QVariant> loadInfo (void);
 private:
@@ -46,18 +47,33 @@ QImage ImageLoader_raw_p::loadThumbnail ()
     return image.scaled (scaled_size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);;
 }
 
-QImage ImageLoader_raw_p::loadImage ()
+QImage ImageLoader_raw_p::loadPreview ()
+{
+    m_rawProcessor.unpack_thumb();
+
+    QSize size (m_rawProcessor.imgdata.thumbnail.twidth, m_rawProcessor.imgdata.thumbnail.theight);
+
+    QImage image;
+    image.loadFromData(
+                reinterpret_cast <unsigned char*> (m_rawProcessor.imgdata.thumbnail.thumb),
+                m_rawProcessor.imgdata.thumbnail.tlength,
+                "JPG");
+
+    return image;
+}
+
+QImage ImageLoader_raw_p::loadMaster ()
 {
     m_rawProcessor.unpack();
 
     // Use camera whitebalance
     m_rawProcessor.imgdata.params.use_camera_wb = 1;
 
-    m_rawProcessor.imgdata.params.no_auto_bright = 0;
-    m_rawProcessor.imgdata.params.bright = 1;
+//    m_rawProcessor.imgdata.params.no_auto_bright = 0;
+//    m_rawProcessor.imgdata.params.bright = 1;
 
-    m_rawProcessor.imgdata.params.gamm[0] = 1.f / 2.4;  // sRGB
-    m_rawProcessor.imgdata.params.gamm[1] = 12.92;      // sRGB
+    //    m_rawProcessor.imgdata.params.gamm[0] = 1.f / 2.4;  // sRGB
+    //    m_rawProcessor.imgdata.params.gamm[1] = 12.92;      // sRGB
 
     m_rawProcessor.imgdata.params.output_color = 1; // sRGB
 
@@ -68,7 +84,7 @@ QImage ImageLoader_raw_p::loadImage ()
     if (m_rawProcessor.imgdata.other.iso_speed)
         m_rawProcessor.imgdata.params.threshold = m_rawProcessor.imgdata.other.iso_speed / 4; // TODO  /8 beter?
 
-    //m_rawProcessor.imgdata.params.med_passes = 1;
+//    m_rawProcessor.imgdata.params.med_passes = 1;
 
     m_rawProcessor.dcraw_process();
 
@@ -134,9 +150,14 @@ QImage ImageLoader_raw::loadThumbnail()
     return p->loadThumbnail();
 }
 
-QImage ImageLoader_raw::loadImage()
+QImage ImageLoader_raw::loadPreview()
 {
-    return p->loadImage();
+    return p->loadPreview();
+}
+
+QImage ImageLoader_raw::loadMaster()
+{
+    return p->loadMaster();
 }
 
 QMap <QString, QVariant> ImageLoader_raw::loadInfo (void)

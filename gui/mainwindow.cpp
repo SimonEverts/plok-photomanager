@@ -1,11 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "imageview.h"
-
 #include "imageprovider_qmlwrapper.h"
 
 #include "common/miscutils.h"
+
+#include "setviewmodelitem.h"
 
 // Qt includes
 #include <QFileDialog>
@@ -38,6 +38,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_thumbnailNavigator = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("thumbnailNavigator");
 
+    QObject* setView = ui->setView->rootObject()->findChild<QObject*> ("setView");
+        connect( setView, SIGNAL(currentIndexChanged()), this, SLOT(currentSetChanged()), Qt::QueuedConnection);
 
     ImageProvider_qmlwrapper* image_provider_qml = new ImageProvider_qmlwrapper(this);
     image_provider_qml->setImageProvider(&m_imageProvider);
@@ -99,10 +101,16 @@ void MainWindow::blockSignals (bool block)
 void MainWindow::loadGUI (void)
 {
     QList <Set> sets = m_database.sets();
+
+    QList<QObject*> dataList;
     for (int i=0; i<sets.size(); i++)
     {
-        ui->setBrowser->addItem(sets.at(i).name());
+        dataList.append( new SetViewModelItem( sets.at(i).name() ) );
     }
+
+    QDeclarativeContext *context = ui->setView->rootContext();
+    context->setContextProperty("setViewModel", QVariant::fromValue<QList<QObject*> >(dataList));
+
 }
 
 void MainWindow::on_fileBrowserTreeView_activated ( const QModelIndex & index )
@@ -313,6 +321,9 @@ void MainWindow::currentSelectionChanged (int currentIndex)
 
 void MainWindow::currentImageChanged( int currentIndex )
 {
+    if (!m_thumbnailModel.size())
+        return;
+
     m_currentPath = QUrl (m_thumbnailModel.at( currentIndex )->path()).toString(QUrl::RemoveScheme);
     m_currentImage = m_thumbnailModel.at( currentIndex )->name();
 
@@ -329,6 +340,35 @@ void MainWindow::currentImageChanged( int currentIndex )
     ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
 
     loadImage (m_currentPath);
+}
+
+void MainWindow::currentSetChanged( void )
+{
+    QList <Set> sets = m_database.sets();
+
+    QObject* setView = ui->setView->rootObject()->findChild<QObject*> ("setView");
+    int index = setView->property("currentIndex").toInt();
+
+    QString path = sets.at(index).path();
+
+    QFileInfo file_info ( path );
+
+    if (file_info.isDir())
+    {
+        importCapturesFromDir( path );
+        loadThumbnailsFromCaptures();
+    } else
+    {
+        if (QFileInfo(path).absolutePath() != QFileInfo(m_currentPath).absolutePath())
+        {
+            importCapturesFromDir( file_info.absolutePath() );
+            loadThumbnailsFromCaptures();
+        }
+
+        loadImage( path );
+    }
+
+    ui->mainStackedWidget->setCurrentWidget(ui->mainStackedThumbnailPage);
 }
 
 void MainWindow::on_actionCombine_triggered()
@@ -499,34 +539,6 @@ void MainWindow::on_actionCreate_set_triggered()
         // Generate thumnbails
         m_imageThumbnailer.generateThumbnails (absolute_paths, "");
     }
-}
-
-void MainWindow::on_setBrowser_itemActivated(QListWidgetItem *item)
-{
-    QList <Set> sets = m_database.sets();
-
-    int index = ui->setBrowser->currentRow();
-
-    QString path = sets.at(index).path();
-
-    QFileInfo file_info ( path );
-
-    if (file_info.isDir())
-    {
-        importCapturesFromDir( path );
-        loadThumbnailsFromCaptures();
-    } else
-    {
-        if (QFileInfo(path).absolutePath() != QFileInfo(m_currentPath).absolutePath())
-        {
-            importCapturesFromDir( file_info.absolutePath() );
-            loadThumbnailsFromCaptures();
-        }
-
-        loadImage( path );
-    }
-
-    ui->mainStackedWidget->setCurrentWidget(ui->mainStackedThumbnailPage);
 }
 
 void MainWindow::on_actionAlbums_triggered()

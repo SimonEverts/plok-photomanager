@@ -49,6 +49,8 @@ public slots:
 
     void currentImageChanged( int currentIndex );
 
+    void currentSetChanged( void );
+
 protected slots:
     void on_fileBrowserTreeView_activated ( const QModelIndex & index );
 
@@ -67,8 +69,6 @@ private slots:
     void on_actionDelete_triggered();
 
     void on_actionCreate_set_triggered();
-
-    void on_setBrowser_itemActivated(QListWidgetItem *item);
 
     void on_actionFiles_triggered();
 

@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     image/thumbnailcache.cpp \
     worker/workthread.cpp \
     gui/imageprovider_qmlwrapper.cpp \
-    model/picture.cpp
+    model/picture.cpp \
+    gui/setviewmodelitem.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/imageview.h \
@@ -45,14 +46,16 @@ HEADERS  += gui/mainwindow.h \
     image/thumbnailcache.h \
     worker/workthread.h \
     gui/imageprovider_qmlwrapper.h \
-    model/picture.h
+    model/picture.h \
+    gui/setviewmodelitem.h
 
 FORMS    += gui/mainwindow.ui
 
 OTHER_FILES += \
     gui/thumbnailView.qml \
     gui/thumbnailNavigator.qml \
-    gui/ThumbnailDelegate.qml
+    gui/ThumbnailDelegate.qml \
+    gui/setview.qml
 
 RESOURCES += \
     gui/gui.qrc \
