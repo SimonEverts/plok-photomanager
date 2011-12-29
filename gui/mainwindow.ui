@@ -36,7 +36,7 @@
            </property>
            <property name="source">
             <url>
-             <string>file:///home/simon/projects/plok-photomanager/plok-photomanager/gui/setview.qml</string>
+             <string>qrc:/standard/setview.qml</string>
             </url>
            </property>
           </widget>

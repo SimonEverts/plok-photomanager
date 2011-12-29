@@ -3,5 +3,6 @@
         <file>thumbnailNavigator.qml</file>
         <file>thumbnailView.qml</file>
         <file>ThumbnailDelegate.qml</file>
+        <file>setview.qml</file>
     </qresource>
 </RCC>
