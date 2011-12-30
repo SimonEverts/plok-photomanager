@@ -3,6 +3,7 @@
 
 #include <QDeclarativeImageProvider>
 #include <QImage>
+#include <QMutex>
 
 #include "image/imageprovider.h"
 
@@ -12,14 +13,18 @@ public:
     explicit ImageProvider_qmlwrapper(QObject *parent = 0);
     virtual ~ImageProvider_qmlwrapper (void);
 
-    void setImageProvider (ImageProvider* imageProvider) {
-        m_imageProvider = imageProvider;
-    }
-
     QImage requestImage ( const QString& id, QSize* size, const QSize& requestedSize );
 
+    void setCurrentImage (QImage image) {
+        m_currentImage = image;
+    }
+
 private:
-    ImageProvider* m_imageProvider;
+    QMutex m_mutex;
+
+    QImage m_currentImage;
+
+    ImageProvider m_imageProvider;
 };
 
 #endif // IMAGEPROVIDER_QMLWRAPPER_H

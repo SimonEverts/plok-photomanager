@@ -22,6 +22,8 @@ private:
 
 void ImageLoader_raw_p::openImage (QString imagePath)
 {
+    m_rawProcessor.recycle();
+
     m_rawProcessor.open_file( imagePath.toAscii() );
 }
 
@@ -126,6 +128,7 @@ QMap <QString, QVariant> ImageLoader_raw_p::loadInfo (void)
             QString::number(m_rawProcessor.imgdata.color.cam_mul[1]) + " " +
             QString::number(m_rawProcessor.imgdata.color.cam_mul[2]) + " " +
             QString::number(m_rawProcessor.imgdata.color.cam_mul[3]);
+    info["lens"] = "todo";
 
     return info;
 }

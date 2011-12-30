@@ -15,6 +15,8 @@
 #include "database/database.h"
 #include "worker/workthread.h"
 
+#include "gui/imageprovider_qmlwrapper.h"
+
 // Qt includes
 #include <QMainWindow>
 #include <QGraphicsScene>
@@ -96,7 +98,9 @@ private:
     QFileSystemModel* m_fileSystemModel;
 
     ImageUploader m_imageUploader;
+
     ImageProvider m_imageProvider;
+    ImageProvider_qmlwrapper m_qmlImageProvider;
 
     // TODO rename to imageThumbnailer
     Thumbnailer m_imageThumbnailer;

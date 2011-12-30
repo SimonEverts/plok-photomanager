@@ -12,20 +12,25 @@ Rectangle {
 
         anchors.fill: parent
 
+        spacing: 4
+
         Column {
             id: imageFrame
             objectName: "imageFrame"
 
-            property variant infoMap: { 'iso_speed' : 0, 'aperture': 0, 'shutter' : 0, 'focal_len' : 0}
+            property variant infoMap
 
             width: parent.width;
-            height: parent.height - thumbnailNavigator.height - 15
+            height: parent.height - thumbnailNavigator.height
 
-            spacing: 4
+            spacing: 2
 
             Image {
                 width: parent.width
-                height: parent.height - info.height - 4
+                height: parent.height - info.height - info_text.height
+
+                cache: false
+                asynchronous: false
 
                 anchors.top: imageFrame.top
 
@@ -67,6 +72,37 @@ Rectangle {
                     text: imageFrame.infoMap.focal_len + 'mm'
                 }
             }
+
+            Row {
+                height: 13
+
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                spacing: 10
+
+                id: info_text
+
+                Text {
+                    font.pixelSize: 10
+
+                    text: '<b>Name: </b>' + thumbnailViewModel[thumbnailNavigator.currentIndex].name
+                }
+                Text {
+                    font.pixelSize: 10
+
+                    text: '<b>Camera: </b>' + imageFrame.infoMap.make + " " + imageFrame.infoMap.model
+                }
+                Text {
+                    font.pixelSize: 10
+
+                    text: '<b>Lens: </b>' + imageFrame.infoMap.lens
+                }
+                Text {
+                    font.pixelSize: 10
+
+                    text: '<b>Date: </b>' + imageFrame.infoMap.timestamp.toString()
+                }
+            }
         }
 
         ListView {
@@ -77,8 +113,6 @@ Rectangle {
 
             width: parent.width
             height: 130
-            anchors.top: imageFrame.bottom
-            //anchors.fill: parent
 
             orientation: ListView.Horizontal
 

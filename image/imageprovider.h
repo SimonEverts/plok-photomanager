@@ -22,14 +22,8 @@ public:
 
     QStringList supportedSuffixes (void);
 
-    void setCurrentImage (QImage image) {
-        m_currentImage = image;
-    }
-
 private:
     QList <ImageLoader*> m_imageLoaders;
-
-    QImage m_currentImage;
 };
 
 #endif // IMAGEPROVIDER_H

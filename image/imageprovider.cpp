@@ -31,15 +31,9 @@ QImage ImageProvider::requestThumbnail ( const QString& id, QSize* size, const Q
 {
     QImage thumb;
 
-    if (id == "current")
-        thumb = m_currentImage;
-
-    if (thumb.isNull())
-    {
-        // Check for cached thumnail
-        QString cached_name = QFileInfo (id).baseName();
-        thumb = ThumbnailCache::getCachedThumbnail(cached_name, "");
-    }
+    // Check for cached thumnail
+    QString cached_name = QFileInfo (id).baseName();
+    thumb = ThumbnailCache::getCachedThumbnail(cached_name, "");
 
     if (thumb.isNull())
     {

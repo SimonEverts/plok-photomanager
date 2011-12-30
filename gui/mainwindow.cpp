@@ -41,12 +41,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject* setView = ui->setView->rootObject()->findChild<QObject*> ("setView");
         connect( setView, SIGNAL(currentIndexChanged()), this, SLOT(currentSetChanged()), Qt::QueuedConnection);
 
-    ImageProvider_qmlwrapper* image_provider_qml = new ImageProvider_qmlwrapper(this);
-    image_provider_qml->setImageProvider(&m_imageProvider);
-
-    ui->thumbnailNavigator->engine()->addImageProvider(QLatin1String("imageprovider"), image_provider_qml);
-    ui->thumbnailView->engine()->addImageProvider(QLatin1String("imageprovider"), image_provider_qml);
-
+    ui->thumbnailNavigator->engine()->addImageProvider(QLatin1String("imageprovider"), &m_qmlImageProvider);
+    ui->thumbnailView->engine()->addImageProvider(QLatin1String("imageprovider"), &m_qmlImageProvider);
 
     if (m_thumbnailNavigator)
         connect( m_thumbnailNavigator, SIGNAL(loadNewImage(int)), this, SLOT(currentImageChanged(int)), Qt::QueuedConnection);
@@ -299,14 +295,14 @@ void MainWindow::updateImage (void)
         {
             qDebug() << "updateImage: "  << m_currentImage;
 
-            m_imageProvider.setCurrentImage (pictures.at(i).image());
+            m_qmlImageProvider.setCurrentImage (pictures.at(i).image());
 
-            blockSignals( true );
+            image_view->blockSignals( true );
 
             if (image_view)
                 image_view->setProperty("source", QString("image://imageprovider/") + "current");
 
-            blockSignals( false );
+            image_view->blockSignals( false );
 
             ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
         }
@@ -327,15 +323,19 @@ void MainWindow::currentImageChanged( int currentIndex )
     m_currentPath = QUrl (m_thumbnailModel.at( currentIndex )->path()).toString(QUrl::RemoveScheme);
     m_currentImage = m_thumbnailModel.at( currentIndex )->name();
 
-    blockSignals( true );
-
     if (m_thumbnailView)
+    {
+        m_thumbnailView->blockSignals(true);
         m_thumbnailView->setProperty("currentIndex", currentIndex);
+        m_thumbnailView->blockSignals(false);
+    }
 
     if (m_thumbnailNavigator)
+    {
+        m_thumbnailNavigator->blockSignals(true);
         m_thumbnailNavigator->setProperty("currentIndex", currentIndex);
-
-    blockSignals( false );
+        m_thumbnailNavigator->blockSignals(false);
+    }
 
     ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
 
@@ -353,19 +353,22 @@ void MainWindow::currentSetChanged( void )
 
     QFileInfo file_info ( path );
 
-    if (file_info.isDir())
+    if (file_info.exists())
     {
-        importCapturesFromDir( path );
-        loadThumbnailsFromCaptures();
-    } else
-    {
-        if (QFileInfo(path).absolutePath() != QFileInfo(m_currentPath).absolutePath())
+        if (file_info.isDir())
         {
-            importCapturesFromDir( file_info.absolutePath() );
+            importCapturesFromDir( path );
             loadThumbnailsFromCaptures();
-        }
+        } else
+        {
+            if (QFileInfo(path).absolutePath() != QFileInfo(m_currentPath).absolutePath())
+            {
+                importCapturesFromDir( file_info.absolutePath() );
+                loadThumbnailsFromCaptures();
+            }
 
-        loadImage( path );
+            loadImage( path );
+        }
     }
 
     ui->mainStackedWidget->setCurrentWidget(ui->mainStackedThumbnailPage);
