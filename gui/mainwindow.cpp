@@ -110,6 +110,10 @@ void MainWindow::blockSignals (bool block)
 
     if (m_thumbnailNavigator)
         m_thumbnailNavigator->blockSignals(block);
+
+    QObject* image_view = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("previewImage");
+    if (image_view)
+        image_view->blockSignals (block);
 }
 
 void MainWindow::loadGUI (void)
@@ -314,15 +318,11 @@ void MainWindow::updateImage (void)
         {
             qDebug() << "updateImage: "  << m_currentImage;
 
-            if (m_qmlViewImageProvider)
-                m_qmlViewImageProvider->setCurrentImage (pictures.at(i).image());
-
-            image_view->blockSignals( true );
+            if (m_qmlNavImageProvider)
+                m_qmlNavImageProvider->setCurrentImage (pictures.at(i).image());
 
             if (image_view)
                 image_view->setProperty("source", QString("image://imageprovider/") + "current");
-
-            image_view->blockSignals( false );
         }
     }
 }
