@@ -108,7 +108,8 @@ private:
     ImageUploader m_imageUploader;
 
     ImageProvider m_imageProvider;
-    ImageProvider_qmlwrapper m_qmlImageProvider;
+    ImageProvider_qmlwrapper* m_qmlNavImageProvider;
+    ImageProvider_qmlwrapper* m_qmlViewImageProvider;
 
     // TODO rename to imageThumbnailer
     Thumbnailer m_imageThumbnailer;

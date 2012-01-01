@@ -49,8 +49,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject* setViewList = ui->setView->rootObject()->findChild<QObject*> ("setViewList");
     connect( setViewList, SIGNAL(currentIndexChanged()), this, SLOT(currentSetChanged()), Qt::QueuedConnection);
 
-    ui->thumbnailNavigator->engine()->addImageProvider(QLatin1String("imageprovider"), &m_qmlImageProvider);
-    ui->thumbnailView->engine()->addImageProvider(QLatin1String("imageprovider"), &m_qmlImageProvider);
+    m_qmlNavImageProvider = new ImageProvider_qmlwrapper();
+    m_qmlViewImageProvider = new ImageProvider_qmlwrapper();
+
+    ui->thumbnailNavigator->engine()->addImageProvider(QLatin1String("imageprovider"), m_qmlNavImageProvider);
+    ui->thumbnailView->engine()->addImageProvider(QLatin1String("imageprovider"), m_qmlViewImageProvider);
 
     if (m_thumbnailNavigator)
         connect( m_thumbnailNavigator, SIGNAL(loadNewImage(int)), this, SLOT(currentImageChanged(int)), Qt::QueuedConnection);
@@ -311,7 +314,8 @@ void MainWindow::updateImage (void)
         {
             qDebug() << "updateImage: "  << m_currentImage;
 
-            m_qmlImageProvider.setCurrentImage (pictures.at(i).image());
+            if (m_qmlViewImageProvider)
+                m_qmlViewImageProvider->setCurrentImage (pictures.at(i).image());
 
             image_view->blockSignals( true );
 
