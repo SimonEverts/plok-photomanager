@@ -12,6 +12,8 @@ public:
     Thumbnailer( ImageProvider* imageProvider );
 
     void generateThumbnails (QStringList photos, QString thumbnailPath);
+
+    void generateThumbnails (QString path, QString thumbnailPath);
 private:
 
     ImageProvider* m_imageProvider;

@@ -2,6 +2,8 @@
 import QtQuick 1.1
 
 Rectangle {
+    width: 100
+    height: 600
 
     Component {
         id: setViewDelegate
@@ -18,34 +20,97 @@ Rectangle {
                 id: setViewDelegate_mousearea
                 anchors.fill: parent
                 onClicked: {
-                    setView.currentIndex = index;
+                    setViewList.currentIndex = index;
                 }
             }
         }
     }
 
-    ListView {
-        width: parent.width
-
-        id: setView
-        keyNavigationWraps: false
-        highlightFollowsCurrentItem: true
-        interactive: true
-        objectName: "setView"
-
+    Column {
+        id: column1
         anchors.fill: parent
-        anchors.margins: 5
 
-        spacing: 5
+        ListView {
+            id: setViewList
+            objectName: "setViewList"
 
-        model: setViewModel
-        delegate: setViewDelegate
+            width: parent.width
+            height: parent.height - listButtons.height
 
-        highlight: Rectangle {
-            width: parent.width;
-            color: "lightsteelblue";
+            keyNavigationWraps: false
+            highlightFollowsCurrentItem: true
+            interactive: true
+
+
+            //anchors.fill: parent
+            anchors.margins: 5
+
+            spacing: 5
+
+            model: setViewModel
+            delegate: setViewDelegate
+
+            highlight: Rectangle {
+                width: parent.width;
+                color: "lightsteelblue";
+            }
+
+            focus: true
         }
 
-        focus: true
+        Row {
+            id: listButtons
+            objectName: "listButtons"
+
+            signal createSet;
+            signal deleteSet;
+
+            spacing: 4
+
+            Rectangle {
+                width: 22
+                height: 22
+
+                border.color: "lightsteelblue"
+                border.width: 1
+
+                Image {
+                    anchors.fill: parent
+
+                    source: "icons/22x22/list-add.png"
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onClicked: {
+                        listButtons.createSet();
+                        console.log ("createSet");
+                    }
+                }
+            }
+            Rectangle {
+                width: 22
+                height: 22
+
+                border.color: "lightsteelblue"
+                border.width: 1
+
+                Image {
+                    anchors.fill: parent
+
+                    source: "icons/22x22/list-remove.png"
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onClicked: {
+                        console.log ("createSet");
+                        listButtons.deleteSet();
+                    }
+                }
+            }
+        }
     }
 }

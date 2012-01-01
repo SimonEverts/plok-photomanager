@@ -2,6 +2,7 @@
 #define DATABASE_H
 
 #include <QString>
+#include <QSqlQuery>
 
 #include "model/set.h"
 
@@ -15,9 +16,13 @@ public:
 
     void initialize (void);
 
-    void addSet (Set set);
-    QList <Set> sets ();
+    void open (void);
+    void close (void);
 
+    QString formatString (QString string);
+
+    // TODO encapsulate QSqlQuery?
+    QSqlQuery exec (QString query);
 private:
     QSqlDatabase* m_database;
 };

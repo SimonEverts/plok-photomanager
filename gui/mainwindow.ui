@@ -226,8 +226,6 @@
    <addaction name="actionSplit"/>
    <addaction name="separator"/>
    <addaction name="actionDelete"/>
-   <addaction name="separator"/>
-   <addaction name="actionCreate_set"/>
   </widget>
   <action name="actionUpload_images">
    <property name="text">
@@ -333,6 +331,11 @@
   <action name="actionCreate_set">
    <property name="text">
     <string>Create set</string>
+   </property>
+  </action>
+  <action name="actionDelete_set">
+   <property name="text">
+    <string>Delete_set</string>
    </property>
   </action>
  </widget>

@@ -57,8 +57,6 @@ QString Capture::previewPhoto (void)
 {
     QString result;
 
-    qDebug() << m_pictures.size();
-
     // Check if one of the foto's is more suited for a thumbnail
     QList<QString>::iterator it;
     for (it=m_pictures.begin(); it != m_pictures.end(); it++)

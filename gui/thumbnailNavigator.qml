@@ -18,7 +18,16 @@ Rectangle {
             id: imageFrame
             objectName: "imageFrame"
 
-            property variant infoMap
+            property variant infoMap : {
+                "iso_speed" : 0,
+                        "aperture" : 0,
+                        "shutter" : 0,
+                        "focal_len" : 0,
+                        "make" : "unknown",
+                        "model" : "unknown",
+                        "lens" : "unknown",
+                        "timestamp" : "unknown"
+            }
 
             width: parent.width;
             height: parent.height - thumbnailNavigator.height

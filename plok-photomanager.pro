@@ -28,7 +28,10 @@ SOURCES += main.cpp\
     worker/workthread.cpp \
     gui/imageprovider_qmlwrapper.cpp \
     model/picture.cpp \
-    gui/setviewmodelitem.cpp
+    gui/setviewmodelitem.cpp \
+    model/setmanager.cpp \
+    model/setdao.cpp \
+    gui/createsetdialog.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/imageview.h \
@@ -47,9 +50,13 @@ HEADERS  += gui/mainwindow.h \
     worker/workthread.h \
     gui/imageprovider_qmlwrapper.h \
     model/picture.h \
-    gui/setviewmodelitem.h
+    gui/setviewmodelitem.h \
+    model/setmanager.h \
+    model/setdao.h \
+    gui/createsetdialog.h
 
-FORMS    += gui/mainwindow.ui
+FORMS    += gui/mainwindow.ui \
+    gui/createsetdialog.ui
 
 OTHER_FILES += \
     gui/thumbnailView.qml \

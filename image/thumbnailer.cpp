@@ -36,3 +36,15 @@ void Thumbnailer::generateThumbnails (QStringList photos, QString thumbnailPath)
         thumb.save( thumbnail_path + file_info.baseName() + ".jpg");
     }
 }
+
+void Thumbnailer::generateThumbnails (QString path, QString thumbnailPath)
+{
+    // TODO generate list for now, this will be part of database in the future
+    QDir dir (path);
+    QStringList dir_entry_list = dir.entryList( m_imageProvider->supportedSuffixes() );
+    QStringList absolute_paths;
+    for (int i=0; i<dir_entry_list.size(); i++)
+        absolute_paths.push_back( dir.absolutePath() + "/" + dir_entry_list.at(i) );
+
+    generateThumbnails( absolute_paths, thumbnailPath);
+}

@@ -45,9 +45,7 @@ void Database::initialize()
                             "path VARCHAR(255));",
                             *m_database);
 
-
-
-    if (!create_table.exec())
+    if (create_table.lastError().isValid())
     {
         qDebug() << m_database->lastError();
         qDebug() << create_table.lastError();
@@ -56,64 +54,36 @@ void Database::initialize()
     m_database->close();
 }
 
-void Database::addSet (Set set)
+void Database::open (void)
 {
     if (!m_database->open())
         qDebug () << m_database->lastError();
+}
 
-    QSqlDriver* driver = m_database->driver();
-
-    QString query_add_set ("INSERT INTO sets (name, path) VALUES (");
-
-    QSqlField path_field ("name", QVariant::String);
-    path_field.setValue( set.path() );
-
-    query_add_set += "'" + set.name() + "',";
-    query_add_set += driver->formatValue(path_field) +");";
-
-        qDebug () << query_add_set;
-
-    QSqlQuery add_set (query_add_set, *m_database);
-
-    // TODO use QSqlRecord to format the path
-
-    if (add_set.lastError().isValid())
-    {
-        qDebug() << m_database->lastError();
-        qDebug() << add_set.lastError();
-    }
-
+void Database::close (void)
+{
     m_database->close();
 }
 
-QList <Set> Database::sets ()
+QString Database::formatString (QString string)
 {
-    if (!m_database->open())
-        qDebug () << m_database->lastError();
+    QSqlDriver* driver = m_database->driver();
 
-    QString query_add_set ("SELECT name,path FROM sets;");
+    QSqlField field ("", QVariant::String);
+    field.setValue( string );
 
+    return driver->formatValue( field );
+}
 
-    QSqlQuery add_set (query_add_set, *m_database);
+QSqlQuery Database::exec (QString query)
+{
+    QSqlQuery qsql_query (query, *m_database);
 
-    // TODO use QSqlRecord to format the path
-
-    if (!add_set.exec())
+    if (qsql_query.lastError().isValid())
     {
         qDebug() << m_database->lastError();
-        qDebug() << add_set.lastError();
+        qDebug() << qsql_query.lastError();
     }
 
-    QSqlRecord record = add_set.record();
-    int name_index = record.indexOf ("name");
-    int path_index = record.indexOf ("path");
-
-    QList <Set> result;
-
-    while (add_set.next())
-        result.push_back( Set (add_set.value(name_index).toString(), add_set.value(path_index).toString() ));
-
-    m_database->close();
-
-    return result;
+    return qsql_query;
 }

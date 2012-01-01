@@ -12,10 +12,14 @@
 
 #include "model/capture.h"
 
+#include "model/setdao.h"
+//#include "model/setmanager.h"
+
 #include "database/database.h"
 #include "worker/workthread.h"
 
 #include "gui/imageprovider_qmlwrapper.h"
+#include "gui/createsetdialog.h"
 
 // Qt includes
 #include <QMainWindow>
@@ -57,6 +61,7 @@ protected slots:
     void on_fileBrowserTreeView_activated ( const QModelIndex & index );
 
 private slots:
+    void loadGUI (void);
 
     void on_actionUpload_images_triggered( bool checked );
 
@@ -76,8 +81,9 @@ private slots:
 
     void on_actionAlbums_triggered();
 
+    void on_actionDelete_set_triggered();
+
 private:
-    void loadGUI (void);
 
     void loadThumbnailsFromDir (QString dirName);
     void loadThumbnailsFromCaptures (void);
@@ -89,6 +95,8 @@ private:
     Ui::MainWindow *ui;
     QObject* m_thumbnailNavigator;
     QObject* m_thumbnailView;
+
+    CreateSetDialog m_createSetDialog;
 
     QActionGroup* m_sourceActionGroup;
     QActionGroup* m_imageViewActionGroup;
@@ -109,6 +117,9 @@ private:
     QString m_currentImage;
 
     Database m_database;
+
+    SetDao m_setDao;
+    //    SetManager m_setManager;
 
     QList <QSharedPointer< ThumbnailModelItem > > m_thumbnailModel;
 
