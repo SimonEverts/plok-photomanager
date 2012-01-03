@@ -20,6 +20,7 @@
 
 #include "gui/imageprovider_qmlwrapper.h"
 #include "gui/createsetdialog.h"
+#include "gui/imageeditor.h"
 
 // Qt includes
 #include <QMainWindow>
@@ -57,6 +58,9 @@ public slots:
 
     void currentSetChanged( void );
 
+    void setBrowserPage (void);
+    void setPreviewPage (void);
+
 protected slots:
     void on_fileBrowserTreeView_activated ( const QModelIndex & index );
 
@@ -83,6 +87,8 @@ private slots:
 
     void on_actionDelete_set_triggered();
 
+    void on_actionEdit_triggered();
+
 private:
 
     void loadThumbnailsFromDir (QString dirName);
@@ -97,6 +103,7 @@ private:
     QObject* m_thumbnailView;
 
     CreateSetDialog m_createSetDialog;
+    ImageEditor m_imageEditor;
 
     QActionGroup* m_sourceActionGroup;
     QActionGroup* m_imageViewActionGroup;
@@ -114,8 +121,10 @@ private:
     // TODO rename to imageThumbnailer
     Thumbnailer m_imageThumbnailer;
 
-    QString m_currentPath;
-    QString m_currentImage;
+    Capture m_currentCapture;
+
+    //QString m_currentPath;
+    //QString m_currentImage;
 
     Database m_database;
 

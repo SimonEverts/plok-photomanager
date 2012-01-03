@@ -11,6 +11,8 @@ public:
 
     void setImage (QImage image);
 
+    QImage scaledImage (void) {return m_scaled_image;}
+
 protected:
     void paintEvent(QPaintEvent* event);
     void resizeEvent(QResizeEvent* event);

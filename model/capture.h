@@ -14,17 +14,17 @@ public:
     virtual ~Capture();
 
     void setName (QString name);
-    QString name (void);
+    QString name (void) const;
 
     void setCaptureTime (QDateTime dateTime);
-    QDateTime captureTime (void);
+    QDateTime captureTime (void) const;
 
     void addPhoto (QString path);
 
     void setPhotos (QList<QString> photos);
     QList <QString> photoList (void);
 
-    int photoCount (void);
+    int photoCount (void) const;
 
     QString previewPhoto (void);
 

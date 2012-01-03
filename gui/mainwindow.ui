@@ -220,12 +220,12 @@
    <addaction name="actionThumbnails"/>
    <addaction name="actionPreview"/>
    <addaction name="separator"/>
-   <addaction name="actionInfo"/>
-   <addaction name="separator"/>
    <addaction name="actionCombine"/>
    <addaction name="actionSplit"/>
    <addaction name="separator"/>
    <addaction name="actionDelete"/>
+   <addaction name="separator"/>
+   <addaction name="actionEdit"/>
   </widget>
   <action name="actionUpload_images">
    <property name="text">
@@ -289,18 +289,6 @@
     <string>Preview</string>
    </property>
   </action>
-  <action name="actionInfo">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../icons.qrc">
-     <normaloff>:/standard/icons/22x22/view-list-details.png</normaloff>:/standard/icons/22x22/view-list-details.png</iconset>
-   </property>
-   <property name="text">
-    <string>Info</string>
-   </property>
-  </action>
   <action name="actionCombine">
    <property name="icon">
     <iconset resource="../icons.qrc">
@@ -336,6 +324,18 @@
   <action name="actionDelete_set">
    <property name="text">
     <string>Delete_set</string>
+   </property>
+  </action>
+  <action name="actionEdit">
+   <property name="icon">
+    <iconset resource="../icons.qrc">
+     <normaloff>:/standard/icons/22x22/edit-guides.png</normaloff>:/standard/icons/22x22/edit-guides.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edit</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit</string>
    </property>
   </action>
  </widget>

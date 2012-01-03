@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ImageEditor</class>
+ <widget class="QWidget" name="ImageEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>956</width>
+    <height>625</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Image editor</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../icons.qrc">
+    <normaloff>:/standard/icons/22x22/edit-guides.png</normaloff>:/standard/icons/22x22/edit-guides.png</iconset>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QListWidget" name="menu">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>150</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>48</width>
+       <height>48</height>
+      </size>
+     </property>
+     <property name="spacing">
+      <number>4</number>
+     </property>
+     <property name="currentRow">
+      <number>-1</number>
+     </property>
+     <item>
+      <property name="text">
+       <string>Capture</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../icons.qrc">
+        <normaloff>:/standard/icons/22x22/edit-guides.png</normaloff>:/standard/icons/22x22/edit-guides.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Adjust gamma</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../icons.qrc">
+        <normaloff>:/standard/icons/22x22/edit-guides.png</normaloff>:/standard/icons/22x22/edit-guides.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Crop</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../icons.qrc">
+        <normaloff>:/standard/icons/22x22/edit-guides.png</normaloff>:/standard/icons/22x22/edit-guides.png</iconset>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item>
+    <widget class="ImageView" name="imageView" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="editStack">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <widget class="QWidget" name="page">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Image developer</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QComboBox" name="imageDeveloper">
+            <item>
+             <property name="text">
+              <string>RAW camera</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>RAW manual</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>543</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page_2"/>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ImageView</class>
+   <extends>QWidget</extends>
+   <header>gui/imageview.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>

@@ -3,6 +3,8 @@
 #include <QPainter>
 #include <QPaintEngine>
 
+#include <QDebug>
+
 ImageView::ImageView(QWidget *parent) :
     QWidget(parent)
 {

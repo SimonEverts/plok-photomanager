@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     gui/setviewmodelitem.cpp \
     model/setmanager.cpp \
     model/setdao.cpp \
-    gui/createsetdialog.cpp
+    gui/createsetdialog.cpp \
+    gui/imageeditor.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/imageview.h \
@@ -53,10 +54,12 @@ HEADERS  += gui/mainwindow.h \
     gui/setviewmodelitem.h \
     model/setmanager.h \
     model/setdao.h \
-    gui/createsetdialog.h
+    gui/createsetdialog.h \
+    gui/imageeditor.h
 
 FORMS    += gui/mainwindow.ui \
-    gui/createsetdialog.ui
+    gui/createsetdialog.ui \
+    gui/imageeditor.ui
 
 OTHER_FILES += \
     gui/thumbnailView.qml \

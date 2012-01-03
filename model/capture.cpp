@@ -18,7 +18,7 @@ void Capture::setName (QString name)
     m_name = name;
 }
 
-QString Capture::name (void)
+QString Capture::name (void) const
 {
     return m_name;
 }
@@ -28,7 +28,7 @@ void Capture::setCaptureTime (QDateTime captureTime)
     m_captureTime = captureTime;
 }
 
-QDateTime Capture::captureTime (void)
+QDateTime Capture::captureTime (void) const
 {
     return m_captureTime;
 }
@@ -48,7 +48,7 @@ QList <QString> Capture::photoList (void)
     return m_pictures;
 }
 
-int Capture::photoCount (void)
+int Capture::photoCount (void) const
 {
     return m_pictures.size();
 }
