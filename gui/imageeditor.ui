@@ -129,6 +129,104 @@
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Histogram:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="HistogramView" name="histogramView" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>100</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Lut:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="LutView" name="lutView" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>100</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="1" column="1">
+          <widget class="QSpinBox" name="spinBox">
+           <property name="minimum">
+            <number>-255</number>
+           </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Contrast:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Brightness:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QSlider" name="brightnessSlider">
+           <property name="minimum">
+            <number>-255</number>
+           </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QSlider" name="contrastSlider">
+           <property name="minimum">
+            <number>-200</number>
+           </property>
+           <property name="maximum">
+            <number>200</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QSpinBox" name="spinBox_2">
+           <property name="minimum">
+            <number>-200</number>
+           </property>
+           <property name="maximum">
+            <number>200</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -155,9 +253,86 @@
    <header>gui/imageview.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>HistogramView</class>
+   <extends>QWidget</extends>
+   <header>gui/histogramview.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LutView</class>
+   <extends>QWidget</extends>
+   <header>gui/lutview.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="../icons.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>brightnessSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>857</x>
+     <y>346</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>903</x>
+     <y>345</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>brightnessSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>900</x>
+     <y>354</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>871</x>
+     <y>354</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>contrastSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_2</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>870</x>
+     <y>384</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>912</x>
+     <y>384</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>contrastSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>905</x>
+     <y>395</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>848</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

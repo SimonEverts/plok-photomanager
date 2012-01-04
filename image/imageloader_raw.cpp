@@ -71,11 +71,11 @@ QImage ImageLoader_raw_p::loadMaster ()
     // Use camera whitebalance
     m_rawProcessor.imgdata.params.use_camera_wb = 1;
 
-//    m_rawProcessor.imgdata.params.no_auto_bright = 0;
+    m_rawProcessor.imgdata.params.no_auto_bright = 1;
 //    m_rawProcessor.imgdata.params.bright = 1;
 
-    //    m_rawProcessor.imgdata.params.gamm[0] = 1.f / 2.4;  // sRGB
-    //    m_rawProcessor.imgdata.params.gamm[1] = 12.92;      // sRGB
+        m_rawProcessor.imgdata.params.gamm[0] = 1.f / 2.2;  // sRGB
+        m_rawProcessor.imgdata.params.gamm[1] = 12.92;      // sRGB
 
     m_rawProcessor.imgdata.params.output_color = 1; // sRGB
 

@@ -32,7 +32,10 @@ SOURCES += main.cpp\
     model/setmanager.cpp \
     model/setdao.cpp \
     gui/createsetdialog.cpp \
-    gui/imageeditor.cpp
+    gui/imageeditor.cpp \
+    image/imageprocessing.cpp \
+    gui/histogramview.cpp \
+    gui/lutview.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/imageview.h \
@@ -55,7 +58,10 @@ HEADERS  += gui/mainwindow.h \
     model/setmanager.h \
     model/setdao.h \
     gui/createsetdialog.h \
-    gui/imageeditor.h
+    gui/imageeditor.h \
+    image/imageprocessing.h \
+    gui/histogramview.h \
+    gui/lutview.h
 
 FORMS    += gui/mainwindow.ui \
     gui/createsetdialog.ui \

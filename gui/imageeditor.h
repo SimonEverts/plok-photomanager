@@ -25,9 +25,12 @@ public:
 
 private slots:
 
-    void updateHistogram ();
+    void updateHistogram ( QImage image );
+    void updateLut ( void );
 
     void on_imageDeveloper_currentIndexChanged(const int &currentIndex);
+
+    void on_brightnessSlider_valueChanged(int value);
 
 private:
     Ui::ImageEditor *ui;
