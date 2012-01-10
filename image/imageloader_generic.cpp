@@ -15,9 +15,9 @@ public:
 
     void openImage (QString imagePath);
 
-    QImage loadThumbnail (void);
-    QImage loadPreview (void);
-    QImage loadMaster (void);
+    Image loadThumbnail (void);
+    Image loadPreview (void);
+    Image loadMaster (void);
 private:
     QImageReader m_imageReader;
 
@@ -30,10 +30,10 @@ void ImageLoader_generic_p::openImage (QString imagePath)
     m_imageReader.setFileName( imagePath );
 }
 
-QImage ImageLoader_generic_p::loadThumbnail ()
+Image ImageLoader_generic_p::loadThumbnail ()
 {
     if (!m_imageReader.canRead())
-        return QImage();
+        return Image();
 
     m_imageReader.setQuality(25);
 
@@ -53,7 +53,7 @@ QImage ImageLoader_generic_p::loadThumbnail ()
     return image;
 }
 
-QImage ImageLoader_generic_p::loadPreview ()
+Image ImageLoader_generic_p::loadPreview ()
 {
     if (!m_imageReader.canRead())
         return QImage();
@@ -69,9 +69,9 @@ QImage ImageLoader_generic_p::loadPreview ()
     return image;
 }
 
-QImage ImageLoader_generic_p::loadMaster ()
+Image ImageLoader_generic_p::loadMaster ()
 {
-    return QImage();
+    return Image();
 }
 
 ImageLoader_generic::ImageLoader_generic (QObject *parent)
@@ -89,17 +89,17 @@ void ImageLoader_generic::openImage (QString imagePath)
     p->openImage(imagePath);
 }
 
-QImage ImageLoader_generic::loadThumbnail()
+Image ImageLoader_generic::loadThumbnail()
 {
     return p->loadThumbnail();
 }
 
-QImage ImageLoader_generic::loadPreview()
+Image ImageLoader_generic::loadPreview()
 {
     return p->loadPreview();
 }
 
-QImage ImageLoader_generic::loadMaster()
+Image ImageLoader_generic::loadMaster()
 {
     return p->loadMaster();
 }

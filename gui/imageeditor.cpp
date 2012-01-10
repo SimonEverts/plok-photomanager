@@ -7,6 +7,8 @@
 #include <QFileInfo>
 #include <QDebug>
 
+#include <cmath>
+
 ImageEditor::ImageEditor(ImageProvider* imageProvider, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ImageEditor),
@@ -31,6 +33,9 @@ void ImageEditor::setCapture(Capture capture)
 
     QStringList pictures = m_capture.photoList();
 
+    if (!pictures.size())
+        return;
+
     // TODO just select raw for now
     for (int i=0; i<pictures.size(); i++)
     {
@@ -41,84 +46,145 @@ void ImageEditor::setCapture(Capture capture)
             m_currentPicture = pictures.at(i);
     }
 
-    QImage image;
+    qDebug () << "setCapture:";
+
+    Image image;
     if (ui->imageDeveloper->currentIndex() == 0)
         image = m_imageProvider->loadPreview (m_currentPicture);
     if (ui->imageDeveloper->currentIndex() == 1)
         image = m_imageProvider->loadMaster (m_currentPicture);
 
-    ui->imageView->setImage( image );
+     qDebug () << "assign m_workImage:";
 
-    m_workImage = ui->imageView->scaledImage();
+    m_workImage = image;
 
     updateLut( );
+
+    qDebug () << "imageView->setImage:";
+
+    ui->imageView->setImage( m_workImage.toQImage() );
+
+    // = ui->imageView->scaledImage();
+
+
 }
 
 void ImageEditor::on_imageDeveloper_currentIndexChanged(const int &currentIndex)
 {
-    QImage image;
+    qDebug () << "currentIndexChanged:";
+
+
+    Image image;
+
+    qDebug () << "imageProvider:";
 
     if (currentIndex == 0)
         image = m_imageProvider->loadPreview (m_currentPicture);
     if (currentIndex == 1)
         image = m_imageProvider->loadMaster (m_currentPicture);
 
-    ui->imageView->setImage( image );
+    qDebug () << "assign m_workImage:";
 
-    m_workImage = ui->imageView->scaledImage();
+    m_workImage = image;
 
     updateLut ();
+
+//    qDebug () << "imageView->setImage:";
+
+
+//    ui->imageView->setImage( image.toQImage() );
+
+    //m_workImage = ui->imageView->scaledImage();
 }
 
-void ImageEditor::updateHistogram ( QImage image )
+void ImageEditor::updateHistogram ( Image image )
 {
     Histogram histogram;
     memset (&histogram, 0, sizeof(Histogram));
 
-    ImageProcessing::createHistogram(&image, histogram);
+    if (image.depth() == 24)
+        ImageProcessing::createHistogram_8u(&image, histogram);
+    if (image.depth() == 48)
+        ImageProcessing::createHistogram_16u(&image, histogram);
 
     ui->histogramView->setHistogram( histogram );
 
-    for( int i=0; i<255; i++)
-    {
-        qDebug() << histogram.red[i] << histogram.green[i] << histogram.blue[i];
-    }
+//    for( int i=0; i<255; i++)
+//    {
+//        qDebug() << histogram.red[i] << histogram.green[i] << histogram.blue[i];
+//    }
 }
 
 void ImageEditor::updateLut (void)
 {
+    qDebug () << "updateLut:";
+
     Lut lut;
-    //memset (&lut, 0, sizeof(Lut));
+    memset (&lut, 0, sizeof(Lut));
 
     float contrast = 1 + float(ui->contrastSlider->value()) / 100;
     int brightness = ui->brightnessSlider->value();
 
-    // Generate lut
-    for (int i=0; i<255; i++)
+    if (m_workImage.depth() == 24 || m_workImage.depth() == 32)
     {
-        int value = (i*contrast) + brightness;
-        if (value < 0)
-            value = 0;
-        if (value > 255)
-            value = 255;
+        for (int i=0; i<0x100; i++)
+        {
+            float gamma = 255.f * (pow (1.055 * (float(i)/255), 1/2.2) - 0.055);
 
-        lut.red[i] = value;
-        lut.green[i] = value;
-        lut.blue[i] = value;
+            int value = (contrast*gamma + brightness);
+
+            if (value < 0)
+                value = 0;
+            if (value > 0xFF)
+                value = 0xFF;
+
+            lut.red[i] = value;
+            lut.green[i] = value;
+            lut.blue[i] = value;
+        }
+    }
+
+    if (m_workImage.depth() == 48)
+    {
+        // Generate lut
+        for (int i=0; i<0x10000; i++)
+        {
+            float gamma = 65535.f * (pow (1.055 * (float(i)/65535), 1/2.2) - 0.055);
+
+            int value = (contrast*gamma + brightness);
+
+            if (value < 0)
+                value = 0;
+            if (value > 0xFFFF)
+                value = 0xFFFF;
+
+            lut.red[i] = value >> 8;
+            lut.green[i] = value >> 8;
+            lut.blue[i] = value >> 8;
+        }
     }
 
     ui->lutView->setLut( lut );
 
-    for( int i=0; i<255; i++)
-    {
-        qDebug() << lut.red[i] << lut.green[i] << lut.blue[i];
-    }
+//    for( int i=0; i<max_value; i++)
+//    {
+//        qDebug() << lut.red[i] << lut.green[i] << lut.blue[i];
+//    }
 
-    QImage dest_image (m_workImage.size(), m_workImage.format());
+    Image dest_image (m_workImage.size(), m_workImage.channels(), m_workImage.size().width() * m_workImage.channels(), 24);
 
-    ImageProcessing::applyLut (&m_workImage, &dest_image, lut);
+    qDebug () << "applyLut:";
 
-    ui->imageView->setImage(dest_image);
+    if (m_workImage.depth() == 24)
+        ImageProcessing::applyLut_8u (&m_workImage, &dest_image, lut);
+    if (m_workImage.depth() == 48)
+        ImageProcessing::applyLut_16u (&m_workImage, &dest_image, lut);
+
+    qDebug () << "updateLut -> imageView->setImage:";
+
+    ui->imageView->setImage(dest_image.toQImage());
+
+    qDebug () << "updateHistogram:";
 
     updateHistogram( dest_image );
 }

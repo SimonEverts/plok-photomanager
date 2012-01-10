@@ -327,7 +327,7 @@ void MainWindow::updateImage (void)
             qDebug() << "updateImage: "  << m_currentCapture.name();
 
             if (m_qmlNavImageProvider)
-                m_qmlNavImageProvider->setCurrentImage (pictures.at(i).image());
+                m_qmlNavImageProvider->setCurrentImage (pictures.at(i).image().toQImage());
 
             if (image_view)
                 image_view->setProperty("source", QString("image://imageprovider/") + "current");

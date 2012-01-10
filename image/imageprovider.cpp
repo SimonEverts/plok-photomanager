@@ -44,7 +44,7 @@ QImage ImageProvider::requestThumbnail ( const QString& id, QSize* size, const Q
         if (image_loader)
         {
             image_loader->openImage( id );
-            thumb = image_loader->loadThumbnail();
+            thumb = image_loader->loadThumbnail().toQImage();
         }
     }
 
@@ -70,11 +70,11 @@ QImage ImageProvider::requestThumbnail ( const QString& id, QSize* size, const Q
 
 // TODO this is now used for the thumbnail generation, use a seperate function for this, and make a new one using the cached thumbnail?
 
-QImage ImageProvider::loadThumbnail (QString fileName)
+Image ImageProvider::loadThumbnail (QString fileName)
 {
     QString suffix = QFileInfo (fileName).suffix();
 
-    QImage thumb;
+    Image thumb;
 
     ImageLoader* image_loader = imageLoaderFromFormat( suffix );
     if (image_loader)
@@ -86,11 +86,11 @@ QImage ImageProvider::loadThumbnail (QString fileName)
     return thumb;
 }
 
-QImage ImageProvider::loadPreview (QString fileName)
+Image ImageProvider::loadPreview (QString fileName)
 {
     QString suffix = QFileInfo (fileName).suffix();
 
-    QImage image;
+    Image image;
 
     ImageLoader* image_loader = imageLoaderFromFormat( suffix );
     if (image_loader)
@@ -102,11 +102,11 @@ QImage ImageProvider::loadPreview (QString fileName)
     return image;
 }
 
-QImage ImageProvider::loadMaster (QString fileName)
+Image ImageProvider::loadMaster (QString fileName)
 {
     QString suffix = QFileInfo (fileName).suffix();
 
-    QImage image;
+    Image image;
 
     ImageLoader* image_loader = imageLoaderFromFormat( suffix );
     if (image_loader)

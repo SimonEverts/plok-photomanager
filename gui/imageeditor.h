@@ -25,7 +25,7 @@ public:
 
 private slots:
 
-    void updateHistogram ( QImage image );
+    void updateHistogram ( Image image );
     void updateLut ( void );
 
     void on_imageDeveloper_currentIndexChanged(const int &currentIndex);
@@ -38,7 +38,7 @@ private:
     Capture m_capture;
     QString m_currentPicture;
 
-    QImage m_workImage;
+    Image m_workImage;
 
     ImageProvider* m_imageProvider;
 };

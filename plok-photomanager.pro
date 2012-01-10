@@ -9,7 +9,6 @@ QT       += core gui declarative network sql
 TARGET = plok-photomanager
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
         gui/mainwindow.cpp \
     gui/imageview.cpp \
@@ -35,7 +34,8 @@ SOURCES += main.cpp\
     gui/imageeditor.cpp \
     image/imageprocessing.cpp \
     gui/histogramview.cpp \
-    gui/lutview.cpp
+    gui/lutview.cpp \
+    image/image.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/imageview.h \
@@ -61,7 +61,8 @@ HEADERS  += gui/mainwindow.h \
     gui/imageeditor.h \
     image/imageprocessing.h \
     gui/histogramview.h \
-    gui/lutview.h
+    gui/lutview.h \
+    image/image.h
 
 FORMS    += gui/mainwindow.ui \
     gui/createsetdialog.ui \

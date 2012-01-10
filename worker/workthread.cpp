@@ -61,7 +61,7 @@ void WorkThread::run()
         // Load image
         if (!file_name.isEmpty())
         {
-            QImage image = m_imageProvider.loadPreview (file_name);
+            Image image = m_imageProvider.loadPreview (file_name);
             if (!image.isNull())
             {
                 Picture picture (QFileInfo(file_name).baseName (), file_name, image);

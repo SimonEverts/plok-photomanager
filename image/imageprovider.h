@@ -4,6 +4,8 @@
 #include <QDeclarativeImageProvider>
 #include <QImage>
 
+#include "image.h"
+
 class ImageLoader;
 
 class ImageProvider
@@ -14,9 +16,9 @@ public:
 
     QImage requestThumbnail( const QString& id, QSize* size, const QSize& requestedSize );
 
-    QImage loadThumbnail (QString fileName);
-    QImage loadPreview (QString fileName);
-    QImage loadMaster (QString fileName);
+    Image loadThumbnail (QString fileName);
+    Image loadPreview (QString fileName);
+    Image loadMaster (QString fileName);
 
     ImageLoader* imageLoaderFromFormat (QString format);
 

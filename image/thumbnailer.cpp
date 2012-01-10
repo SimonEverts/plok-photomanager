@@ -32,7 +32,7 @@ void Thumbnailer::generateThumbnails (QStringList photos, QString thumbnailPath)
         if (!file_info.exists())
             continue;
 
-        QImage thumb = m_imageProvider->loadThumbnail(photos.at(i));
+        QImage thumb = m_imageProvider->loadThumbnail(photos.at(i)).toQImage();
         thumb.save( thumbnail_path + file_info.baseName() + ".jpg");
     }
 }

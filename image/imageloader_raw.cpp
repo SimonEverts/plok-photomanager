@@ -10,9 +10,9 @@ class ImageLoader_raw_p
 public:
     void openImage (QString imagePath);
 
-    QImage loadThumbnail (void);
-    QImage loadPreview (void);
-    QImage loadMaster (void);
+    Image loadThumbnail (void);
+    Image loadPreview (void);
+    Image loadMaster (void);
 
     QMap <QString, QVariant> loadInfo (void);
 private:
@@ -27,7 +27,7 @@ void ImageLoader_raw_p::openImage (QString imagePath)
     m_rawProcessor.open_file( imagePath.toAscii() );
 }
 
-QImage ImageLoader_raw_p::loadThumbnail ()
+Image ImageLoader_raw_p::loadThumbnail ()
 {
     m_rawProcessor.unpack_thumb();
 
@@ -46,10 +46,10 @@ QImage ImageLoader_raw_p::loadThumbnail ()
     QSize scaled_size( size.width() / scale,
                        size.height() / scale);
 
-    return image.scaled (scaled_size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);;
+    return Image (image.scaled (scaled_size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
 }
 
-QImage ImageLoader_raw_p::loadPreview ()
+Image ImageLoader_raw_p::loadPreview ()
 {
     m_rawProcessor.unpack_thumb();
 
@@ -61,23 +61,29 @@ QImage ImageLoader_raw_p::loadPreview ()
                 m_rawProcessor.imgdata.thumbnail.tlength,
                 "JPG");
 
-    return image;
+    return image.copy();
 }
 
-QImage ImageLoader_raw_p::loadMaster ()
+Image ImageLoader_raw_p::loadMaster ()
 {
-    m_rawProcessor.unpack();
+
 
     // Use camera whitebalance
     m_rawProcessor.imgdata.params.use_camera_wb = 1;
 
-    m_rawProcessor.imgdata.params.no_auto_bright = 1;
+    //m_rawProcessor.imgdata.params.no_auto_bright = 1;
 //    m_rawProcessor.imgdata.params.bright = 1;
 
-        m_rawProcessor.imgdata.params.gamm[0] = 1.f / 2.2;  // sRGB
-        m_rawProcessor.imgdata.params.gamm[1] = 12.92;      // sRGB
+    //m_rawProcessor.imgdata.params.gamm[0] = 1.f / 2.4;  // sRGB
+    //m_rawProcessor.imgdata.params.gamm[1] = 12.92;      // sRGB
+
+//    m_rawProcessor.imgdata.params.gamm[0] = 1;  // sRGB
+//    m_rawProcessor.imgdata.params.gamm[1] = 0;      // sRGB
 
     m_rawProcessor.imgdata.params.output_color = 1; // sRGB
+    m_rawProcessor.imgdata.params.output_bps = 16;  // 16 bits
+
+    m_rawProcessor.unpack();
 
     // Use AHC bayer interpolation
     m_rawProcessor.imgdata.params.user_qual = 3;
@@ -99,13 +105,11 @@ QImage ImageLoader_raw_p::loadMaster ()
 
     QSize size (mem_width, mem_height);
 
-    QImage image;
-    if (mem_channels == 3 && mem_bits_per_pixel == 8)
-    {
-        image = QImage (size, QImage::Format_RGB888);
+    qDebug () << "Create rawprocessor image:";
 
-        m_rawProcessor.copy_mem_image(image.bits(), image.bytesPerLine(), 0);
-    }
+    Image image (size, mem_channels, size.width() * mem_channels * mem_bits_per_pixel, mem_channels * mem_bits_per_pixel);
+
+    m_rawProcessor.copy_mem_image(image.pixels(), image.step(), 0);
 
     return image;
 }
@@ -148,17 +152,17 @@ void ImageLoader_raw::openImage (QString imagePath)
     p->openImage(imagePath);
 }
 
-QImage ImageLoader_raw::loadThumbnail()
+Image ImageLoader_raw::loadThumbnail()
 {
     return p->loadThumbnail();
 }
 
-QImage ImageLoader_raw::loadPreview()
+Image ImageLoader_raw::loadPreview()
 {
     return p->loadPreview();
 }
 
-QImage ImageLoader_raw::loadMaster()
+Image ImageLoader_raw::loadMaster()
 {
     return p->loadMaster();
 }
