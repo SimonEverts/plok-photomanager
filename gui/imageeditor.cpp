@@ -54,15 +54,27 @@ void ImageEditor::setCapture(Capture capture)
     if (ui->imageDeveloper->currentIndex() == 1)
         image = m_imageProvider->loadMaster (m_currentPicture);
 
-     qDebug () << "assign m_workImage:";
+    QSize imageview_size = ui->imageView->size();
+    QSize image_size = image.size();
 
-    m_workImage = image;
+    int scale = 1;
+
+    while ((image_size.width() >> scale) > imageview_size.width())
+            scale++;
+
+    QSize scaled_size( image_size.width() / scale,
+                       image_size.height() / scale);
+
+
+    qDebug () << "assign m_workImage:";
+
+    m_workImage = image.toQImage().scaled(scaled_size);
 
     updateLut( );
 
-    qDebug () << "imageView->setImage:";
+    //qDebug () << "imageView->setImage:";
 
-    ui->imageView->setImage( m_workImage.toQImage() );
+    //ui->imageView->setImage( m_workImage.toQImage() );
 
     // = ui->imageView->scaledImage();
 
@@ -102,7 +114,7 @@ void ImageEditor::updateHistogram ( Image image )
     Histogram histogram;
     memset (&histogram, 0, sizeof(Histogram));
 
-    if (image.depth() == 24)
+    if (image.depth() == 24 || m_workImage.depth() == 32)
         ImageProcessing::createHistogram_8u(&image, histogram);
     if (image.depth() == 48)
         ImageProcessing::createHistogram_16u(&image, histogram);
@@ -122,11 +134,11 @@ void ImageEditor::updateLut (void)
     Lut lut;
     memset (&lut, 0, sizeof(Lut));
 
-    float contrast = 1 + float(ui->contrastSlider->value()) / 100;
-    int brightness = ui->brightnessSlider->value();
-
     if (m_workImage.depth() == 24 || m_workImage.depth() == 32)
     {
+        float contrast = 1 + float(ui->contrastSlider->value()) / 100;
+        int brightness = 0x100 * (float(ui->brightnessSlider->value()) / 100);
+
         for (int i=0; i<0x100; i++)
         {
             float gamma = 255.f * (pow (1.055 * (float(i)/255), 1/2.2) - 0.055);
@@ -146,6 +158,9 @@ void ImageEditor::updateLut (void)
 
     if (m_workImage.depth() == 48)
     {
+        float contrast = 1 + float(ui->contrastSlider->value()) / 100;
+        int brightness = 0x10000 * (float(ui->brightnessSlider->value()) / 100);
+
         // Generate lut
         for (int i=0; i<0x10000; i++)
         {
@@ -175,7 +190,7 @@ void ImageEditor::updateLut (void)
 
     qDebug () << "applyLut:";
 
-    if (m_workImage.depth() == 24)
+    if (m_workImage.depth() == 24 || m_workImage.depth() == 32)
         ImageProcessing::applyLut_8u (&m_workImage, &dest_image, lut);
     if (m_workImage.depth() == 48)
         ImageProcessing::applyLut_16u (&m_workImage, &dest_image, lut);

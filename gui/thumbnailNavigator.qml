@@ -47,8 +47,7 @@ Rectangle {
                 objectName: "previewImage"
 
                 fillMode: Image.PreserveAspectFit
-
-                sourceSize.width: 1920
+                smooth: true
             }
 
             Row {

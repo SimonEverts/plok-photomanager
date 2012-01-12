@@ -64,5 +64,5 @@ void ImageView::resizeImage(void)
     scaled_image_size.setHeight( static_cast <int> (m_scaleFactor * orig_image_size.height() ));
 
     // TODO Fast on preview
-    m_scaled_image = m_orig_image.scaled (scaled_image_size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    m_scaled_image = m_orig_image.scaled (scaled_image_size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }

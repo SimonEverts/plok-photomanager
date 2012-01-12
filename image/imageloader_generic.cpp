@@ -39,9 +39,9 @@ Image ImageLoader_generic_p::loadThumbnail ()
 
     QSize image_size = m_imageReader.size();
 
-    int scale = image_size.width() / 480;
-    if (scale < 1)
-        scale = 1;
+    int scale = 1;
+    while ((image_size.width() >> scale) > 480)
+        scale++;
 
     QSize scaled_size( image_size.width() / scale,
                        image_size.height() / scale);
@@ -71,7 +71,7 @@ Image ImageLoader_generic_p::loadPreview ()
 
 Image ImageLoader_generic_p::loadMaster ()
 {
-    return Image();
+    return loadPreview();
 }
 
 ImageLoader_generic::ImageLoader_generic (QObject *parent)

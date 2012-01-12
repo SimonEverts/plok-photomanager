@@ -39,9 +39,10 @@ Image ImageLoader_raw_p::loadThumbnail ()
                 m_rawProcessor.imgdata.thumbnail.tlength,
                 "JPG");
 
-    int scale = size.width() / 480;
-    if (scale < 1)
-        scale = 1;
+    int scale = 1;
+    while ((image.size().width() >> scale) > 480)
+        scale++;
+
 
     QSize scaled_size( size.width() / scale,
                        size.height() / scale);
@@ -68,8 +69,7 @@ Image ImageLoader_raw_p::loadMaster ()
 {
 
 
-    // Use camera whitebalance
-    m_rawProcessor.imgdata.params.use_camera_wb = 1;
+
 
     //m_rawProcessor.imgdata.params.no_auto_bright = 1;
 //    m_rawProcessor.imgdata.params.bright = 1;
@@ -85,6 +85,9 @@ Image ImageLoader_raw_p::loadMaster ()
 
     m_rawProcessor.unpack();
 
+    // Use camera whitebalance
+    m_rawProcessor.imgdata.params.use_camera_wb = 1;
+
     // Use AHC bayer interpolation
     m_rawProcessor.imgdata.params.user_qual = 3;
 
@@ -92,7 +95,7 @@ Image ImageLoader_raw_p::loadMaster ()
     if (m_rawProcessor.imgdata.other.iso_speed)
         m_rawProcessor.imgdata.params.threshold = m_rawProcessor.imgdata.other.iso_speed / 4; // TODO  /8 beter?
 
-//    m_rawProcessor.imgdata.params.med_passes = 1;
+    m_rawProcessor.imgdata.params.med_passes = 1;
 
     m_rawProcessor.dcraw_process();
 
