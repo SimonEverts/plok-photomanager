@@ -16,6 +16,22 @@ Image::Image (void) :
         qDebug () << "construct null image";
 }
 
+Image::Image(QSize size, unsigned int channels, unsigned int depth) :
+    m_size (size),
+    m_channels (channels),
+    m_depth (depth),
+    m_owner (true)
+{
+    m_step = size.width() * depth/8;
+
+    m_pixels = new unsigned char [size_t(size.height()) * m_step];
+
+    m_ref = new QAtomicInt();
+    m_ref->ref();
+
+    qDebug () << "construct image";
+}
+
 Image::Image(QSize size, unsigned int channels, unsigned int step, unsigned int depth) :
     m_size (size),
     m_channels (channels),

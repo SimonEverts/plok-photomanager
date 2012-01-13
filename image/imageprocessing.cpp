@@ -150,3 +150,97 @@ void ImageProcessing::applyLut_16u (Image* src, Image* dest, const Lut& lut)
         }
     }
 }
+
+Image ImageProcessing::fastScale (const Image& image, QSize minimumSize)
+{
+    QSize image_size = image.size();
+
+    int scale = 1;
+
+    while (((image_size.width()  >> scale) > minimumSize.width() ))
+        scale++;
+
+    Image scaled_image;
+    if (image.depth() == 24 || image.depth() == 32)
+        scaled_image = ImageProcessing::fastScale_8u(image, scale);
+    if (image.depth() == 48)
+        scaled_image = ImageProcessing::fastScale_16u(image, scale);
+
+    return scaled_image;
+}
+
+Image ImageProcessing::fastScale_8u (const Image& image, int scale)
+{
+    QSize scaled_size( image.size().width() >> scale,
+                       image.size().height() >> scale);
+
+    Image dest_image (scaled_size, image.channels(), 32); // TODO depth decouple from channels
+
+    unsigned char* src_pixels = image.pixels();
+    unsigned char* dest_pixels = dest_image.pixels();
+
+    // TODO assume image size and format are the same
+    QSize src_size = image.size();
+
+    unsigned int src_step = image.step();
+    unsigned int dest_step = dest_image.step();
+
+    unsigned int src_channels = image.channels();
+    unsigned int dest_channels = dest_image.channels();
+
+    int height = scaled_size.height();
+    int width = scaled_size.width();
+
+    for(int y=0; y < height; y++)
+    {
+        for(int x=0; x < width; x++)
+        {
+            unsigned int src_index = ((y << scale)*src_step) + ((x << scale)*src_channels);
+            unsigned int dest_index = (y*dest_step) + (x*dest_channels);
+
+            dest_pixels[dest_index] =  src_pixels[src_index];
+            dest_pixels[dest_index+1] = src_pixels[src_index+1];
+            dest_pixels[dest_index+2] = src_pixels[src_index+2];
+        }
+    }
+
+    return dest_image;
+}
+
+Image ImageProcessing::fastScale_16u (const Image& image, int scale)
+{
+    QSize scaled_size( image.size().width() >> scale,
+                       image.size().height() >> scale);
+
+    Image dest_image (scaled_size, image.channels(), 48); // TODO depth decouple from channels
+
+    unsigned char* src_pixels = image.pixels();
+    unsigned char* dest_pixels = dest_image.pixels();
+
+    // TODO assume image size and format are the same
+    QSize src_size = image.size();
+
+    unsigned int src_step = image.step();
+    unsigned int dest_step = dest_image.step();
+
+    unsigned int src_channels = image.channels();
+    unsigned int dest_channels = dest_image.channels();
+
+    int height = scaled_size.height();
+    int width = scaled_size.width();
+
+    for(int y=0; y < height; y++)
+    {
+        for(int x=0; x < width; x++)
+        {
+            unsigned short int* src_pixel = reinterpret_cast <unsigned short int*> (src_pixels + (y << scale)*src_step) + (x << scale)*src_channels;
+            unsigned short int* dest_pixel = reinterpret_cast <unsigned short int*> (dest_pixels + y*dest_step) + x*dest_channels;
+
+            dest_pixel[0] = src_pixel[0];
+            dest_pixel[1] = src_pixel[1];
+            dest_pixel[2] = src_pixel[2];
+        }
+    }
+
+    return dest_image;
+}

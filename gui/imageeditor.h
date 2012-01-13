@@ -30,8 +30,6 @@ private slots:
 
     void on_imageDeveloper_currentIndexChanged(const int &currentIndex);
 
-    void on_brightnessSlider_valueChanged(int value);
-
 private:
     Ui::ImageEditor *ui;
 

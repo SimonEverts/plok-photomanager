@@ -27,6 +27,12 @@ public:
 
     static void applyLut_8u (Image* src, Image* dest, const Lut& lut);
     static void applyLut_16u (Image* src, Image* dest, const Lut& lut);
+
+    static Image fastScale (const Image& image, QSize minimumSize);
+
+private:
+    static Image fastScale_8u (const Image& image, int scale);
+    static Image fastScale_16u (const Image& image, int scale);
 };
 
 #endif // IMAGEPROCESSING_H

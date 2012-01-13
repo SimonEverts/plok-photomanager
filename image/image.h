@@ -10,6 +10,7 @@ class Image
 {
 public:
     explicit Image (void);
+    Image(QSize size, unsigned int channels, unsigned int depth);
     Image(QSize size, unsigned int channels, unsigned int step, unsigned int depth);
     Image(unsigned char* pixels, QSize size, unsigned int channels, unsigned int step, unsigned int depth);
 
@@ -24,9 +25,9 @@ public:
     Image copy (void);
     QImage toQImage (void) const;
 
-    Image swap ();
-
     bool isNull (void);
+
+    Image fastScale (const Image& image, QSize minimumSize);
 
     unsigned char* pixels () const {return m_pixels;}
     QSize size () const {return m_size;}

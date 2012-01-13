@@ -54,31 +54,10 @@ void ImageEditor::setCapture(Capture capture)
     if (ui->imageDeveloper->currentIndex() == 1)
         image = m_imageProvider->loadMaster (m_currentPicture);
 
-    QSize imageview_size = ui->imageView->size();
-    QSize image_size = image.size();
-
-    int scale = 1;
-
-    while ((image_size.width() >> scale) > imageview_size.width())
-            scale++;
-
-    QSize scaled_size( image_size.width() / scale,
-                       image_size.height() / scale);
-
-
-    qDebug () << "assign m_workImage:";
-
-    m_workImage = image.toQImage().scaled(scaled_size);
+    qDebug () << "assign/scale m_workImage:";
+    m_workImage = ImageProcessing::fastScale (image, ui->imageView->size());
 
     updateLut( );
-
-    //qDebug () << "imageView->setImage:";
-
-    //ui->imageView->setImage( m_workImage.toQImage() );
-
-    // = ui->imageView->scaledImage();
-
-
 }
 
 void ImageEditor::on_imageDeveloper_currentIndexChanged(const int &currentIndex)
@@ -95,18 +74,11 @@ void ImageEditor::on_imageDeveloper_currentIndexChanged(const int &currentIndex)
     if (currentIndex == 1)
         image = m_imageProvider->loadMaster (m_currentPicture);
 
-    qDebug () << "assign m_workImage:";
+    qDebug () << "assign/scale m_workImage:";
 
-    m_workImage = image;
+    m_workImage = ImageProcessing::fastScale (image, ui->imageView->size());
 
     updateLut ();
-
-//    qDebug () << "imageView->setImage:";
-
-
-//    ui->imageView->setImage( image.toQImage() );
-
-    //m_workImage = ui->imageView->scaledImage();
 }
 
 void ImageEditor::updateHistogram ( Image image )
@@ -120,11 +92,6 @@ void ImageEditor::updateHistogram ( Image image )
         ImageProcessing::createHistogram_16u(&image, histogram);
 
     ui->histogramView->setHistogram( histogram );
-
-//    for( int i=0; i<255; i++)
-//    {
-//        qDebug() << histogram.red[i] << histogram.green[i] << histogram.blue[i];
-//    }
 }
 
 void ImageEditor::updateLut (void)
@@ -181,10 +148,6 @@ void ImageEditor::updateLut (void)
 
     ui->lutView->setLut( lut );
 
-//    for( int i=0; i<max_value; i++)
-//    {
-//        qDebug() << lut.red[i] << lut.green[i] << lut.blue[i];
-//    }
 
     Image dest_image (m_workImage.size(), m_workImage.channels(), m_workImage.size().width() * m_workImage.channels(), 24);
 
@@ -202,15 +165,4 @@ void ImageEditor::updateLut (void)
     qDebug () << "updateHistogram:";
 
     updateHistogram( dest_image );
-}
-
-void ImageEditor::on_brightnessSlider_valueChanged(int value)
-{
-//    QImage dest_image (m_workImage.size(), m_workImage.format());
-
-//    ImageProcessing::adjustBrightness (&m_workImage, &dest_image, value);
-
-//    ui->imageView->setImage(dest_image);
-
-//    updateHistogram( dest_image );
 }

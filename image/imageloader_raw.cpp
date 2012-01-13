@@ -71,7 +71,8 @@ Image ImageLoader_raw_p::loadMaster ()
 
 
 
-    //m_rawProcessor.imgdata.params.no_auto_bright = 1;
+    m_rawProcessor.imgdata.params.no_auto_bright = 1;
+
 //    m_rawProcessor.imgdata.params.bright = 1;
 
     //m_rawProcessor.imgdata.params.gamm[0] = 1.f / 2.4;  // sRGB
@@ -91,11 +92,11 @@ Image ImageLoader_raw_p::loadMaster ()
     // Use AHC bayer interpolation
     m_rawProcessor.imgdata.params.user_qual = 3;
 
-    m_rawProcessor.imgdata.params.threshold = 100;
-    if (m_rawProcessor.imgdata.other.iso_speed)
-        m_rawProcessor.imgdata.params.threshold = m_rawProcessor.imgdata.other.iso_speed / 4; // TODO  /8 beter?
+//    m_rawProcessor.imgdata.params.threshold = 100;
+//    if (m_rawProcessor.imgdata.other.iso_speed)
+//        m_rawProcessor.imgdata.params.threshold = m_rawProcessor.imgdata.other.iso_speed / 4; // TODO  /8 beter?
 
-    m_rawProcessor.imgdata.params.med_passes = 1;
+//    m_rawProcessor.imgdata.params.med_passes = 1;
 
     m_rawProcessor.dcraw_process();
 
