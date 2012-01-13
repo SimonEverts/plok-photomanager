@@ -32,7 +32,7 @@ void HistogramView::draw (void)
     float x_step = float(rect().width()) / max_value;
 
     int height = rect().height();
-    float y_step = float(height) / max_value;
+    float y_step = float(height) / 255;
 
     painter.setPen(Qt::GlobalColor(Qt::red));
     for (int i=0; i<max_value; i++)

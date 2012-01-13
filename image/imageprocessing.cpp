@@ -111,21 +111,21 @@ void ImageProcessing::normalizeHistogram (Histogram& histogram, const int max_va
             max = blue[i];
     }
 
-    max /= 255;
+    max = 255.f / max;
 
     // TODO no inplace calc
     if (max > 0)
     {
         for (int i=0; i<max_value; i++)
         {
-            red[i] /= max;
-            green[i] /= max;
-            blue[i] /= max;
+            red[i] *= max;
+            green[i] *= max;
+            blue[i] *= max;
         }
     }
 }
 
-void ImageProcessing::generateLut (float brightness, float contrast, float gamma, Lut& lut)
+void ImageProcessing::generateLut (float brightness, float contrast, float gamma, float wbRed, float wbGreen, float wbBlue, Lut& lut)
 {
     int* red = lut.red();
     int* green = lut.green();
@@ -143,16 +143,28 @@ void ImageProcessing::generateLut (float brightness, float contrast, float gamma
         // TODO 8bit images have gamma already applied
         float gamma_value = float(max_value) * (pow ((float(i)/max_value), gamma));
 
-        int value = (contrast*gamma_value + brightness);
+        float value = (contrast*gamma_value + brightness);
 
-        if (value < 0)
-            value = 0;
-        if (value > (max_value-1))
-            value = (max_value-1);
+        float r = value * wbRed;
+        float g = value * wbGreen;
+        float b = value * wbBlue;
 
-        red[i] = value;
-        green[i] = value;
-        blue[i] = value;
+        if (r < 0)
+            r = 0;
+        if (r > (max_value-1))
+            r = (max_value-1);
+        if (g < 0)
+            g = 0;
+        if (g > (max_value-1))
+            g = (max_value-1);
+        if (b < 0)
+            b = 0;
+        if (b > (max_value-1))
+            b = (max_value-1);
+
+        red[i] = r;
+        green[i] = g;
+        blue[i] = b;
     }
 }
 
@@ -233,10 +245,13 @@ Image ImageProcessing::fastScale (const Image& image, QSize minimumSize)
 {
     QSize image_size = image.size();
 
-    int scale = 1;
-
-    while (((image_size.width()  >> scale) > minimumSize.width() ))
+    int scale = 0;
+    int i = 1;
+    while (((image_size.width() >> i) > minimumSize.width() ))
+    {
+        i++;
         scale++;
+    }
 
     Image scaled_image;
     if (image.depth() == 8)
@@ -290,7 +305,7 @@ Image ImageProcessing::fastScale_16u (const Image& image, int scale)
     QSize scaled_size( image.size().width() >> scale,
                        image.size().height() >> scale);
 
-    Image dest_image (scaled_size, image.channels(), 16); // TODO depth decouple from channels
+    Image dest_image (scaled_size, image.channels(), 16);
 
     unsigned char* src_pixels = image.pixels();
     unsigned char* dest_pixels = dest_image.pixels();

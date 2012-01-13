@@ -18,6 +18,11 @@ ImageEditor::ImageEditor(ImageProvider* imageProvider, QWidget *parent) :
 
     connect (ui->brightnessSlider, SIGNAL(valueChanged(int)), this, SLOT(updateLut()));
     connect (ui->contrastSlider, SIGNAL(valueChanged(int)), this, SLOT(updateLut()));
+    connect (ui->gammaSpinBox, SIGNAL(valueChanged(double)), this, SLOT(updateLut()));
+
+    connect (ui->redSpinBox, SIGNAL(valueChanged(double)), this, SLOT(updateLut()));
+    connect (ui->greenSpinBox, SIGNAL(valueChanged(double)), this, SLOT(updateLut()));
+    connect (ui->blueSpinBox, SIGNAL(valueChanged(double)), this, SLOT(updateLut()));
 }
 
 ImageEditor::~ImageEditor()
@@ -48,9 +53,15 @@ void ImageEditor::setCapture(Capture capture)
 
     Image image;
     if (ui->imageDeveloper->currentIndex() == 0)
+    {
         image = m_imageProvider->loadPreview (m_currentPicture);
+        ui->gammaSpinBox->setValue(1);
+    }
     if (ui->imageDeveloper->currentIndex() == 1)
+    {
         image = m_imageProvider->loadMaster (m_currentPicture);
+        ui->gammaSpinBox->setValue(2.2);
+    }
 
     qDebug () << "assign/scale m_workImage:";
     m_workImage = ImageProcessing::fastScale (image, ui->imageView->size());
@@ -68,9 +79,15 @@ void ImageEditor::on_imageDeveloper_currentIndexChanged(const int &currentIndex)
     qDebug () << "imageProvider:";
 
     if (currentIndex == 0)
+    {
         image = m_imageProvider->loadPreview (m_currentPicture);
+        ui->gammaSpinBox->setValue(1);
+    }
     if (currentIndex == 1)
+    {
         image = m_imageProvider->loadMaster (m_currentPicture);
+        ui->gammaSpinBox->setValue(2.2);
+    }
 
     qDebug () << "assign/scale m_workImage:";
 
@@ -103,12 +120,13 @@ void ImageEditor::updateLut (void)
 
     float contrast = 1 + float(ui->contrastSlider->value()) / 100;
     float brightness = float(ui->brightnessSlider->value()) / 100;
+    float gamma = 1.f / ui->gammaSpinBox->value();
 
-    float gamma = 1;
-    if (m_workImage.depth() == 16)
-        gamma = 1.f/2.2;
+    float wb_red = ui->redSpinBox->value();
+    float wb_green = ui->greenSpinBox->value();
+    float wb_blue = ui->blueSpinBox->value();
 
-    ImageProcessing::generateLut(brightness, contrast, gamma, lut);
+    ImageProcessing::generateLut(brightness, contrast, gamma, wb_red, wb_green, wb_blue, lut);
 
 
     ui->lutView->setLut( lut );

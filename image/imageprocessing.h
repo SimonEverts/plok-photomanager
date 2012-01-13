@@ -15,7 +15,7 @@ public:
     static void createHistogram (const Image& image, Histogram& histogram);    
     static void normalizeHistogram (Histogram& histogram, const int max_value);
 
-    static void generateLut (float brightness, float contrast, float gamma, Lut& lut);
+    static void generateLut (float brightness, float contrast, float gamma, float wbRed, float wbGreen, float wbBlue, Lut& lut);
     static void applyLut (Image* src, Image* dest, const Lut& lut);
 
     static Image fastScale (const Image& image, QSize minimumSize);
