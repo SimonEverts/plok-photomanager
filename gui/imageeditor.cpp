@@ -81,15 +81,12 @@ void ImageEditor::on_imageDeveloper_currentIndexChanged(const int &currentIndex)
     updateLut ();
 }
 
-void ImageEditor::updateHistogram ( Image image )
+void ImageEditor::updateHistogram ( const Image& image )
 {
     Histogram histogram;
     memset (&histogram, 0, sizeof(Histogram));
 
-    if (image.depth() == 24 || m_workImage.depth() == 32)
-        ImageProcessing::createHistogram_8u(&image, histogram);
-    if (image.depth() == 48)
-        ImageProcessing::createHistogram_16u(&image, histogram);
+    ImageProcessing::createHistogram (image, histogram);
 
     ui->histogramView->setHistogram( histogram );
 }
@@ -101,7 +98,7 @@ void ImageEditor::updateLut (void)
     Lut lut;
     memset (&lut, 0, sizeof(Lut));
 
-    if (m_workImage.depth() == 24 || m_workImage.depth() == 32)
+    if (m_workImage.depth() == 8)
     {
         float contrast = 1 + float(ui->contrastSlider->value()) / 100;
         int brightness = 0x100 * (float(ui->brightnessSlider->value()) / 100);
@@ -123,7 +120,7 @@ void ImageEditor::updateLut (void)
         }
     }
 
-    if (m_workImage.depth() == 48)
+    if (m_workImage.depth() == 16)
     {
         float contrast = 1 + float(ui->contrastSlider->value()) / 100;
         int brightness = 0x10000 * (float(ui->brightnessSlider->value()) / 100);
@@ -149,14 +146,11 @@ void ImageEditor::updateLut (void)
     ui->lutView->setLut( lut );
 
 
-    Image dest_image (m_workImage.size(), m_workImage.channels(), m_workImage.size().width() * m_workImage.channels(), 24);
+    Image dest_image (m_workImage.size(), m_workImage.channels(), m_workImage.size().width() * m_workImage.channels(), 8);
 
     qDebug () << "applyLut:";
 
-    if (m_workImage.depth() == 24 || m_workImage.depth() == 32)
-        ImageProcessing::applyLut_8u (&m_workImage, &dest_image, lut);
-    if (m_workImage.depth() == 48)
-        ImageProcessing::applyLut_16u (&m_workImage, &dest_image, lut);
+    ImageProcessing::applyLut (&m_workImage, &dest_image, lut);
 
     qDebug () << "updateLut -> imageView->setImage:";
 

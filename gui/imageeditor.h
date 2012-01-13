@@ -25,7 +25,7 @@ public:
 
 private slots:
 
-    void updateHistogram ( Image image );
+    void updateHistogram ( const Image& image );
     void updateLut ( void );
 
     void on_imageDeveloper_currentIndexChanged(const int &currentIndex);

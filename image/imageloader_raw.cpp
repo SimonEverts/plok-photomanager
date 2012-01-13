@@ -111,7 +111,7 @@ Image ImageLoader_raw_p::loadMaster ()
 
     qDebug () << "Create rawprocessor image:";
 
-    Image image (size, mem_channels, size.width() * mem_channels * mem_bits_per_pixel, mem_channels * mem_bits_per_pixel);
+    Image image (size, mem_channels, size.width() * mem_channels * mem_bits_per_pixel, mem_bits_per_pixel);
 
     m_rawProcessor.copy_mem_image(image.pixels(), image.step(), 0);
 

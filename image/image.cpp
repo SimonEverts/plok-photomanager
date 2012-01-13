@@ -13,7 +13,6 @@ Image::Image (void) :
     m_depth (0),
     m_owner (false)
 {
-        qDebug () << "construct null image";
 }
 
 Image::Image(QSize size, unsigned int channels, unsigned int depth) :
@@ -22,7 +21,7 @@ Image::Image(QSize size, unsigned int channels, unsigned int depth) :
     m_depth (depth),
     m_owner (true)
 {
-    m_step = size.width() * depth/8;
+    m_step = size.width() * channels * depth/8;
 
     m_pixels = new unsigned char [size_t(size.height()) * m_step];
 
@@ -56,7 +55,6 @@ Image::Image(unsigned char* pixels, QSize size, unsigned int channels, unsigned 
     m_depth (depth),
     m_owner (false)
 {
-    qDebug () << "construct shallow image";
 }
 
 Image::Image (const Image& image) :
@@ -69,20 +67,34 @@ Image::Image (const Image& image) :
     m_pixels = image.pixels(); //new unsigned char [m_size.height()  * m_step];
     m_ref = image.m_ref;
     m_ref->ref();
-
-    qDebug () << "construct copy image";
-
-    //memcpy (m_pixels, image.pixels(), size_t(image.size().height())  * m_step);
 }
 
 Image::Image (QImage image) :
     m_size (image.size()),
     m_step (image.bytesPerLine()),
-    m_depth (image.depth()),
     m_owner (false)
 {
-    if (image.depth())
-        m_channels = image.depth()/8;
+    m_channels = 0;
+    m_depth = 0;
+
+    switch (image.format()) {
+    case QImage::Format_RGB32: {
+        m_channels = 4;
+        m_depth = 8;
+    }; break;
+    case QImage::Format_ARGB32: {
+        m_channels = 4;
+        m_depth = 8;
+    }; break;
+    case QImage::Format_RGB888: {
+        m_channels = 3;
+        m_depth = 8;
+    }; break;
+    default: {
+        qDebug() << "Unknown image format: " << image.format();
+        qFatal("unknown image format");
+    }
+    }
 
     qDebug () << "COPY construct copy qimage";
 
@@ -92,47 +104,32 @@ Image::Image (QImage image) :
 
     m_ref = new QAtomicInt();
     m_ref->ref();
-
-//    unsigned char* pixels = image.bits();
-
-//    for (int y=0; y<m_size.height(); y++)
-//    {
-//        for (int x=0; x<m_size.width(); x++)
-//        {
-//            unsigned int index = (y*m_step) + x;
-
-//            m_pixels[index] = pixels[index];
-//        }
-//    }
 }
 
 Image::~Image (void)
 {
     if (m_pixels && !m_ref->deref())
     {
-        qDebug () << "destruct owner image";
+        qDebug () << "destruct image";
 
         delete[] m_pixels;
         m_pixels = 0;
 
         delete m_ref;
-    } else
-        qDebug () << "destruct image";
+    }
 }
 
 Image& Image::operator= (const Image& image)
 {
-    qDebug () << "assign image";
-
     if (&image != this)
     {
         if (m_pixels && !m_ref->deref())
         {
+            qDebug () << "assign: cleanup image";
+
             delete[] m_pixels;
             delete m_ref;
         }
-
-//        m_pixels = new unsigned char [size_t(image.size().height())  * image.step()];
     }
 
     m_size = image.size();
@@ -144,8 +141,6 @@ Image& Image::operator= (const Image& image)
     m_pixels = image.m_pixels;
     m_ref = image.m_ref;
     m_ref->ref();
-
-    //memcpy (m_pixels, image.pixels(), size_t(image.size().height()) * m_step);
 
     return *this;
 }
