@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     image/imageprocessing.cpp \
     gui/histogramview.cpp \
     gui/lutview.cpp \
-    image/image.cpp
+    image/image.cpp \
+    image/lut.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/imageview.h \
@@ -62,7 +63,8 @@ HEADERS  += gui/mainwindow.h \
     image/imageprocessing.h \
     gui/histogramview.h \
     gui/lutview.h \
-    image/image.h
+    image/image.h \
+    image/lut.h
 
 FORMS    += gui/mainwindow.ui \
     gui/createsetdialog.ui \

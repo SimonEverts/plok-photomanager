@@ -18,29 +18,36 @@ void HistogramView::draw (void)
 
     painter.fillRect(rect(), brush);
 
-    int* red = m_histogram.red;
-    int* green = m_histogram.green;
-    int* blue = m_histogram.blue;
+    int* red = m_histogram.red();
+    int* green = m_histogram.green();
+    int* blue = m_histogram.blue();
 
-    float x_step = float(rect().width()) / 255;
+    if (!red || !green || !blue)
+        return;
+
+    int max_value = 1 << m_histogram.depth();
+    if (!max_value)
+        return;
+
+    float x_step = float(rect().width()) / max_value;
 
     int height = rect().height();
-    float y_step = float(height) / 255;
+    float y_step = float(height) / max_value;
 
     painter.setPen(Qt::GlobalColor(Qt::red));
-    for (int i=0; i<255; i++)
+    for (int i=0; i<max_value; i++)
     {
         painter.drawLine (static_cast <int> (i*x_step), height-(red[i]*y_step), static_cast <int>((i+1)*x_step), height-(red[i+1]*y_step));
     }
 
     painter.setPen(Qt::GlobalColor(Qt::green));
-    for (int i=0; i<255; i++)
+    for (int i=0; i<max_value; i++)
     {
         painter.drawLine (static_cast <int> (i*x_step), height-(green[i]*y_step), static_cast <int>((i+1)*x_step), height-(green[i+1]*y_step));
     }
 
     painter.setPen(Qt::GlobalColor(Qt::blue));
-    for (int i=0; i<255; i++)
+    for (int i=0; i<max_value; i++)
     {
         painter.drawLine (static_cast <int> (i*x_step), height-(blue[i]*y_step), static_cast <int>((i+1)*x_step), height-(blue[i+1]*y_step));
     }

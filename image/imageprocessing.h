@@ -3,28 +3,21 @@
 
 #include "image.h"
 
-struct Histogram {
-    int red[ 0x10000 ];
-    int green[ 0x10000 ];
-    int blue[ 0x10000 ];
-};
+#include "lut.h"
 
-struct Lut {
-    int red[ 0x10000 ];
-    int green[ 0x10000 ];
-    int blue[ 0x10000 ];
-};
+typedef Lut Histogram;
 
 class ImageProcessing
 {
 public:
     ImageProcessing();
 
-    static void createHistogram (const Image& image, Histogram& histogram);
-
+    static void createHistogram (const Image& image, Histogram& histogram);    
     static void normalizeHistogram (Histogram& histogram, const int max_value);
 
+    static void generateLut (float brightness, float contrast, float gamma, Lut& lut);
     static void applyLut (Image* src, Image* dest, const Lut& lut);
+
     static Image fastScale (const Image& image, QSize minimumSize);
 
 private:

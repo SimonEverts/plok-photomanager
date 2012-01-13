@@ -7,8 +7,6 @@
 #include <QFileInfo>
 #include <QDebug>
 
-#include <cmath>
-
 ImageEditor::ImageEditor(ImageProvider* imageProvider, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ImageEditor),
@@ -83,8 +81,7 @@ void ImageEditor::on_imageDeveloper_currentIndexChanged(const int &currentIndex)
 
 void ImageEditor::updateHistogram ( const Image& image )
 {
-    Histogram histogram;
-    memset (&histogram, 0, sizeof(Histogram));
+    Histogram histogram (image.depth());
 
     ImageProcessing::createHistogram (image, histogram);
 
@@ -95,53 +92,24 @@ void ImageEditor::updateLut (void)
 {
     qDebug () << "updateLut:";
 
-    Lut lut;
-    memset (&lut, 0, sizeof(Lut));
+    Lut lut (m_workImage.depth());
 
-    if (m_workImage.depth() == 8)
-    {
-        float contrast = 1 + float(ui->contrastSlider->value()) / 100;
-        int brightness = 0x100 * (float(ui->brightnessSlider->value()) / 100);
+    int* red = lut.red();
+    int* green = lut.green();
+    int* blue = lut.blue();
 
-        for (int i=0; i<0x100; i++)
-        {
-            float gamma = 255.f * (pow (1.055 * (float(i)/255), 1/2.2) - 0.055);
+    if (!red || !green || !blue)
+        return;
 
-            int value = (contrast*gamma + brightness);
+    float contrast = 1 + float(ui->contrastSlider->value()) / 100;
+    float brightness = float(ui->brightnessSlider->value()) / 100;
 
-            if (value < 0)
-                value = 0;
-            if (value > 0xFF)
-                value = 0xFF;
-
-            lut.red[i] = value;
-            lut.green[i] = value;
-            lut.blue[i] = value;
-        }
-    }
-
+    float gamma = 1;
     if (m_workImage.depth() == 16)
-    {
-        float contrast = 1 + float(ui->contrastSlider->value()) / 100;
-        int brightness = 0x10000 * (float(ui->brightnessSlider->value()) / 100);
+        gamma = 1.f/2.2;
 
-        // Generate lut
-        for (int i=0; i<0x10000; i++)
-        {
-            float gamma = 65535.f * (pow (1.055 * (float(i)/65535), 1/2.2) - 0.055);
+    ImageProcessing::generateLut(brightness, contrast, gamma, lut);
 
-            int value = (contrast*gamma + brightness);
-
-            if (value < 0)
-                value = 0;
-            if (value > 0xFFFF)
-                value = 0xFFFF;
-
-            lut.red[i] = value >> 8;
-            lut.green[i] = value >> 8;
-            lut.blue[i] = value >> 8;
-        }
-    }
 
     ui->lutView->setLut( lut );
 

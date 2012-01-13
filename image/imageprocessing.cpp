@@ -2,6 +2,8 @@
 
 #include <QDebug>
 
+#include <cmath>
+
 ImageProcessing::ImageProcessing()
 {
 }
@@ -29,24 +31,32 @@ void ImageProcessing::createHistogram_8u (const Image& image, Histogram& histogr
     int height = size.height();
     int width = size.width();
 
+    int* red = histogram.red();
+    int* green = histogram.green();
+    int* blue = histogram.blue();
+
+    if (!red || !green || !blue)
+        return;
+
     for(int y=0; y < height; y++)
     {
         for(int x=0; x < width; x++)
         {
             unsigned int index = (y*step) + (x*channels);
 
-            histogram.red[ pixels[index] ]++;
-            histogram.green[ pixels[index+1] ]++;
-            histogram.blue[ pixels[index+2] ]++;
+            red[ pixels[index] ]++;
+            green[ pixels[index+1] ]++;
+            blue[ pixels[index+2] ]++;
         }
     }
 
-    normalizeHistogram (histogram, 0x100);
+    normalizeHistogram (histogram, 1 << histogram.depth());
 }
 
 void ImageProcessing::createHistogram_16u (const Image& image, Histogram& histogram)
 {
-    short int* pixels = reinterpret_cast <short int*> (image.pixels());
+    unsigned char* pixels = image.pixels();
+    //short int* pixels = reinterpret_cast <short int*> (image.pixels());
 
     QSize size = image.size();
     unsigned int step = image.step();
@@ -59,45 +69,90 @@ void ImageProcessing::createHistogram_16u (const Image& image, Histogram& histog
     int height = size.height();
     int width = size.width();
 
+    int* red = histogram.red();
+    int* green = histogram.green();
+    int* blue = histogram.blue();
+
+    if (!red || !green || !blue)
+        return;
+
     for(int y=0; y < height; y++)
     {
         for(int x=0; x < width; x++)
         {
-            unsigned int index = (y*step) + (x*channels);
+            unsigned short int* src_pixel = reinterpret_cast <unsigned short int*> (pixels + y*step) + x*channels;
 
-            histogram.red[ pixels[index] ]++;
-            histogram.green[ pixels[index+1] ]++;
-            histogram.blue[ pixels[index+2] ]++;
+            red[ src_pixel[0] ]++;
+            green[ src_pixel[1] ]++;
+            blue[ src_pixel[2] ]++;
         }
     }
 
-    normalizeHistogram (histogram, 0x10000);
+    normalizeHistogram (histogram, 1 << histogram.depth());
 }
 
 void ImageProcessing::normalizeHistogram (Histogram& histogram, const int max_value)
 {
-    int max = 0;
+    int* red = histogram.red();
+    int* green = histogram.green();
+    int* blue = histogram.blue();
+
+    if (!red || !green || !blue)
+        return;
+
+    float max = 0;
     for (int i=0; i< max_value; i++)
     {
-        if (histogram.red[i] > max)
-            max = histogram.red[i];
-        if (histogram.green[i] > max)
-            max = histogram.green[i];
-        if (histogram.blue[i] > max)
-            max = histogram.blue[i];
+        if (red[i] > max)
+            max = red[i];
+        if (green[i] > max)
+            max = green[i];
+        if (blue[i] > max)
+            max = blue[i];
     }
 
-    max /= max_value;
+    max /= 255;
 
     // TODO no inplace calc
     if (max > 0)
     {
         for (int i=0; i<max_value; i++)
         {
-            histogram.red[i] /= max;
-            histogram.green[i] /= max;
-            histogram.blue[i] /= max;
+            red[i] /= max;
+            green[i] /= max;
+            blue[i] /= max;
         }
+    }
+}
+
+void ImageProcessing::generateLut (float brightness, float contrast, float gamma, Lut& lut)
+{
+    int* red = lut.red();
+    int* green = lut.green();
+    int* blue = lut.blue();
+
+    if (!red || !green || !blue)
+        return;
+
+    int max_value = (1 << lut.depth());
+
+    brightness *= max_value;
+
+    for (int i=0; i<max_value; i++)
+    {
+        // TODO 8bit images have gamma already applied
+        float gamma_value = float(max_value) * (pow ((float(i)/max_value), gamma));
+
+        int value = (contrast*gamma_value + brightness);
+
+        if (value < 0)
+            value = 0;
+        if (value > (max_value-1))
+            value = (max_value-1);
+
+        red[i] = value;
+        green[i] = value;
+        blue[i] = value;
     }
 }
 
@@ -122,15 +177,19 @@ void ImageProcessing::applyLut_8u (Image* src, Image* dest, const Lut& lut)
     int height = size.height();
     int width = size.width();
 
+    int* red = lut.red();
+    int* green = lut.green();
+    int* blue = lut.blue();
+
     for(int y=0; y < height; y++)
     {
         for(int x=0; x < width; x++)
         {
             unsigned int index = (y*step) + (x*channels);
 
-            dest_pixels[index] =  lut.red[ src_pixels[index] ];
-            dest_pixels[index+1] = lut.green[ src_pixels[index+1] ];
-            dest_pixels[index+2] = lut.blue[ src_pixels[index+2] ];
+            dest_pixels[index] =  red[ src_pixels[index] ];
+            dest_pixels[index+1] = green[ src_pixels[index+1] ];
+            dest_pixels[index+2] = blue[ src_pixels[index+2] ];
         }
     }
 }
@@ -148,6 +207,10 @@ void ImageProcessing::applyLut_16u8u (Image* src, Image* dest, const Lut& lut)
 
     unsigned int channels = src->channels();
 
+    int* red = lut.red();
+    int* green = lut.green();
+    int* blue = lut.blue();
+
     int height = size.height();
     int width = size.width();
 
@@ -155,14 +218,13 @@ void ImageProcessing::applyLut_16u8u (Image* src, Image* dest, const Lut& lut)
     {
         for(int x=0; x < width; x++)
         {
-            //unsigned int src_index = (y*src_step) + (x*channels);
             unsigned int dest_index = (y*dest_step) + (x*channels);
 
             unsigned short int* src_pixel = reinterpret_cast <unsigned short int*> (src_pixels + y*src_step) + x*channels;
 
-            dest_pixels[dest_index] =  lut.red[ src_pixel[0] ];
-            dest_pixels[dest_index+1] = lut.green[ src_pixel[1] ];
-            dest_pixels[dest_index+2] = lut.blue[ src_pixel[2] ];
+            dest_pixels[dest_index] =  red[ src_pixel[0] ] >> 8;
+            dest_pixels[dest_index+1] = green[ src_pixel[1] ] >> 8;
+            dest_pixels[dest_index+2] = blue[ src_pixel[2] ] >> 8;
         }
     }
 }
