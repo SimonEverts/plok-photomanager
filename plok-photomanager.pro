@@ -9,6 +9,8 @@ QT       += core gui declarative network sql
 TARGET = plok-photomanager
 TEMPLATE = app
 
+CONFIG += opencv
+
 SOURCES += main.cpp\
         gui/mainwindow.cpp \
     gui/imageview.cpp \
@@ -82,6 +84,12 @@ RESOURCES += \
 
 unix {
     LIBS += -lraw -lgomp
+}
+
+CONFIG (opencv) {
+    DEFINES += OPENCV
+
+    LIBS += -lopencv_imgproc -lopencv_core
 }
 
 win32 {

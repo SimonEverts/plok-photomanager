@@ -164,6 +164,13 @@
        </item>
        <item>
         <layout class="QGridLayout" name="gridLayout">
+         <item row="11" column="0" colspan="2">
+          <widget class="Line" name="line_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_6">
            <property name="font">
@@ -334,6 +341,13 @@
           <widget class="QLabel" name="label_10">
            <property name="text">
             <string>Blue</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="0">
+          <widget class="QCheckBox" name="medianCheckBox">
+           <property name="text">
+            <string>Median filter</string>
            </property>
           </widget>
          </item>

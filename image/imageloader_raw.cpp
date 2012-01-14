@@ -78,8 +78,8 @@ Image ImageLoader_raw_p::loadMaster ()
     //m_rawProcessor.imgdata.params.gamm[0] = 1.f / 2.4;  // sRGB
     //m_rawProcessor.imgdata.params.gamm[1] = 12.92;      // sRGB
 
-//    m_rawProcessor.imgdata.params.gamm[0] = 1;  // sRGB
-//    m_rawProcessor.imgdata.params.gamm[1] = 0;      // sRGB
+    m_rawProcessor.imgdata.params.gamm[0] = 1;  // sRGB
+    m_rawProcessor.imgdata.params.gamm[1] = 0;      // sRGB
 
     m_rawProcessor.imgdata.params.output_color = 1; // sRGB
     m_rawProcessor.imgdata.params.output_bps = 16;  // 16 bits
@@ -87,7 +87,7 @@ Image ImageLoader_raw_p::loadMaster ()
     m_rawProcessor.unpack();
 
     // Use camera whitebalance
-    m_rawProcessor.imgdata.params.use_camera_wb = 1;
+    //m_rawProcessor.imgdata.params.use_camera_wb = 1;
 
     // Use AHC bayer interpolation
     m_rawProcessor.imgdata.params.user_qual = 3;

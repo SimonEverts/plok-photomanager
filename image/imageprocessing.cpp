@@ -4,6 +4,11 @@
 
 #include <cmath>
 
+#ifdef OPENCV
+# include <opencv/cxcore.h>
+# include <opencv/cv.h>
+#endif
+
 ImageProcessing::ImageProcessing()
 {
 }
@@ -336,4 +341,17 @@ Image ImageProcessing::fastScale_16u (const Image& image, int scale)
     }
 
     return dest_image;
+}
+
+void ImageProcessing::medianFilter_16u (const Image& src, Image& dest, int kernel)
+{
+#ifdef OPENCV
+    QSize qsize = src.size();
+    CvSize size = {qsize.width(), qsize.height()};
+
+    cv::Mat src_mat (size, CV_16UC3, reinterpret_cast <char*> (src.pixels()));
+    cv::Mat dest_mat (size, CV_16UC3, reinterpret_cast <char*> (dest.pixels()));
+
+    cv::medianBlur (src_mat, dest_mat, kernel);
+#endif
 }

@@ -7,6 +7,27 @@
 
 #include "image/image.h"
 
+class PictureAdjustments
+{
+public:
+    PictureAdjustments (void) :
+        brightness (0),
+        contrast (1),
+        gamma (1),
+        wb_red (1),
+        wb_green (1),
+        wb_blue (1)
+    {}
+
+    float brightness;
+    float contrast;
+    float gamma;
+
+    float wb_red;
+    float wb_green;
+    float wb_blue;
+};
+
 class Picture
 {
 public:
@@ -26,6 +47,10 @@ private:
 
     Image m_image;
 
+    // Editor settings
+    PictureAdjustments m_pictureAdjustments;
+
+    // Info
     QMap <QString, QVariant> m_info;
 };
 

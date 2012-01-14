@@ -66,7 +66,8 @@ Image::Image (const Image& image) :
 {
     m_pixels = image.pixels(); //new unsigned char [m_size.height()  * m_step];
     m_ref = image.m_ref;
-    m_ref->ref();
+    if (m_ref)
+        m_ref->ref();
 }
 
 Image::Image (QImage image) :
@@ -140,7 +141,9 @@ Image& Image::operator= (const Image& image)
 
     m_pixels = image.m_pixels;
     m_ref = image.m_ref;
-    m_ref->ref();
+
+    if (m_ref)
+        m_ref->ref();
 
     return *this;
 }

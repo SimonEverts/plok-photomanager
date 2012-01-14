@@ -23,6 +23,8 @@ ImageEditor::ImageEditor(ImageProvider* imageProvider, QWidget *parent) :
     connect (ui->redSpinBox, SIGNAL(valueChanged(double)), this, SLOT(updateLut()));
     connect (ui->greenSpinBox, SIGNAL(valueChanged(double)), this, SLOT(updateLut()));
     connect (ui->blueSpinBox, SIGNAL(valueChanged(double)), this, SLOT(updateLut()));
+
+    connect (ui->medianCheckBox, SIGNAL(toggled(bool)), this, SLOT(updateLut()));
 }
 
 ImageEditor::~ImageEditor()
@@ -128,15 +130,27 @@ void ImageEditor::updateLut (void)
 
     ImageProcessing::generateLut(brightness, contrast, gamma, wb_red, wb_green, wb_blue, lut);
 
-
     ui->lutView->setLut( lut );
-
 
     Image dest_image (m_workImage.size(), m_workImage.channels(), m_workImage.size().width() * m_workImage.channels(), 8);
 
-    qDebug () << "applyLut:";
+    if (m_workImage.depth() == 16 && ui->medianCheckBox->isChecked())
+    {
+#ifdef OPENCV
+        Image tmp_image1 (m_workImage.size(), m_workImage.channels(), m_workImage.size().width() * m_workImage.channels() * 2, 16);
 
-    ImageProcessing::applyLut (&m_workImage, &dest_image, lut);
+        ImageProcessing::medianFilter_16u(m_workImage, tmp_image1, 5);
+
+        qDebug () << "applyLut:";
+
+        ImageProcessing::applyLut (&tmp_image1, &dest_image, lut);
+#else
+        ImageProcessing::applyLut (&m_workImage, &dest_image, lut);
+#endif
+    } else
+    {
+        ImageProcessing::applyLut (&m_workImage, &dest_image, lut);
+    }
 
     qDebug () << "updateLut -> imageView->setImage:";
 

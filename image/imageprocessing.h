@@ -20,6 +20,8 @@ public:
 
     static Image fastScale (const Image& image, QSize minimumSize);
 
+    static void medianFilter_16u (const Image& src, Image& dest, int kernel);
+
 private:
     static void createHistogram_8u (const Image& image, Histogram& histogram);
     static void createHistogram_16u (const Image& image, Histogram& histogram);
