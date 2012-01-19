@@ -3,11 +3,14 @@
 #include <QPainter>
 #include <QPaintEngine>
 
+#include <QMouseEvent>
+
 #include <QDebug>
 
 ImageView::ImageView(QWidget *parent) :
     QWidget(parent)
 {
+    setMouseTracking(true);
 }
 
 void ImageView::setImage (QImage image)
@@ -65,4 +68,11 @@ void ImageView::resizeImage(void)
 
     // TODO Fast on preview
     m_scaled_image = m_orig_image.scaled (scaled_image_size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+}
+
+void ImageView::mouseMoveEvent ( QMouseEvent * event )
+{
+    QRgb pixel = m_scaled_image.pixel( event->pos() );
+
+    qDebug() << qRed(pixel) << qGreen(pixel) << qBlue(pixel);
 }

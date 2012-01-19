@@ -69,9 +69,8 @@ private slots:
 
     void on_actionUpload_images_triggered( bool checked );
 
-    void on_actionCombine_triggered();
-
-    void on_actionSplit_triggered();
+    void on_actionStack_triggered();
+    void on_actionDestack_triggered();
 
     void on_actionThumbnails_triggered();
 

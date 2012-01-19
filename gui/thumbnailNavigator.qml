@@ -130,7 +130,7 @@ Rectangle {
             spacing: 8
 
             model: thumbnailViewModel
-            delegate: ThumbnailDelegate {}
+            delegate: ThumbnailDelegate_navigator {}
 
             highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
             highlightMoveDuration: 300

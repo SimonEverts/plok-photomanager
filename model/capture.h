@@ -24,14 +24,14 @@ public:
     void setPhotos (QList<QString> photos);
     QList <QString> photoList (void);
 
-    Picture jpegByCamera (void) {return m_jpegByCamera;}
-    void setJpegByCamera (Picture picture) {m_jpegByCamera = picture;}
+    Picture& jpegMaster (void) {return m_jpegMaster;}
+    void setJpegMaster (Picture picture) {m_jpegMaster = picture;}
 
-    Picture raw (void) {return m_raw;}
-    void setRaw (Picture picture) {m_raw = picture;}
+    Picture& rawMaster (void) {return m_rawMaster;}
+    void setRawMaster (Picture picture) {m_rawMaster = picture;}
 
-    Picture rawJpegByCamera (void) {return m_rawJpegByCamera;}
-    void setRawJpegByCamera (Picture picture) {m_rawJpegByCamera = picture;}
+    Picture& preview (void) {return m_preview;}
+    void setPreview (Picture picture) {m_preview = picture;}
 
     int photoCount (void) const;
 
@@ -45,9 +45,10 @@ private:
 
     QList <QString> m_pictures;
 
-    Picture m_jpegByCamera;
-    Picture m_raw;
-    Picture m_rawJpegByCamera;
+    Picture m_jpegMaster;
+    Picture m_rawMaster;
+
+    Picture m_preview;
 };
 
 #endif // PHOTO_H

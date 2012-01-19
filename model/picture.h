@@ -7,10 +7,10 @@
 
 #include "image/image.h"
 
-class PictureAdjustments
+class PictureProperties
 {
 public:
-    PictureAdjustments (void) :
+    PictureProperties (void) :
         brightness (0),
         contrast (1),
         gamma (1),
@@ -41,6 +41,11 @@ public:
     QString path() const {return m_path;}
 
     const Image& image() const {return m_image;}
+    void setImage (const Image& image) {m_image = image;}
+
+    bool loaded (void) const {return !m_image.isNull();}
+
+    PictureProperties& pictureProperties (void) {return m_pictureProperties;}
 private:
     QString m_name;
     QString m_path;
@@ -48,7 +53,7 @@ private:
     Image m_image;
 
     // Editor settings
-    PictureAdjustments m_pictureAdjustments;
+    PictureProperties m_pictureProperties;
 
     // Info
     QMap <QString, QVariant> m_info;

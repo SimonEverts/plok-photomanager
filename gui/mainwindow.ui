@@ -2,14 +2,6 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>1084</width>
-    <height>791</height>
-   </rect>
-  </property>
   <property name="windowTitle">
    <string>Plok Photo Manager</string>
   </property>
@@ -153,8 +145,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1084</width>
-     <height>20</height>
+     <width>1238</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -220,8 +212,8 @@
    <addaction name="actionThumbnails"/>
    <addaction name="actionPreview"/>
    <addaction name="separator"/>
-   <addaction name="actionCombine"/>
-   <addaction name="actionSplit"/>
+   <addaction name="actionStack"/>
+   <addaction name="actionDestack"/>
    <addaction name="separator"/>
    <addaction name="actionDelete"/>
    <addaction name="separator"/>
@@ -289,22 +281,25 @@
     <string>Preview</string>
    </property>
   </action>
-  <action name="actionCombine">
+  <action name="actionStack">
    <property name="icon">
     <iconset resource="../icons.qrc">
      <normaloff>:/standard/icons/22x22/archive-insert.png</normaloff>:/standard/icons/22x22/archive-insert.png</iconset>
    </property>
    <property name="text">
-    <string>Combine</string>
+    <string>Stack</string>
    </property>
   </action>
-  <action name="actionSplit">
+  <action name="actionDestack">
    <property name="icon">
     <iconset resource="../icons.qrc">
      <normaloff>:/standard/icons/22x22/archive-remove.png</normaloff>:/standard/icons/22x22/archive-remove.png</iconset>
    </property>
    <property name="text">
-    <string>Split</string>
+    <string>Destack</string>
+   </property>
+   <property name="toolTip">
+    <string>Destack</string>
    </property>
   </action>
   <action name="actionDelete">

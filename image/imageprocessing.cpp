@@ -61,7 +61,6 @@ void ImageProcessing::createHistogram_8u (const Image& image, Histogram& histogr
 void ImageProcessing::createHistogram_16u (const Image& image, Histogram& histogram)
 {
     unsigned char* pixels = image.pixels();
-    //short int* pixels = reinterpret_cast <short int*> (image.pixels());
 
     QSize size = image.size();
     unsigned int step = image.step();
@@ -106,7 +105,7 @@ void ImageProcessing::normalizeHistogram (Histogram& histogram, const int max_va
         return;
 
     float max = 0;
-    for (int i=0; i< max_value; i++)
+    for (int i=1; i< max_value-1; i++)
     {
         if (red[i] > max)
             max = red[i];
@@ -173,7 +172,7 @@ void ImageProcessing::generateLut (float brightness, float contrast, float gamma
     }
 }
 
-void ImageProcessing::applyLut (Image* src, Image* dest, const Lut& lut)
+void ImageProcessing::applyLut (const Image* src, Image* dest, const Lut& lut)
 {
     if (src->depth() == 8 && dest->depth() == 8)
         applyLut_8u( src, dest, lut);
@@ -181,7 +180,7 @@ void ImageProcessing::applyLut (Image* src, Image* dest, const Lut& lut)
         applyLut_16u8u( src, dest, lut);
 }
 
-void ImageProcessing::applyLut_8u (Image* src, Image* dest, const Lut& lut)
+void ImageProcessing::applyLut_8u (const Image* src, Image* dest, const Lut& lut)
 {
     unsigned char* src_pixels = src->pixels();
     unsigned char* dest_pixels = dest->pixels();
@@ -211,7 +210,7 @@ void ImageProcessing::applyLut_8u (Image* src, Image* dest, const Lut& lut)
     }
 }
 
-void ImageProcessing::applyLut_16u8u (Image* src, Image* dest, const Lut& lut)
+void ImageProcessing::applyLut_16u8u (const Image* src, Image* dest, const Lut& lut)
 {
     unsigned char* src_pixels = src->pixels();
     unsigned char* dest_pixels = dest->pixels();

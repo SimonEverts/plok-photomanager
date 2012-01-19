@@ -109,6 +109,9 @@ Image::Image (QImage image) :
 
 Image::~Image (void)
 {
+    if (!m_ref)
+        return;
+
     if (m_pixels && !m_ref->deref())
     {
         qDebug () << "destruct image";
@@ -118,6 +121,20 @@ Image::~Image (void)
 
         delete m_ref;
     }
+}
+
+void Image::clear (void)
+{
+    if (m_pixels && !m_ref->deref())
+    {
+        qDebug () << "destruct image";
+
+        delete[] m_pixels;
+        delete m_ref;
+    }
+
+    m_pixels = 0;
+    m_ref = 0;
 }
 
 Image& Image::operator= (const Image& image)
@@ -174,7 +191,7 @@ QImage Image::toQImage () const
     return image.copy();
 }
 
-bool Image::isNull (void)
+bool Image::isNull (void) const
 {
     return (m_pixels == NULL) || (m_size.width() == 0) || (m_size.height() == 0);
 }

@@ -412,7 +412,7 @@ void MainWindow::setPreviewPage (void)
     blockSignals (false);
 }
 
-void MainWindow::on_actionCombine_triggered()
+void MainWindow::on_actionStack_triggered()
 {
     QStringList selected_items;
 
@@ -454,7 +454,7 @@ void MainWindow::on_actionCombine_triggered()
     }
 }
 
-void MainWindow::on_actionSplit_triggered()
+void MainWindow::on_actionDestack_triggered()
 {
     QStringList selected_items;
 

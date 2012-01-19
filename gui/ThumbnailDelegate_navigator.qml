@@ -1,11 +1,11 @@
 import QtQuick 1.1
 
 Component {
-    id: thumbnailDelegate
+    id: thumbnailDelegate_navigator
     Item {
         id: wrapper
-        width: 310
-        height: 230
+        width: 160
+        height: 130
 
         Rectangle {
             border.width: 1
@@ -22,21 +22,21 @@ Component {
             y: 5
             spacing: 5
             Image {
-                width: 300
-                height: 200
+                width: 150
+                height: 100
                 source: "image://imageprovider/" + path
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 asynchronous: true
-                sourceSize.width: 300
-                sourceSize.height: 200
+                sourceSize.width: 150
+                sourceSize.height: 100
             }
 
             Text {
                 text: (imageCount > 1) ? name + " (" + imageCount + ")" : name
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.bold: true
-            }  
+            }
         }
 
         MouseArea {

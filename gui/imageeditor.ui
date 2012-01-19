@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>956</width>
-    <height>625</height>
+    <height>652</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -192,7 +192,7 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QSpinBox" name="spinBox">
+          <widget class="QSpinBox" name="brightnessSpinBox">
            <property name="minimum">
             <number>-100</number>
            </property>
@@ -242,7 +242,7 @@
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="QSpinBox" name="spinBox_2">
+          <widget class="QSpinBox" name="contrastSpinBox">
            <property name="minimum">
             <number>-100</number>
            </property>
@@ -257,7 +257,7 @@
             <double>10.000000000000000</double>
            </property>
            <property name="singleStep">
-            <double>0.100000000000000</double>
+            <double>0.050000000000000</double>
            </property>
            <property name="value">
             <double>2.400000000000000</double>
@@ -304,7 +304,7 @@
             <double>2.000000000000000</double>
            </property>
            <property name="singleStep">
-            <double>0.100000000000000</double>
+            <double>0.050000000000000</double>
            </property>
            <property name="value">
             <double>1.000000000000000</double>
@@ -317,7 +317,7 @@
             <double>2.000000000000000</double>
            </property>
            <property name="singleStep">
-            <double>0.100000000000000</double>
+            <double>0.050000000000000</double>
            </property>
            <property name="value">
             <double>1.000000000000000</double>
@@ -330,7 +330,7 @@
             <double>2.000000000000000</double>
            </property>
            <property name="singleStep">
-            <double>0.100000000000000</double>
+            <double>0.050000000000000</double>
            </property>
            <property name="value">
             <double>1.000000000000000</double>
@@ -400,7 +400,7 @@
   <connection>
    <sender>brightnessSlider</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>spinBox</receiver>
+   <receiver>brightnessSpinBox</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -414,7 +414,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>spinBox</sender>
+   <sender>brightnessSpinBox</sender>
    <signal>valueChanged(int)</signal>
    <receiver>brightnessSlider</receiver>
    <slot>setValue(int)</slot>
@@ -432,7 +432,7 @@
   <connection>
    <sender>contrastSlider</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>spinBox_2</receiver>
+   <receiver>contrastSpinBox</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -446,7 +446,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>spinBox_2</sender>
+   <sender>contrastSpinBox</sender>
    <signal>valueChanged(int)</signal>
    <receiver>contrastSlider</receiver>
    <slot>setValue(int)</slot>

@@ -16,20 +16,31 @@ ImageEditor::ImageEditor(ImageProvider* imageProvider, QWidget *parent) :
 
     updateLut();
 
-    connect (ui->brightnessSlider, SIGNAL(valueChanged(int)), this, SLOT(updateLut()));
-    connect (ui->contrastSlider, SIGNAL(valueChanged(int)), this, SLOT(updateLut()));
-    connect (ui->gammaSpinBox, SIGNAL(valueChanged(double)), this, SLOT(updateLut()));
+    connect (ui->brightnessSlider, SIGNAL(valueChanged(int)), this, SLOT(guiChanged()));
+    connect (ui->contrastSlider, SIGNAL(valueChanged(int)), this, SLOT(guiChanged()));
+    connect (ui->gammaSpinBox, SIGNAL(valueChanged(double)), this, SLOT(guiChanged()));
 
-    connect (ui->redSpinBox, SIGNAL(valueChanged(double)), this, SLOT(updateLut()));
-    connect (ui->greenSpinBox, SIGNAL(valueChanged(double)), this, SLOT(updateLut()));
-    connect (ui->blueSpinBox, SIGNAL(valueChanged(double)), this, SLOT(updateLut()));
+    connect (ui->redSpinBox, SIGNAL(valueChanged(double)), this, SLOT(guiChanged()));
+    connect (ui->greenSpinBox, SIGNAL(valueChanged(double)), this, SLOT(guiChanged()));
+    connect (ui->blueSpinBox, SIGNAL(valueChanged(double)), this, SLOT(guiChanged()));
 
-    connect (ui->medianCheckBox, SIGNAL(toggled(bool)), this, SLOT(updateLut()));
+    connect (ui->medianCheckBox, SIGNAL(toggled(bool)), this, SLOT(guiChanged()));
 }
 
 ImageEditor::~ImageEditor()
 {
     delete ui;
+}
+
+void ImageEditor::blockSignals (bool block)
+{
+    QList<QWidget*> children = findChildren<QWidget*> ();
+
+    for (int i=0; i<children.size(); i++)
+    {
+        children[i]->blockSignals (block);
+    }
+    QWidget::blockSignals(block);
 }
 
 void ImageEditor::setCapture(Capture capture)
@@ -42,6 +53,7 @@ void ImageEditor::setCapture(Capture capture)
         return;
 
     // TODO just select raw for now
+
     for (int i=0; i<pictures.size(); i++)
     {
         if (QFileInfo(pictures.at(i)).suffix() == "ARW" ||
@@ -53,20 +65,29 @@ void ImageEditor::setCapture(Capture capture)
 
     qDebug () << "setCapture:";
 
+    Picture current_picture = currentPicture();
+
+    m_workJpegMaster.clear();
+    m_workRawMaster.clear();
+
     Image image;
     if (ui->imageDeveloper->currentIndex() == 0)
     {
         image = m_imageProvider->loadPreview (m_currentPicture);
-        ui->gammaSpinBox->setValue(1);
+        m_workJpegMaster = ImageProcessing::fastScale (image, ui->imageView->size());
     }
     if (ui->imageDeveloper->currentIndex() == 1)
     {
         image = m_imageProvider->loadMaster (m_currentPicture);
-        ui->gammaSpinBox->setValue(2.2);
+        m_workRawMaster = ImageProcessing::fastScale (image, ui->imageView->size());
     }
 
+    current_picture.setImage( image );
+    loadGUI_pictureProperties( current_picture.pictureProperties() );
+
+
     qDebug () << "assign/scale m_workImage:";
-    m_workImage = ImageProcessing::fastScale (image, ui->imageView->size());
+
 
     updateLut( );
 }
@@ -75,25 +96,30 @@ void ImageEditor::on_imageDeveloper_currentIndexChanged(const int &currentIndex)
 {
     qDebug () << "currentIndexChanged:";
 
+    Picture& current_picture = currentPicture();
 
-    Image image;
-
-    qDebug () << "imageProvider:";
-
-    if (currentIndex == 0)
+    if (ui->imageDeveloper->currentIndex() == 0)
     {
-        image = m_imageProvider->loadPreview (m_currentPicture);
-        ui->gammaSpinBox->setValue(1);
+        if (!current_picture.loaded())
+            current_picture.setImage( m_imageProvider->loadPreview (m_currentPicture) );
+
+        if (m_workJpegMaster.isNull())
+            m_workJpegMaster = ImageProcessing::fastScale (current_picture.image(), ui->imageView->size());
     }
-    if (currentIndex == 1)
+    if (ui->imageDeveloper->currentIndex() == 1)
     {
-        image = m_imageProvider->loadMaster (m_currentPicture);
-        ui->gammaSpinBox->setValue(2.2);
+       if (!current_picture.loaded())
+            current_picture.setImage( m_imageProvider->loadMaster (m_currentPicture) );
+
+        if (m_workRawMaster.isNull())
+            m_workRawMaster = ImageProcessing::fastScale (current_picture.image(), ui->imageView->size());
     }
+
+    loadGUI_pictureProperties( current_picture.pictureProperties() );
 
     qDebug () << "assign/scale m_workImage:";
 
-    m_workImage = ImageProcessing::fastScale (image, ui->imageView->size());
+//    m_workImage = ImageProcessing::fastScale (current_picture.image(), ui->imageView->size());
 
     updateLut ();
 }
@@ -111,7 +137,11 @@ void ImageEditor::updateLut (void)
 {
     qDebug () << "updateLut:";
 
-    Lut lut (m_workImage.depth());
+
+    PictureProperties& picture_properties = currentPicture().pictureProperties();
+    const Image& work_image = currentImage();
+
+    Lut lut (work_image.depth());
 
     int* red = lut.red();
     int* green = lut.green();
@@ -120,36 +150,36 @@ void ImageEditor::updateLut (void)
     if (!red || !green || !blue)
         return;
 
-    float contrast = 1 + float(ui->contrastSlider->value()) / 100;
-    float brightness = float(ui->brightnessSlider->value()) / 100;
-    float gamma = 1.f / ui->gammaSpinBox->value();
+    float contrast = picture_properties.contrast;
+    float brightness = picture_properties.brightness;
+    float gamma = picture_properties.gamma;
 
-    float wb_red = ui->redSpinBox->value();
-    float wb_green = ui->greenSpinBox->value();
-    float wb_blue = ui->blueSpinBox->value();
+    float wb_red = picture_properties.wb_red;
+    float wb_green = picture_properties.wb_green;
+    float wb_blue = picture_properties.wb_blue;
 
     ImageProcessing::generateLut(brightness, contrast, gamma, wb_red, wb_green, wb_blue, lut);
 
     ui->lutView->setLut( lut );
 
-    Image dest_image (m_workImage.size(), m_workImage.channels(), m_workImage.size().width() * m_workImage.channels(), 8);
+    Image dest_image (work_image.size(), work_image.channels(), work_image.size().width() * work_image.channels(), 8);
 
-    if (m_workImage.depth() == 16 && ui->medianCheckBox->isChecked())
+    if (work_image.depth() == 16 && ui->medianCheckBox->isChecked())
     {
 #ifdef OPENCV
-        Image tmp_image1 (m_workImage.size(), m_workImage.channels(), m_workImage.size().width() * m_workImage.channels() * 2, 16);
+        Image tmp_image1 (work_image.size(), work_image.channels(), work_image.size().width() * work_image.channels() * 2, 16);
 
-        ImageProcessing::medianFilter_16u(m_workImage, tmp_image1, 5);
+        ImageProcessing::medianFilter_16u(work_image, tmp_image1, 3);
 
         qDebug () << "applyLut:";
 
         ImageProcessing::applyLut (&tmp_image1, &dest_image, lut);
 #else
-        ImageProcessing::applyLut (&m_workImage, &dest_image, lut);
+        ImageProcessing::applyLut (&work_image, &dest_image, lut);
 #endif
     } else
     {
-        ImageProcessing::applyLut (&m_workImage, &dest_image, lut);
+        ImageProcessing::applyLut (&work_image, &dest_image, lut);
     }
 
     qDebug () << "updateLut -> imageView->setImage:";
@@ -160,3 +190,59 @@ void ImageEditor::updateLut (void)
 
     updateHistogram( dest_image );
 }
+
+void ImageEditor::guiChanged (void)
+{
+    PictureProperties& picture_adjustment = currentPicture().pictureProperties();
+
+    picture_adjustment.brightness = float(ui->brightnessSlider->value()) / 100;
+    picture_adjustment.contrast = 1.f + (float(ui->contrastSlider->value()) / 100);
+    picture_adjustment.gamma = 1.f / float(ui->gammaSpinBox->value());
+
+    picture_adjustment.wb_red = ui->redSpinBox->value();
+    picture_adjustment.wb_green = ui->greenSpinBox->value();
+    picture_adjustment.wb_blue = ui->blueSpinBox->value();
+
+    updateLut();
+}
+
+void ImageEditor::loadGUI_pictureProperties (PictureProperties pictureAdjustments)
+{
+    blockSignals(true);
+
+    float brightness = pictureAdjustments.brightness * 100;
+    float contrast = (pictureAdjustments.contrast - 1.f) * 100;
+
+    ui->brightnessSlider->setValue( brightness );
+    ui->brightnessSpinBox->setValue( brightness );
+    ui->contrastSlider->setValue( contrast );
+    ui->contrastSpinBox->setValue( contrast );
+
+    ui->gammaSpinBox->setValue( 1.f / float(pictureAdjustments.gamma) );
+
+    ui->redSpinBox->setValue( pictureAdjustments.wb_red );
+    ui->greenSpinBox->setValue( pictureAdjustments.wb_green );
+    ui->blueSpinBox->setValue( pictureAdjustments.wb_blue );
+
+    blockSignals (false);
+}
+
+Picture& ImageEditor::currentPicture (void)
+{
+    if (ui->imageDeveloper->currentIndex() == 0)
+        return m_capture.preview();
+
+    if (ui->imageDeveloper->currentIndex() == 1)
+        return m_capture.rawMaster();
+}
+
+Image& ImageEditor::currentImage (void)
+{
+    if (ui->imageDeveloper->currentIndex() == 0)
+        return m_workJpegMaster;
+
+    if (ui->imageDeveloper->currentIndex() == 1)
+        return m_workRawMaster;
+}
+
+

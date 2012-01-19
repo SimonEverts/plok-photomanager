@@ -25,7 +25,8 @@ public:
     Image copy (void);
     QImage toQImage (void) const;
 
-    bool isNull (void);
+    void clear (void);
+    bool isNull (void) const;
 
     Image fastScale (const Image& image, QSize minimumSize);
 

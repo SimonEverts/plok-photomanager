@@ -15,8 +15,8 @@ Rectangle {
         anchors.fill: parent
         flow: GridView.LeftToRight
 
-        cellHeight: 140
-        cellWidth: 170
+        cellHeight: 240
+        cellWidth: 320
 
         maximumFlickVelocity: 2000
         flickDeceleration: 2000

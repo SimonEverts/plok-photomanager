@@ -9,7 +9,7 @@ QT       += core gui declarative network sql
 TARGET = plok-photomanager
 TEMPLATE = app
 
-CONFIG += opencv
+# CONFIG += opencv
 
 SOURCES += main.cpp\
         gui/mainwindow.cpp \
@@ -76,7 +76,9 @@ OTHER_FILES += \
     gui/thumbnailView.qml \
     gui/thumbnailNavigator.qml \
     gui/ThumbnailDelegate.qml \
-    gui/setview.qml
+    gui/setview.qml \
+    gui/ThumbnailDelegate_navigator.qml \
+    todo.txt
 
 RESOURCES += \
     gui/gui.qrc \
