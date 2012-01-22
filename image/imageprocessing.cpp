@@ -142,6 +142,8 @@ void ImageProcessing::generateLut (float brightness, float contrast, float gamma
 
     brightness *= max_value;
 
+    // TODO whitebalance not linear in this lut?
+
     for (int i=0; i<max_value; i++)
     {
         // TODO 8bit images have gamma already applied
@@ -152,6 +154,18 @@ void ImageProcessing::generateLut (float brightness, float contrast, float gamma
         float r = value * wbRed;
         float g = value * wbGreen;
         float b = value * wbBlue;
+
+// TODO werkt niet?
+//        float value = (contrast*i + brightness);
+
+//        float wb_r = value * wbRed;
+//        float wb_g = value * wbGreen;
+//        float wb_b = value * wbBlue;
+
+//        float r = float(max_value) * (pow ((float(wb_r)/max_value), gamma));
+//        float g = float(max_value) * (pow ((float(wb_g)/max_value), gamma));
+//        float b = float(max_value) * (pow ((float(wb_b)/max_value), gamma));
+
 
         if (r < 0)
             r = 0;

@@ -39,17 +39,36 @@ void Database::initialize()
     if (!m_database->open())
         qDebug () << m_database->lastError();
 
-    QSqlQuery create_table (QString ("CREATE TABLE IF NOT EXISTS sets (") +
+    QSqlQuery create_sets (QString ("CREATE TABLE IF NOT EXISTS sets (") +
                             "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                             "name VARCHAR(30)," +
                             "path VARCHAR(255));",
                             *m_database);
 
-    if (create_table.lastError().isValid())
+    if (create_sets.lastError().isValid())
     {
         qDebug() << m_database->lastError();
-        qDebug() << create_table.lastError();
+        qDebug() << create_sets.lastError();
     }
+
+    QSqlQuery create_pictures (QString ("CREATE TABLE IF NOT EXISTS pictures (") +
+                               "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                               "name VARCHAR(30)," +
+                               "path VARCHAR(255)," +
+                               "brightness FLOAT," +
+                               "contrast FLOAT," +
+                               "gamma FLOAT," +
+                               "wb_red FLOAT,"  +
+                               "wb_green FLOAT," +
+                               "wb_blue FLOAT);",
+                               *m_database);
+
+    if (create_pictures.lastError().isValid())
+    {
+        qDebug() << m_database->lastError();
+        qDebug() << create_pictures.lastError();
+    }
+
 
     m_database->close();
 }

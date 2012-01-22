@@ -62,15 +62,11 @@ Image ImageLoader_raw_p::loadPreview ()
                 m_rawProcessor.imgdata.thumbnail.tlength,
                 "JPG");
 
-    return image.copy();
+    return image.convertToFormat(QImage::Format_RGB888);
 }
 
 Image ImageLoader_raw_p::loadMaster ()
 {
-
-
-
-
     m_rawProcessor.imgdata.params.no_auto_bright = 1;
 
 //    m_rawProcessor.imgdata.params.bright = 1;
@@ -79,7 +75,7 @@ Image ImageLoader_raw_p::loadMaster ()
     //m_rawProcessor.imgdata.params.gamm[1] = 12.92;      // sRGB
 
     m_rawProcessor.imgdata.params.gamm[0] = 1;  // sRGB
-    m_rawProcessor.imgdata.params.gamm[1] = 0;      // sRGB
+    m_rawProcessor.imgdata.params.gamm[1] = 1;      // sRGB
 
     m_rawProcessor.imgdata.params.output_color = 1; // sRGB
     m_rawProcessor.imgdata.params.output_bps = 16;  // 16 bits
@@ -92,11 +88,36 @@ Image ImageLoader_raw_p::loadMaster ()
     // Use AHC bayer interpolation
     m_rawProcessor.imgdata.params.user_qual = 3;
 
-//    m_rawProcessor.imgdata.params.threshold = 100;
-//    if (m_rawProcessor.imgdata.other.iso_speed)
-//        m_rawProcessor.imgdata.params.threshold = m_rawProcessor.imgdata.other.iso_speed / 4; // TODO  /8 beter?
+    m_rawProcessor.imgdata.params.threshold = 100;
+    if (m_rawProcessor.imgdata.other.iso_speed)
+        m_rawProcessor.imgdata.params.threshold = m_rawProcessor.imgdata.other.iso_speed / 8; // TODO  /8 beter?
 
 //    m_rawProcessor.imgdata.params.med_passes = 1;
+
+
+//    int fbdd_noiserd
+//        dcraw keys: none
+//        Controls FBDD noise reduction before demosaic.
+
+//            0 - do not use FBDD noise reduction
+//            1 - light FBDD reduction
+//            2 (and more) - full FBDD reduction
+    m_rawProcessor.imgdata.params.fbdd_noiserd = 1;
+
+//    int es_med_passes
+//        dcraw keys: none
+//        Number of edge-sensitive median filter passes after VCD+AHD demosaic. Value above 1 is highly not recommended.
+    m_rawProcessor.imgdata.params.es_med_passes = 1;
+
+
+//    int cfa_clean; float lclean,cclean;
+//        Reduce impulse noise and Gaussian high frequency.
+//        cfa_clean: positive value turns the feature on (default: off).
+//        lclean,cclean - amount of noise reduction for (L)uminance and (C)olor. Useable range from 0.005 to 0.05, common value 0.01
+    m_rawProcessor.imgdata.params.cfa_clean = 1;
+    m_rawProcessor.imgdata.params.lclean = 0.01;
+    m_rawProcessor.imgdata.params.cclean = 0.01;
+
 
     m_rawProcessor.dcraw_process();
 

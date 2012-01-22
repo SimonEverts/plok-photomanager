@@ -26,8 +26,9 @@ MainWindow::MainWindow(QWidget *parent) :
     m_imageThumbnailer (&m_imageProvider),
     m_database (),
     m_setDao(&m_database),
+    m_pictureDao (&m_database),
     m_createSetDialog( &m_setDao, &m_imageThumbnailer ),
-    m_imageEditor (&m_imageProvider)
+    m_imageEditor (&m_imageProvider, &m_pictureDao)
 {
     ui->setupUi(this);
 

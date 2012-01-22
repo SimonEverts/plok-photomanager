@@ -14,7 +14,7 @@
       </property>
       <widget class="QStackedWidget" name="navStackedWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="setBrowserPage">
         <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -141,14 +141,6 @@
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1238</width>
-     <height>21</height>
-    </rect>
-   </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>

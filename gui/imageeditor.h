@@ -9,6 +9,7 @@
 #include "model/picture.h"
 
 class ImageProvider;
+class PictureDao;
 
 namespace Ui {
 class ImageEditor;
@@ -19,7 +20,7 @@ class ImageEditor : public QWidget
     Q_OBJECT
     
 public:
-    explicit ImageEditor(ImageProvider* imageProvider, QWidget *parent = 0);
+    explicit ImageEditor(ImageProvider* imageProvider, PictureDao* pictureDao, QWidget *parent = 0);
     ~ImageEditor();
 
     void blockSignals (bool block);
@@ -31,9 +32,13 @@ private slots:
     void updateHistogram ( const Image& image );
     void updateLut ( void );
 
+    void loadPicture (void);
+
     void guiChanged (void);
 
     void on_imageDeveloper_currentIndexChanged(const int &currentIndex);
+
+    void on_saveButton_clicked();
 
 private:
     void loadGUI_pictureProperties (PictureProperties pictureAdjustments);
@@ -50,6 +55,7 @@ private:
     Image m_workRawMaster;
 
     ImageProvider* m_imageProvider;
+    PictureDao* m_pictureDao;
 };
 
 #endif // IMAGEEDITOR_H

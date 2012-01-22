@@ -4,13 +4,16 @@
 #include "image/imageprovider.h"
 #include "image/imageprocessing.h"
 
+#include "model/picturedao.h"
+
 #include <QFileInfo>
 #include <QDebug>
 
-ImageEditor::ImageEditor(ImageProvider* imageProvider, QWidget *parent) :
+ImageEditor::ImageEditor(ImageProvider* imageProvider, PictureDao* pictureDao, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ImageEditor),
-    m_imageProvider (imageProvider)
+    m_imageProvider (imageProvider),
+    m_pictureDao (pictureDao)
 {
     ui->setupUi(this);
 
@@ -65,26 +68,10 @@ void ImageEditor::setCapture(Capture capture)
 
     qDebug () << "setCapture:";
 
-    Picture current_picture = currentPicture();
-
     m_workJpegMaster.clear();
     m_workRawMaster.clear();
 
-    Image image;
-    if (ui->imageDeveloper->currentIndex() == 0)
-    {
-        image = m_imageProvider->loadPreview (m_currentPicture);
-        m_workJpegMaster = ImageProcessing::fastScale (image, ui->imageView->size());
-    }
-    if (ui->imageDeveloper->currentIndex() == 1)
-    {
-        image = m_imageProvider->loadMaster (m_currentPicture);
-        m_workRawMaster = ImageProcessing::fastScale (image, ui->imageView->size());
-    }
-
-    current_picture.setImage( image );
-    loadGUI_pictureProperties( current_picture.pictureProperties() );
-
+    loadPicture ();
 
     qDebug () << "assign/scale m_workImage:";
 
@@ -96,26 +83,7 @@ void ImageEditor::on_imageDeveloper_currentIndexChanged(const int &currentIndex)
 {
     qDebug () << "currentIndexChanged:";
 
-    Picture& current_picture = currentPicture();
-
-    if (ui->imageDeveloper->currentIndex() == 0)
-    {
-        if (!current_picture.loaded())
-            current_picture.setImage( m_imageProvider->loadPreview (m_currentPicture) );
-
-        if (m_workJpegMaster.isNull())
-            m_workJpegMaster = ImageProcessing::fastScale (current_picture.image(), ui->imageView->size());
-    }
-    if (ui->imageDeveloper->currentIndex() == 1)
-    {
-       if (!current_picture.loaded())
-            current_picture.setImage( m_imageProvider->loadMaster (m_currentPicture) );
-
-        if (m_workRawMaster.isNull())
-            m_workRawMaster = ImageProcessing::fastScale (current_picture.image(), ui->imageView->size());
-    }
-
-    loadGUI_pictureProperties( current_picture.pictureProperties() );
+    loadPicture ();
 
     qDebug () << "assign/scale m_workImage:";
 
@@ -137,6 +105,8 @@ void ImageEditor::updateLut (void)
 {
     qDebug () << "updateLut:";
 
+
+    // TODO, gamma after contrast?
 
     PictureProperties& picture_properties = currentPicture().pictureProperties();
     const Image& work_image = currentImage();
@@ -189,6 +159,47 @@ void ImageEditor::updateLut (void)
     qDebug () << "updateHistogram:";
 
     updateHistogram( dest_image );
+}
+
+void ImageEditor::loadPicture (void)
+{
+    Picture& current_picture = currentPicture();
+    current_picture.setPath ( m_currentPicture );
+
+    Image image;
+    if (ui->imageDeveloper->currentIndex() == 0)
+    {
+        current_picture.pictureProperties().clear();
+
+        if (!current_picture.loaded())
+        {
+            image = m_imageProvider->loadPreview (m_currentPicture);
+            current_picture.setImage( image );
+        }
+
+        if (m_workJpegMaster.isNull())
+        {
+            //m_workJpegMaster = ImageProcessing::fastScale (image, QSize(800,600));
+            m_workJpegMaster = image;
+        }
+    }
+    if (ui->imageDeveloper->currentIndex() == 1)
+    {
+        if (!current_picture.loaded())
+        {
+            Picture new_picture;
+            new_picture = m_pictureDao->read( current_picture.path() );
+            current_picture.setPictureProperties (new_picture.pictureProperties());
+
+            image = m_imageProvider->loadMaster (m_currentPicture);
+            current_picture.setImage( image );
+        }
+
+        if (m_workRawMaster.isNull())
+            m_workRawMaster = ImageProcessing::fastScale (image, QSize(800,600));
+    }
+
+    loadGUI_pictureProperties (current_picture.pictureProperties());
 }
 
 void ImageEditor::guiChanged (void)
@@ -245,4 +256,19 @@ Image& ImageEditor::currentImage (void)
         return m_workRawMaster;
 }
 
+void ImageEditor::on_saveButton_clicked()
+{
+    if (ui->imageDeveloper->currentIndex() == 0)
+    {
+        qDebug() << "TODO cannot change or modify published picture";
+        return;
+    }
 
+    int id = m_pictureDao->read(currentPicture().path()).id();
+    if ( id != -1  )
+    {
+        currentPicture().setId (id);
+        m_pictureDao->update( currentPicture() );
+    } else
+        m_pictureDao->create ( currentPicture() );
+}

@@ -50,7 +50,7 @@ Image ImageLoader_generic_p::loadThumbnail ()
 
     QImage image = m_imageReader.read();
 
-    return image;
+    return image.convertToFormat(QImage::Format_RGB888);
 }
 
 Image ImageLoader_generic_p::loadPreview ()
@@ -66,7 +66,7 @@ Image ImageLoader_generic_p::loadPreview ()
 
     QImage image = m_imageReader.read();
 
-    return image;
+    return image.convertToFormat(QImage::Format_RGB888);
 }
 
 Image ImageLoader_generic_p::loadMaster ()

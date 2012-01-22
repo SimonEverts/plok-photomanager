@@ -13,6 +13,7 @@
 #include "model/capture.h"
 
 #include "model/setdao.h"
+#include "model/picturedao.h"
 //#include "model/setmanager.h"
 
 #include "database/database.h"
@@ -48,6 +49,10 @@ public:
     ~MainWindow();
 
     void blockSignals (bool block);
+
+    QSize sizeHint() const {
+        return QSize(1280, 1024);
+    }
 
 public slots:
     void updateImage (void);
@@ -128,6 +133,8 @@ private:
     Database m_database;
 
     SetDao m_setDao;
+    PictureDao m_pictureDao;
+
     //    SetManager m_setManager;
 
     QList <QSharedPointer< ThumbnailModelItem > > m_thumbnailModel;

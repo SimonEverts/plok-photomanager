@@ -33,6 +33,9 @@ public:
     Picture& preview (void) {return m_preview;}
     void setPreview (Picture picture) {m_preview = picture;}
 
+    Picture& published (void) {return m_published;}
+    void setPublished (Picture picture) {m_published = picture;}
+
     int photoCount (void) const;
 
     QString previewPhoto (void);
@@ -49,6 +52,8 @@ private:
     Picture m_rawMaster;
 
     Picture m_preview;
+
+    Picture m_published;
 };
 
 #endif // PHOTO_H
