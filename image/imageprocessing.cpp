@@ -149,22 +149,12 @@ void ImageProcessing::generateLut (float brightness, float contrast, float gamma
         // TODO 8bit images have gamma already applied
         float gamma_value = float(max_value) * (pow ((float(i)/max_value), gamma));
 
-        float value = (contrast*gamma_value + brightness);
-
-        float r = value * wbRed;
-        float g = value * wbGreen;
-        float b = value * wbBlue;
+        float r = (contrast * gamma_value * wbRed + brightness);
+        float g = (contrast * gamma_value * wbGreen + brightness);
+        float b = (contrast * gamma_value * wbBlue + brightness);
 
 // TODO werkt niet?
-//        float value = (contrast*i + brightness);
 
-//        float wb_r = value * wbRed;
-//        float wb_g = value * wbGreen;
-//        float wb_b = value * wbBlue;
-
-//        float r = float(max_value) * (pow ((float(wb_r)/max_value), gamma));
-//        float g = float(max_value) * (pow ((float(wb_g)/max_value), gamma));
-//        float b = float(max_value) * (pow ((float(wb_b)/max_value), gamma));
 
 
         if (r < 0)
@@ -356,6 +346,52 @@ Image ImageProcessing::fastScale_16u (const Image& image, int scale)
     return dest_image;
 }
 
+void ImageProcessing::fastDebayer_16u (const Image& src, Image& dest)
+{
+    // TODO for a fast half-size debayering, to a two pass method
+    // TODO use second green
+
+    // TODO or split a row in half size of cache
+
+    unsigned char* src_pixels = src.pixels();
+    unsigned char* dest_pixels = dest.pixels();
+
+    // TODO assume image size and format are the same
+    QSize src_size = src.size();
+
+    unsigned int src_step = src.step();
+    unsigned int dest_step = dest.step();
+
+    unsigned int src_channels = src.channels();
+    unsigned int dest_channels = dest.channels();
+
+    int height = src_size.height() / 2;
+    int width = src_size.width() / 2;
+
+    for(int y=0; y < height; y++)
+    {
+        for(int x=0; x < width; x++)
+        {
+            unsigned short int* src_pixel = reinterpret_cast <unsigned short int*> (src_pixels + y*2*src_step) + (x*2);
+            unsigned short int* dest_pixel = reinterpret_cast <unsigned short int*> (dest_pixels + y*dest_step) + x*dest_channels;
+
+            dest_pixel[0] = src_pixel[1];
+            dest_pixel[1] = src_pixel[1];
+        }
+    }
+
+    for(int y=0; y < height; y++)
+    {
+        for(int x=0; x < width; x++)
+        {
+            unsigned short int* src_pixel = reinterpret_cast <unsigned short int*> (src_pixels + ((y*2)+1)*src_step) + (x*2);
+            unsigned short int* dest_pixel = reinterpret_cast <unsigned short int*> (dest_pixels + y*dest_step) + x*dest_channels;
+
+            dest_pixel[2] = 0;//src_pixel[0];
+        }
+    }
+}
+
 void ImageProcessing::medianFilter_16u (const Image& src, Image& dest, int kernel)
 {
 #ifdef OPENCV
@@ -367,4 +403,255 @@ void ImageProcessing::medianFilter_16u (const Image& src, Image& dest, int kerne
 
     cv::medianBlur (src_mat, dest_mat, kernel);
 #endif
+}
+
+void ImageProcessing::applyProperties (const Image* src, Image* dest, float brightness, float contrast, float gamma, float wbRed, float wbGreen, float wbBlue)
+{
+    if (src->depth() == 8 && dest->depth() == 8)
+        applyProperties_8u( src, dest, brightness, contrast, gamma, wbRed, wbGreen, wbBlue);
+    if (src->depth() == 16 && dest->depth() == 8)
+        applyProperties_16u8u( src, dest, brightness, contrast, gamma, wbRed, wbGreen, wbBlue);
+}
+
+void ImageProcessing::applyProperties_8u (const Image* src, Image* dest, float brightness, float contrast, float gamma, float wbRed, float wbGreen, float wbBlue )
+{
+    unsigned char* src_pixels = src->pixels();
+    unsigned char* dest_pixels = dest->pixels();
+
+    // TODO assume image size and format are the same
+    QSize size = src->size();
+
+    unsigned int src_step = src->step();
+    unsigned int dest_step = dest->step();
+
+    unsigned int channels = src->channels();
+
+    int height = size.height();
+    int width = size.width();
+
+    const float norm_value = (1 << 8);
+
+    for(int y=0; y < height; y++)
+    {
+        for(int x=0; x < width; x++)
+        {
+            unsigned int index = (y*src_step) + (x*channels);
+
+            float r = static_cast<float> (src_pixels[index]) / norm_value;
+            float g = static_cast<float> (src_pixels[index+1]) / norm_value;
+            float b = static_cast<float> (src_pixels[index+2]) / norm_value;
+
+            float x, y, z;
+            convertRGBtoXYZ(r, g, b, x, y, z);
+
+            float l, a, lab_b;
+            convertXYZtoLAB(x, y, z, l, a, lab_b);
+
+            l = l * contrast + (brightness * 100);
+
+            a = a * wbRed * wbGreen;
+            lab_b = lab_b * wbRed * wbBlue;
+
+            convertLABtoXYZ(l, a, lab_b, x, y, z);
+
+            convertXYZtoRGB(x, y, z, r, g, b);
+
+            r = r * 255.f;
+            g = g * 255.f;
+            b = b * 255.f;
+
+
+            if (r < 0)
+                r = 0;
+            if (r > 255)
+                r = 255;
+            if (g < 0)
+                g = 0;
+            if (g > 255)
+                g = 255;
+            if (b < 0)
+                b = 0;
+            if (b > 255)
+                b = 255;
+
+            dest_pixels[index] =  r;
+            dest_pixels[index+1] = g;
+            dest_pixels[index+2] = b;
+        }
+    }
+}
+
+void ImageProcessing::applyProperties_16u8u (const Image* src, Image* dest, float brightness, float contrast, float gamma, float wbRed, float wbGreen, float wbBlue )
+{
+    unsigned char* src_pixels = src->pixels();
+    unsigned char* dest_pixels = dest->pixels();
+
+    // TODO assume image size and format are the same
+    QSize size = src->size();
+
+    unsigned int src_step = src->step();
+    unsigned int dest_step = dest->step();
+
+    unsigned int channels = src->channels();
+
+    const float norm_value = (1 << 16);
+
+    int height = size.height();
+    int width = size.width();
+
+    for(int y=0; y < height; y++)
+    {
+        for(int x=0; x < width; x++)
+        {
+            unsigned int dest_index = (y*dest_step) + (x*channels);
+
+            unsigned short int* src_pixel = reinterpret_cast <unsigned short int*> (src_pixels + y*src_step) + x*channels;
+
+            float r = static_cast<float> (src_pixel[0]) / norm_value;
+            float g = static_cast<float> (src_pixel[1]) / norm_value;
+            float b = static_cast<float> (src_pixel[2]) / norm_value;
+
+            float x, y, z;
+            convertRGBtoXYZ(r, g, b, x, y, z);
+
+            float l, a, lab_b;
+            convertXYZtoLAB(x, y, z, l, a, lab_b);
+
+            l = l * contrast + (brightness * 100);
+
+            a = a * wbRed * wbGreen;
+            lab_b = lab_b * wbRed * wbBlue;
+
+            convertLABtoXYZ(l, a, lab_b, x, y, z);
+
+            convertXYZtoRGB(x, y, z, r, g, b);
+
+            r = r * 255.f;
+            g = g * 255.f;
+            b = b * 255.f;
+
+
+            if (r < 0)
+                r = 0;
+            if (r > 255)
+                r = 255;
+            if (g < 0)
+                g = 0;
+            if (g > 255)
+                g = 255;
+            if (b < 0)
+                b = 0;
+            if (b > 255)
+                b = 255;
+
+            dest_pixels[dest_index] =  r;
+            dest_pixels[dest_index+1] = g;
+            dest_pixels[dest_index+2] = b;
+        }
+    }
+}
+
+void ImageProcessing::convertRGBtoXYZ (float r, float g, float b, float& x, float& y, float& z)
+{
+    if ( r > 0.04045 )
+        r = pow( (( r + 0.055 ) / 1.055 ), 2.4);
+    else
+        r = r / 12.92;
+
+    if ( g > 0.04045 )
+        g = pow( (( g + 0.055 ) / 1.055 ), 2.4);
+    else
+        g = g / 12.92;
+
+    if ( b > 0.04045 )
+        b = pow( (( b + 0.055 ) / 1.055 ), 2.4);
+    else
+        b = b / 12.92;
+
+    r = r * 100.f;
+    g = g * 100.f;
+    b = b * 100.f;
+
+    //Observer. = 2°, Illuminant = D65
+    x = r * 0.4124 + g * 0.3576 + b * 0.1805;
+    y = r * 0.2126 + g * 0.7152 + b * 0.0722;
+    z = r * 0.0193 + g * 0.1192 + b * 0.9505;
+}
+
+void ImageProcessing::convertXYZtoRGB (float x, float y, float z, float& r, float& g, float& b)
+{
+    x = x / 100.f;        //X from 0 to  95.047      (Observer = 2°, Illuminant = D65)
+    y = y / 100.f;        //Y from 0 to 100.000
+    z = z / 100.f;        //Z from 0 to 108.883
+
+    r = x *  3.2406 + y * -1.5372 + z * -0.4986;
+    g = x * -0.9689 + y *  1.8758 + z *  0.0415;
+    b = x *  0.0557 + y * -0.2040 + z *  1.0570;
+
+    if ( r > 0.0031308 )
+        r = 1.055 * ( pow (r, ( 1 / 2.4 )) ) - 0.055;
+    else
+        r = 12.92 * r;
+
+    if ( g > 0.0031308 )
+        g = 1.055 * ( pow (g, ( 1 / 2.4 )) ) - 0.055;
+    else
+        g = 12.92 * g;
+
+    if ( b > 0.0031308 )
+        b = 1.055 * ( pow (b, ( 1 / 2.4 )) ) - 0.055;
+    else
+        b = 12.92 * b;
+}
+
+void ImageProcessing::convertLABtoXYZ (float l, float a, float b, float& x, float& y, float& z)
+{
+    y = ( l + 16.f ) / 116.f;
+    x = (a / 500.f) + y;
+    z = y - (b / 200.f);
+
+    if ( pow (y,3) > 0.008856 )
+        y= pow(y,3);
+    else
+        y = ( y - (16.f / 116.f) ) / 7.787;
+
+    if ( pow (x,3) > 0.008856 )
+        x = pow (x, 3);
+    else
+        x = ( x - (16.f / 116.f) ) / 7.787;
+
+    if ( pow (z,3) > 0.008856 )
+        z = pow(z, 3);
+    else
+        z = ( z - (16.f / 116.f) ) / 7.787;
+
+    x = 95.047 * x;     //ref_X =       Observer= 2°, Illuminant= D65
+    y = 100.000 * y;     //ref_Y =
+    z = 108.883 * z;     //ref_Z =
+}
+
+void ImageProcessing::convertXYZtoLAB (float x, float y, float z, float& l, float& a, float& b)
+{
+    x = x / 95.047;          //ref_X =     Observer= 2°, Illuminant= D65
+    y = y / 100.000;          //ref_Y =
+    z = z / 108.883;          //ref_Z =
+
+    if ( x > 0.008856 )
+        x = pow (x, ( 1.f/3.f ));
+    else
+        x = ( 7.787 * x ) + ( 16.f / 116.f );
+
+    if ( y > 0.008856 )
+        y = pow (y, ( 1.f/3.f ));
+    else
+        y = ( 7.787 * y ) + ( 16.f / 116.f );
+
+    if ( z > 0.008856 )
+        z = pow (z, ( 1.f/3.f ));
+    else
+        z = ( 7.787 * z ) + ( 16.f / 116.f );
+
+    l = ( 116.f * y ) - 16;
+    a = 500.f * ( x - y );
+    b = 200.f * ( y - z );
 }

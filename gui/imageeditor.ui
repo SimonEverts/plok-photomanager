@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>956</width>
-    <height>652</height>
+    <height>692</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -231,10 +231,10 @@
          <item row="4" column="0">
           <widget class="QSlider" name="contrastSlider">
            <property name="minimum">
-            <number>-100</number>
+            <number>-1000</number>
            </property>
            <property name="maximum">
-            <number>100</number>
+            <number>1000</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -244,10 +244,10 @@
          <item row="4" column="1">
           <widget class="QSpinBox" name="contrastSpinBox">
            <property name="minimum">
-            <number>-100</number>
+            <number>-1000</number>
            </property>
            <property name="maximum">
-            <number>100</number>
+            <number>1000</number>
            </property>
           </widget>
          </item>

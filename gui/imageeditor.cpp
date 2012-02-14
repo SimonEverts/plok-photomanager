@@ -134,23 +134,25 @@ void ImageEditor::updateLut (void)
 
     Image dest_image (work_image.size(), work_image.channels(), work_image.size().width() * work_image.channels(), 8);
 
-    if (work_image.depth() == 16 && ui->medianCheckBox->isChecked())
-    {
-#ifdef OPENCV
-        Image tmp_image1 (work_image.size(), work_image.channels(), work_image.size().width() * work_image.channels() * 2, 16);
+    ImageProcessing::applyLut (&work_image, &dest_image, lut);
 
-        ImageProcessing::medianFilter_16u(work_image, tmp_image1, 3);
+//    if (work_image.depth() == 16 && ui->medianCheckBox->isChecked())
+//    {
+//#ifdef OPENCV
+//        Image tmp_image1 (work_image.size(), work_image.channels(), work_image.size().width() * work_image.channels() * 2, 16);
 
-        qDebug () << "applyLut:";
+//        ImageProcessing::medianFilter_16u(work_image, tmp_image1, 3);
 
-        ImageProcessing::applyLut (&tmp_image1, &dest_image, lut);
-#else
-        ImageProcessing::applyLut (&work_image, &dest_image, lut);
-#endif
-    } else
-    {
-        ImageProcessing::applyLut (&work_image, &dest_image, lut);
-    }
+//        qDebug () << "applyLut:";
+
+//        ImageProcessing::applyLut (&tmp_image1, &dest_image, lut);
+//#else
+//        ImageProcessing::applyLut (&work_image, &dest_image, lut);
+//#endif
+//    } else
+//    {
+//        ImageProcessing::applyLut (&work_image, &dest_image, lut);
+//    }
 
     qDebug () << "updateLut -> imageView->setImage:";
 
