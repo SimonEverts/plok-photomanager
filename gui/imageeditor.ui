@@ -19,61 +19,6 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="QListWidget" name="menu">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>150</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>48</width>
-       <height>48</height>
-      </size>
-     </property>
-     <property name="spacing">
-      <number>4</number>
-     </property>
-     <property name="currentRow">
-      <number>-1</number>
-     </property>
-     <item>
-      <property name="text">
-       <string>Capture</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../icons.qrc">
-        <normaloff>:/standard/icons/22x22/edit-guides.png</normaloff>:/standard/icons/22x22/edit-guides.png</iconset>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Adjust gamma</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../icons.qrc">
-        <normaloff>:/standard/icons/22x22/edit-guides.png</normaloff>:/standard/icons/22x22/edit-guides.png</iconset>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Crop</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../icons.qrc">
-        <normaloff>:/standard/icons/22x22/edit-guides.png</normaloff>:/standard/icons/22x22/edit-guides.png</iconset>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item>
     <widget class="ImageView" name="imageView" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -164,6 +109,16 @@
        </item>
        <item>
         <layout class="QGridLayout" name="gridLayout">
+         <item row="4" column="1">
+          <widget class="QSpinBox" name="contrastSpinBox">
+           <property name="minimum">
+            <number>-1000</number>
+           </property>
+           <property name="maximum">
+            <number>1000</number>
+           </property>
+          </widget>
+         </item>
          <item row="11" column="0" colspan="2">
           <widget class="Line" name="line_2">
            <property name="orientation">
@@ -238,16 +193,6 @@
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QSpinBox" name="contrastSpinBox">
-           <property name="minimum">
-            <number>-1000</number>
-           </property>
-           <property name="maximum">
-            <number>1000</number>
            </property>
           </widget>
          </item>
@@ -341,13 +286,6 @@
           <widget class="QLabel" name="label_10">
            <property name="text">
             <string>Blue</string>
-           </property>
-          </widget>
-         </item>
-         <item row="12" column="0">
-          <widget class="QCheckBox" name="medianCheckBox">
-           <property name="text">
-            <string>Median filter</string>
            </property>
           </widget>
          </item>

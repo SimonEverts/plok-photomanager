@@ -565,10 +565,9 @@ void MainWindow::on_actionDelete_triggered()
 
 void MainWindow::on_actionCreate_set_triggered()
 {
-//    m_createSetDialog.setName( QFileInfo(m_currentPath).absoluteDir().dirName() );
-//    m_createSetDialog.setPath( QFileInfo(m_currentPath).absolutePath());
+    qDebug () << "Create set";
 
-    m_createSetDialog.show();
+    m_setCreator.createSet("");
 }
 
 void MainWindow::on_actionDelete_set_triggered()

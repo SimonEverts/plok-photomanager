@@ -26,8 +26,6 @@ ImageEditor::ImageEditor(ImageProvider* imageProvider, PictureDao* pictureDao, Q
     connect (ui->redSpinBox, SIGNAL(valueChanged(double)), this, SLOT(guiChanged()));
     connect (ui->greenSpinBox, SIGNAL(valueChanged(double)), this, SLOT(guiChanged()));
     connect (ui->blueSpinBox, SIGNAL(valueChanged(double)), this, SLOT(guiChanged()));
-
-    connect (ui->medianCheckBox, SIGNAL(toggled(bool)), this, SLOT(guiChanged()));
 }
 
 ImageEditor::~ImageEditor()

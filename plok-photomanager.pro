@@ -16,6 +16,7 @@ SOURCES += main.cpp\
     gui/imageview.cpp \
     gui/thumbnailmodelitem.cpp \
     server/imageuploader.cpp \
+    server/setcreator.cpp \
     model/capture.cpp \
     image/imageloader.cpp \
     image/imageprovider.cpp \
@@ -39,12 +40,14 @@ SOURCES += main.cpp\
     gui/lutview.cpp \
     image/image.cpp \
     image/lut.cpp \
-    model/picturedao.cpp
+    model/picturedao.cpp \
+    3rdparty/json.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/imageview.h \
     gui/thumbnailmodelitem.h \
     server/imageuploader.h \
+    server/setcreator.h \
     model/capture.h \
     image/imageloader.h \
     image/imageprovider.h \
@@ -68,7 +71,8 @@ HEADERS  += gui/mainwindow.h \
     gui/lutview.h \
     image/image.h \
     image/lut.h \
-    model/picturedao.h
+    model/picturedao.h \
+    3rdparty/json.h
 
 FORMS    += gui/mainwindow.ui \
     gui/createsetdialog.ui \

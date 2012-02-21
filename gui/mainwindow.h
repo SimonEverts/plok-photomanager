@@ -9,6 +9,7 @@
 #include "image/thumbnailer.h"
 
 #include "server/imageuploader.h"
+#include "server/setcreator.h"
 
 #include "model/capture.h"
 
@@ -117,6 +118,7 @@ private:
     QFileSystemModel* m_fileSystemModel;
 
     ImageUploader m_imageUploader;
+    SetCreator m_setCreator;
 
     ImageProvider m_imageProvider;
     ImageProvider_qmlwrapper* m_qmlNavImageProvider;

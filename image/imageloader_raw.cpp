@@ -67,7 +67,10 @@ Image ImageLoader_raw_p::loadPreview ()
 
 Image ImageLoader_raw_p::loadMaster ()
 {
-    m_rawProcessor.imgdata.params.half_size = 0;
+    // Skip debayer for now
+    m_rawProcessor.imgdata.params.half_size = 1;
+    m_rawProcessor.imgdata.params.document_mode = 1;
+
     m_rawProcessor.imgdata.params.use_camera_wb = 0;
     m_rawProcessor.imgdata.params.use_auto_wb = 0;
     m_rawProcessor.imgdata.params.med_passes = 0;
