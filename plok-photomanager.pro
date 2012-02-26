@@ -41,7 +41,8 @@ SOURCES += main.cpp\
     image/image.cpp \
     image/lut.cpp \
     model/picturedao.cpp \
-    3rdparty/json.cpp
+    3rdparty/json.cpp \
+    import/directoryimporter.cpp
 
 HEADERS  += gui/mainwindow.h \
     gui/imageview.h \
@@ -72,7 +73,8 @@ HEADERS  += gui/mainwindow.h \
     image/image.h \
     image/lut.h \
     model/picturedao.h \
-    3rdparty/json.h
+    3rdparty/json.h \
+    import/directoryimporter.h
 
 FORMS    += gui/mainwindow.ui \
     gui/createsetdialog.ui \

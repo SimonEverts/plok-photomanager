@@ -122,9 +122,9 @@ void ImageProcessing::normalizeHistogram (Histogram& histogram, const int max_va
     {
         for (int i=0; i<max_value; i++)
         {
-            red[i] *= max;
-            green[i] *= max;
-            blue[i] *= max;
+            red[i] = float(red[i]) * max;
+            green[i] = float(green[i]) * max;
+            blue[i] = float(blue[i]) * max;
         }
     }
 }
@@ -149,9 +149,9 @@ void ImageProcessing::generateLut (float brightness, float contrast, float gamma
         // TODO 8bit images have gamma already applied
         float gamma_value = float(max_value) * (pow ((float(i)/max_value), gamma));
 
-        float r = (contrast * gamma_value * wbRed + brightness);
-        float g = (contrast * gamma_value * wbGreen + brightness);
-        float b = (contrast * gamma_value * wbBlue + brightness);
+        float r = (contrast * gamma_value * wbRed) + brightness;
+        float g = (contrast * gamma_value * wbGreen) + brightness;
+        float b = (contrast * gamma_value * wbBlue) + brightness;
 
 // TODO werkt niet?
 

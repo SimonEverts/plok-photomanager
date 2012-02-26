@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_thumbnailView (0),
     m_imageProvider(),
     m_imageThumbnailer (&m_imageProvider),
+    m_directoryImporter (&m_imageProvider),
     m_database (),
     m_setDao(&m_database),
     m_pictureDao (&m_database),
@@ -140,23 +141,20 @@ void MainWindow::on_fileBrowserTreeView_activated ( const QModelIndex & index )
 
     if (file_info.isDir())
     {
-        importCapturesFromDir( path );
+        m_captures = m_directoryImporter.importCapturesFromDir( path );
         loadThumbnailsFromCaptures();
 
         setBrowserPage();
     } else
     {
-//        if (QFileInfo(path).absolutePath() != QFileInfo(m_currentCapture.).absolutePath())
-//        {
-            importCapturesFromDir( file_info.absolutePath() );
-            loadThumbnailsFromCaptures();
-//       }
+        m_captures = m_directoryImporter.importCapturesFromDir( file_info.absolutePath() );
+        loadThumbnailsFromCaptures();
 
-            for (int i=0; i<m_captures.size(); i++)
-            {
-                if (m_captures.at(i).name() == QFileInfo(path).baseName())
-                    m_currentCapture = m_captures.at(i);
-            }
+        for (int i=0; i<m_captures.size(); i++)
+        {
+            if (m_captures.at(i).name() == QFileInfo(path).baseName())
+                m_currentCapture = m_captures.at(i);
+        }
 
         loadImage( path );
 
@@ -178,42 +176,6 @@ void MainWindow::on_actionUpload_images_triggered( bool checked )
             m_imageUploader.uploadImage( (*it)->path() );
         }
     }
-}
-
-void MainWindow::loadThumbnailsFromDir (QString dirName)
-{
-    QDir dir (dirName);
-    dir.setFilter( QDir::Files );
-    dir.setNameFilters( m_imageProvider.supportedSuffixes() );
-
-    QList <QFileInfo> file_info_list = dir.entryInfoList();
-    QList <QFileInfo>::iterator it;
-
-    QList<QObject*> modelList;
-    m_thumbnailModel.clear();
-
-    for (it = file_info_list.begin(); it != file_info_list.end(); it++)
-    {
-        QString file_name = it->fileName();
-        QString file_path = it->filePath();
-
-        QSharedPointer <ThumbnailModelItem> model_item (new ThumbnailModelItem( file_name, file_path, 1 ));
-
-        m_thumbnailModel.push_back( model_item );
-        modelList.append( &(*model_item) );
-    }
-
-    blockSignals( true );
-
-    QDeclarativeContext *context = ui->thumbnailView->rootContext();
-    context->setContextProperty("thumbnailViewModel", QVariant::fromValue<QList<QObject*> >(modelList));
-    context->setContextProperty("mainWindow", this);
-
-    QDeclarativeContext *nav_context = ui->thumbnailNavigator->rootContext();
-    nav_context->setContextProperty("thumbnailViewModel", QVariant::fromValue<QList<QObject*> >(modelList));
-    nav_context->setContextProperty("mainWindow", this);
-
-    blockSignals( false );
 }
 
 void MainWindow::loadThumbnailsFromCaptures (void)
@@ -245,47 +207,6 @@ void MainWindow::loadThumbnailsFromCaptures (void)
     nav_context->setContextProperty("mainWindow", this);
 
     blockSignals( false );
-}
-
-void MainWindow::importCapturesFromDir (QString dirName)
-{
-    QDir dir (dirName);
-    dir.setFilter( QDir::Files );
-    dir.setSorting( QDir::Name );
-
-    dir.setNameFilters( m_imageProvider.supportedSuffixes() );
-
-    QList <QFileInfo> file_info_list = dir.entryInfoList();
-
-    m_captures.clear();
-
-    Capture current_capture;
-
-    QList <QFileInfo>::iterator it = file_info_list.begin();
-    while( it != file_info_list.end() )
-    {
-        QString base_name = it->baseName();
-        QString file_path = it->filePath();
-
-        QDateTime capture_time = it->created();
-
-        if (!current_capture.name().isEmpty() && base_name != current_capture.name())
-        {
-            m_captures.push_back (current_capture);
-
-            current_capture.setName("");
-            current_capture.clear();
-        }
-
-        current_capture.setName( base_name );
-        current_capture.addPhoto( file_path );
-        current_capture.setCaptureTime( capture_time );
-
-        it++;
-    }
-
-    if (!current_capture.name().isEmpty())
-        m_captures.push_back (current_capture);
 }
 
 void MainWindow::loadImage (QString fileName)
@@ -327,11 +248,18 @@ void MainWindow::updateImage (void)
         {
             qDebug() << "updateImage: "  << m_currentCapture.name();
 
-            if (m_qmlNavImageProvider)
-                m_qmlNavImageProvider->setCurrentImage (pictures.at(i).image().toQImage());
-
             if (image_view)
+            {
+                int width = image_view->property("width").toInt();
+                int height = image_view->property("height").toInt();
+                QImage image = pictures.at(i).image().toQImage().scaled(QSize(width, height), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+
+                if (m_qmlNavImageProvider)
+                    m_qmlNavImageProvider->setCurrentImage (image);
+
                 image_view->setProperty("source", QString("image://imageprovider/") + "current");
+            }
         }
     }
 }
@@ -384,7 +312,7 @@ void MainWindow::currentSetChanged( void )
 
         if (file_info.exists())
         {
-            importCapturesFromDir( path );
+            m_captures = m_directoryImporter.importCapturesFromDir( path );
             loadThumbnailsFromCaptures();
         }
     }
@@ -568,6 +496,8 @@ void MainWindow::on_actionCreate_set_triggered()
     qDebug () << "Create set";
 
     m_setCreator.createSet("");
+
+    m_createSetDialog.show();
 }
 
 void MainWindow::on_actionDelete_set_triggered()

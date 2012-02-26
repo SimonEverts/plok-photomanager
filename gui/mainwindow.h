@@ -24,6 +24,8 @@
 #include "gui/createsetdialog.h"
 #include "gui/imageeditor.h"
 
+#include "import/directoryimporter.h"
+
 // Qt includes
 #include <QMainWindow>
 #include <QGraphicsScene>
@@ -96,7 +98,7 @@ private slots:
 
 private:
 
-    void loadThumbnailsFromDir (QString dirName);
+//    void loadThumbnailsFromDir (QString dirName);
     void loadThumbnailsFromCaptures (void);
 
     void importCapturesFromDir (QString dirName);
@@ -126,6 +128,8 @@ private:
 
     // TODO rename to imageThumbnailer
     Thumbnailer m_imageThumbnailer;
+
+    DirectoryImporter m_directoryImporter;
 
     Capture m_currentCapture;
 

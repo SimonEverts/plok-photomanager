@@ -69,7 +69,7 @@ Image ImageLoader_raw_p::loadMaster ()
 {
     // Skip debayer for now
     m_rawProcessor.imgdata.params.half_size = 1;
-    m_rawProcessor.imgdata.params.document_mode = 1;
+    m_rawProcessor.imgdata.params.document_mode = 2;
 
     m_rawProcessor.imgdata.params.use_camera_wb = 0;
     m_rawProcessor.imgdata.params.use_auto_wb = 0;
@@ -79,7 +79,7 @@ Image ImageLoader_raw_p::loadMaster ()
     m_rawProcessor.imgdata.params.gamm[0] = 1;  // sRGB
     m_rawProcessor.imgdata.params.gamm[1] = 1;      // sRGB
 
-    m_rawProcessor.imgdata.params.output_color = 1; // sRGB
+//    m_rawProcessor.imgdata.params.output_color = 1; // sRGB
     m_rawProcessor.imgdata.params.output_bps = 16;  // 16 bits
 
     m_rawProcessor.unpack();
@@ -88,7 +88,7 @@ Image ImageLoader_raw_p::loadMaster ()
     //m_rawProcessor.imgdata.params.use_camera_wb = 1;
 
     // Use AHC bayer interpolation
-    m_rawProcessor.imgdata.params.user_qual = 3;
+    m_rawProcessor.imgdata.params.user_qual = 1;
 
     m_rawProcessor.imgdata.params.threshold = 100;
     if (m_rawProcessor.imgdata.other.iso_speed)
@@ -106,6 +106,7 @@ Image ImageLoader_raw_p::loadMaster ()
     QSize size (mem_width, mem_height);
 
     qDebug () << "Create rawprocessor image:";
+    qDebug () << mem_width << mem_height << mem_channels << mem_bits_per_pixel;
 
     Image image (size, mem_channels, size.width() * mem_channels * mem_bits_per_pixel, mem_bits_per_pixel);
 

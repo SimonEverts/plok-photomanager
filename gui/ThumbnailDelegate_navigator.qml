@@ -27,6 +27,8 @@ Component {
                 source: "image://imageprovider/" + path
                 anchors.horizontalCenter: parent.horizontalCenter
 
+                fillMode: Image.PreserveAspectFit
+
                 asynchronous: true
                 sourceSize.width: 150
                 sourceSize.height: 100
