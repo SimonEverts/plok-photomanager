@@ -111,7 +111,7 @@ Image ImageLoader_raw_p::loadMaster ()
 
     Image image (size, mem_channels, size.width() * mem_channels * mem_bits_per_pixel, mem_bits_per_pixel);
 
-    image.setMaxValue( m_rawProcessor.imgdata.color.maximum );
+//    image.setMaxValue( m_rawProcessor.imgdata.color.maximum );
 
     m_rawProcessor.copy_mem_image(image.pixels(), image.step(), 0);
 
