@@ -24,17 +24,12 @@ public:
     void setPhotos (QList<QString> photos);
     QList <QString> photoList (void);
 
-    Picture& jpegMaster (void) {return m_jpegMaster;}
-    void setJpegMaster (Picture picture) {m_jpegMaster = picture;}
+    void selectMaster (QString path);
 
-    Picture& rawMaster (void) {return m_rawMaster;}
-    void setRawMaster (Picture picture) {m_rawMaster = picture;}
+    Picture& master (void) {return m_master;}
 
     Picture& preview (void) {return m_preview;}
     void setPreview (Picture picture) {m_preview = picture;}
-
-    Picture& published (void) {return m_published;}
-    void setPublished (Picture picture) {m_published = picture;}
 
     int photoCount (void) const;
 
@@ -48,12 +43,8 @@ private:
 
     QList <QString> m_pictures;
 
-    Picture m_jpegMaster;
-    Picture m_rawMaster;
-
+    Picture m_master;
     Picture m_preview;
-
-    Picture m_published;
 };
 
 #endif // PHOTO_H

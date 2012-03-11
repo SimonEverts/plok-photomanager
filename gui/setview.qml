@@ -7,13 +7,23 @@ Rectangle {
 
     Component {
         id: setViewDelegate
+
         Item {
-            height: 16
+            height: 32
             width: parent.width
 
-            Text {
-                id: name_label
-                text: name
+            Column {
+                x: 5
+
+                Text {
+                    id: name_label
+                    text: name
+                }
+
+                Text {
+                    id: date_label
+                    text: "Date: " + date;
+                }
             }
 
             MouseArea {
@@ -68,8 +78,8 @@ Rectangle {
             spacing: 4
 
             Rectangle {
-                width: 22
-                height: 22
+                width: 32
+                height: 32
 
                 border.color: "lightsteelblue"
                 border.width: 1
@@ -90,8 +100,8 @@ Rectangle {
                 }
             }
             Rectangle {
-                width: 22
-                height: 22
+                width: 32
+                height: 32
 
                 border.color: "lightsteelblue"
                 border.width: 1

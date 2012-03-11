@@ -34,3 +34,10 @@ void Picture::addInfo (QString name, QVariant value)
 {
     m_info[name] = value;
 }
+
+void Picture::clearImage (void)
+{
+    m_image.clear();
+    m_pictureProperties.clear();
+    m_info.clear();
+}

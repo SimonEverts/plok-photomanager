@@ -53,6 +53,13 @@ int Capture::photoCount (void) const
     return m_pictures.size();
 }
 
+void Capture::selectMaster (QString path)
+{
+    m_master.clearImage();
+    m_master.setPath( path );
+
+}
+
 QString Capture::previewPhoto (void)
 {
     QString result;

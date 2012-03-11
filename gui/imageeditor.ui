@@ -53,11 +53,11 @@
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string>Image developer</string>
+          <string>Master image</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="QComboBox" name="imageDeveloper">
+           <widget class="QComboBox" name="masterSelection">
             <item>
              <property name="text">
               <string>Published</string>
@@ -112,10 +112,10 @@
          <item row="4" column="1">
           <widget class="QSpinBox" name="contrastSpinBox">
            <property name="minimum">
-            <number>-1000</number>
+            <number>-100</number>
            </property>
            <property name="maximum">
-            <number>1000</number>
+            <number>100</number>
            </property>
           </widget>
          </item>
@@ -186,10 +186,10 @@
          <item row="4" column="0">
           <widget class="QSlider" name="contrastSlider">
            <property name="minimum">
-            <number>-1000</number>
+            <number>-100</number>
            </property>
            <property name="maximum">
-            <number>1000</number>
+            <number>100</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -246,7 +246,7 @@
          <item row="9" column="1">
           <widget class="QDoubleSpinBox" name="greenSpinBox">
            <property name="maximum">
-            <double>2.000000000000000</double>
+            <double>10.000000000000000</double>
            </property>
            <property name="singleStep">
             <double>0.050000000000000</double>
@@ -259,7 +259,7 @@
          <item row="8" column="1">
           <widget class="QDoubleSpinBox" name="redSpinBox">
            <property name="maximum">
-            <double>2.000000000000000</double>
+            <double>10.000000000000000</double>
            </property>
            <property name="singleStep">
             <double>0.050000000000000</double>
@@ -272,7 +272,7 @@
          <item row="10" column="1">
           <widget class="QDoubleSpinBox" name="blueSpinBox">
            <property name="maximum">
-            <double>2.000000000000000</double>
+            <double>10.000000000000000</double>
            </property>
            <property name="singleStep">
             <double>0.050000000000000</double>
@@ -310,6 +310,13 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="previewButton">
+         <property name="text">
+          <string>Show Preview</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

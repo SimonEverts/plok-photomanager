@@ -225,7 +225,8 @@ void ImageProcessing::applyLut_16u8u (const Image* src, Image* dest, const Lut& 
     unsigned int src_step = src->step();
     unsigned int dest_step = dest->step();
 
-    unsigned int channels = src->channels();
+    unsigned int src_channels = src->channels();
+    unsigned int dest_channels = dest->channels();
 
     int* red = lut.red();
     int* green = lut.green();
@@ -238,13 +239,150 @@ void ImageProcessing::applyLut_16u8u (const Image* src, Image* dest, const Lut& 
     {
         for(int x=0; x < width; x++)
         {
-            unsigned int dest_index = (y*dest_step) + (x*channels);
+            unsigned int dest_index = (y*dest_step) + (x*dest_channels);
 
-            unsigned short int* src_pixel = reinterpret_cast <unsigned short int*> (src_pixels + y*src_step) + x*channels;
+            unsigned short int* src_pixel = reinterpret_cast <unsigned short int*> (src_pixels + y*src_step) + x*src_channels;
 
-            dest_pixels[dest_index] =  red[ src_pixel[0] ] >> 8;
+            dest_pixels[dest_index] = red[ src_pixel[0] ] >> 8;
             dest_pixels[dest_index+1] = green[ src_pixel[1] ] >> 8;
             dest_pixels[dest_index+2] = blue[ src_pixel[2] ] >> 8;
+
+//            dest_pixels[dest_index] = 0;
+//            dest_pixels[dest_index+1] = blue[ src_pixel[2] ] >> 8;
+//            dest_pixels[dest_index+2] = green[ src_pixel[1] ] >> 8;
+//            dest_pixels[dest_index+3] = red[ src_pixel[0] ] >> 8;
+
+//            dest_pixels[dest_index] = blue[ src_pixel[2] ] >> 8;
+//            dest_pixels[dest_index+1] = green[ src_pixel[1] ] >> 8;
+//            dest_pixels[dest_index+2] = red[ src_pixel[0] ] >> 8;
+//            dest_pixels[dest_index+3] = red[ src_pixel[0] ] >> 8;
+
+        }
+    }
+}
+
+void ImageProcessing::applyGamma_16u (const Image* src, Image* dest)
+{
+    unsigned char* src_pixels = src->pixels();
+    unsigned char* dest_pixels = dest->pixels();
+
+    // TODO assume image size and format are the same
+    QSize size = src->size();
+
+    unsigned int src_step = src->step();
+    unsigned int dest_step = dest->step();
+
+    unsigned int src_channels = src->channels();
+    unsigned int dest_channels = dest->channels();
+
+    int height = size.height();
+    int width = size.width();
+
+    float max_value_16b = (1 << 16);
+    float max_value_12b = (1 << 12);
+
+    for(int y=0; y < height; y++)
+    {
+        for(int x=0; x < width; x++)
+        {
+            unsigned short int* src_pixel = reinterpret_cast <unsigned short int*> (src_pixels + y*src_step) + x*src_channels;
+            unsigned short int* dest_pixel = reinterpret_cast <unsigned short int*> (dest_pixels + y*dest_step) + x*dest_channels;
+
+             float r = float(src_pixel[0]) / max_value_16b;
+             float g = float(src_pixel[1]) / max_value_16b;
+             float b = float(src_pixel[2]) / max_value_16b;
+
+             dest_pixel[0] = pow( r, 1.f / 2.2) * max_value_16b;
+             dest_pixel[1] = pow( g, 1.f / 2.2) * max_value_16b;
+             dest_pixel[2] = pow( b, 1.f / 2.2) * max_value_16b;
+        }
+    }
+}
+
+void ImageProcessing::applyCameraMatrix_16u (const Image* src, Image* dest)
+{
+    unsigned char* src_pixels = src->pixels();
+    unsigned char* dest_pixels = dest->pixels();
+
+    // TODO assume image size and format are the same
+    QSize size = src->size();
+
+    unsigned int src_step = src->step();
+    unsigned int dest_step = dest->step();
+
+    unsigned int src_channels = src->channels();
+    unsigned int dest_channels = dest->channels();
+
+    int height = size.height();
+    int width = size.width();
+
+    float max_value_16b = (1 << 16);
+    float max_value_12b = (1 << 12);
+
+    for(int y=0; y < height; y++)
+    {
+        for(int x=0; x < width; x++)
+        {
+            unsigned short int* src_pixel = reinterpret_cast <unsigned short int*> (src_pixels + y*src_step) + x*src_channels;
+            unsigned short int* dest_pixel = reinterpret_cast <unsigned short int*> (dest_pixels + y*dest_step) + x*dest_channels;
+
+             float raw1 = float(src_pixel[0]) / max_value_16b;
+             float raw2 = float(src_pixel[1]) / max_value_16b;
+             float raw3 = float(src_pixel[2]) / max_value_16b;
+
+             float r = raw1 * 1.82002354 + raw2 * -0.726660609 + raw3 * -0.0933628976;
+             float g = raw1 * -0.167555362 + raw2 * 1.70425475 + raw3 * -0.536699355;
+             float b = raw1 * 0.000880597509 + raw2 * -0.404351801 + raw3 * 1.40347123;
+
+//             float x = raw1 * 1.82002354 + raw2 * -0.167555362 + raw3 * 0.000880597509;
+//             float y = raw1 * -0.726660609 + raw2 * 1.70425475 + raw3 * -0.404351801;
+//             float z = raw1 * -0.0933628976 + raw2 * -0.536699355 + raw3 * 1.40347123;
+
+
+
+
+
+
+
+//             float r = raw1 * 5991.f / 10000 ;//+ raw2 * -4764.f/10000 + raw3 * -707.f/10000;
+//             float g = raw1 * -1456.f / 10000 + raw2 * 12135.f/10000 + raw3 * 1425.f/10000;
+//             float b = raw1 * -455.f/10000 + raw2 * -2980.f/10000 + raw3 * 6701.f/10000;
+
+//             float x = raw1 * 5991.f / 10000 + raw2 * -1456.f / 10000 + raw3 * -455.f/10000;
+//             float y = raw1 * -4764.f/10000 + raw2 * 12135.f/10000 + raw3 * -2980.f/10000;
+//             float z = raw1 * -707.f/10000 + raw2 * 1425.f/10000 + raw3 * 6701.f/10000;
+
+//             float r = x *  3.2406 + y * -1.5372 + z * -0.4986;
+//             float g = x * -0.9689 + y *  1.8758 + z *  0.0415;
+//             float b = x *  0.0557 + y * -0.2040 + z *  1.0570;
+
+//             if ( r > 0.0031308 )
+//                 r = 1.055 * ( pow (r, ( 1 / 2.4 )) ) - 0.055;
+//             else
+//                 r = 12.92 * r;
+
+//             if ( g > 0.0031308 )
+//                 g = 1.055 * ( pow (g, ( 1 / 2.4 )) ) - 0.055;
+//             else
+//                 g = 12.92 * g;
+
+//             if ( b > 0.0031308 )
+//                 b = 1.055 * ( pow (b, ( 1 / 2.4 )) ) - 0.055;
+//             else
+//                 b = 12.92 * b;
+
+
+             if (r < 0)
+                 r = 0;
+             if (g < 0)
+                 g = 0;
+             if (b < 0)
+                 b = 0;
+
+
+             dest_pixel[0] = r * max_value_16b;
+             dest_pixel[1] = g * max_value_16b;
+             dest_pixel[2] = b * max_value_16b;
         }
     }
 }

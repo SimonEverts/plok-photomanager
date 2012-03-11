@@ -51,7 +51,7 @@ void CreateSetDialog::on_browseButton_clicked()
 
 void CreateSetDialog::on_createButton_clicked()
 {
-    Set set (ui->nameEdit->text(), ui->pathEdit->text());
+    Set set (ui->nameEdit->text(), ui->pathEdit->text(), ui->dateEdit->text());
     m_setDao->create( set );
 
     // Generate thumnbails

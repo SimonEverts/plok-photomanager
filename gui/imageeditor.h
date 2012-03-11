@@ -36,23 +36,23 @@ private slots:
 
     void guiChanged (void);
 
-    void on_imageDeveloper_currentIndexChanged(const int &currentIndex);
+    void on_masterSelection_currentIndexChanged(const int &currentIndex);
 
     void on_saveButton_clicked();
+
+    void on_previewButton_pressed();
+
+    void on_previewButton_released();
 
 private:
     void loadGUI_pictureProperties (PictureProperties pictureAdjustments);
 
-    Picture& currentPicture (void);
-    Image& currentImage (void);
-
     Ui::ImageEditor *ui;
 
     Capture m_capture;
-    QString m_currentPicture;
 
-    Image m_workJpegMaster;
-    Image m_workRawMaster;
+    Image m_workImage;
+    Image m_workImage_previous;
 
     ImageProvider* m_imageProvider;
     PictureDao* m_pictureDao;

@@ -57,6 +57,7 @@ public:
 
     const Image& image() const {return m_image;}
     void setImage (const Image& image) {m_image = image;}
+    void clearImage (void);
 
     bool loaded (void) const {return !m_image.isNull();}
 

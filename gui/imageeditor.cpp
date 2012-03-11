@@ -10,7 +10,7 @@
 #include <QDebug>
 
 ImageEditor::ImageEditor(ImageProvider* imageProvider, PictureDao* pictureDao, QWidget *parent) :
-    QWidget(parent),
+    QWidget(parent, Qt::Tool),
     ui(new Ui::ImageEditor),
     m_imageProvider (imageProvider),
     m_pictureDao (pictureDao)
@@ -48,46 +48,30 @@ void ImageEditor::setCapture(Capture capture)
 {
     m_capture = capture;
 
-    QStringList pictures = m_capture.photoList();
+    QStringList photo_list = m_capture.photoList();
+    for (int i=0; i<photo_list.size(); i++)
+        photo_list[i] = QFileInfo( photo_list[i] ).fileName();
 
-    if (!pictures.size())
-        return;
+    ui->masterSelection->clear();
+    ui->masterSelection->addItems( photo_list );
 
-    // TODO just select raw for now
-
-    for (int i=0; i<pictures.size(); i++)
-    {
-        if (QFileInfo(pictures.at(i)).suffix() == "ARW" ||
-            QFileInfo(pictures.at(i)).suffix() == "arw" ||
-            QFileInfo(pictures.at(i)).suffix() == "CR2" ||
-            QFileInfo(pictures.at(i)).suffix() == "cr2")
-            m_currentPicture = pictures.at(i);
-    }
-
-    qDebug () << "setCapture:";
-
-    m_workJpegMaster.clear();
-    m_workRawMaster.clear();
+    m_workImage.clear();
 
     loadPicture ();
-
-    qDebug () << "assign/scale m_workImage:";
-
-
-    updateLut( );
+    updateLut ();
 }
 
-void ImageEditor::on_imageDeveloper_currentIndexChanged(const int &currentIndex)
-{
-    qDebug () << "currentIndexChanged:";
+void ImageEditor::on_masterSelection_currentIndexChanged(const int &currentIndex)
+{   
+    QStringList photo_list = m_capture.photoList();
 
-    loadPicture ();
+    if (currentIndex < photo_list.size() && currentIndex != -1)
+    {
+        m_capture.selectMaster( photo_list.at(currentIndex) );
 
-    qDebug () << "assign/scale m_workImage:";
-
-//    m_workImage = ImageProcessing::fastScale (current_picture.image(), ui->imageView->size());
-
-    updateLut ();
+        loadPicture ();
+        updateLut ();
+    }
 }
 
 void ImageEditor::updateHistogram ( const Image& image )
@@ -101,15 +85,12 @@ void ImageEditor::updateHistogram ( const Image& image )
 
 void ImageEditor::updateLut (void)
 {
-    qDebug () << "updateLut:";
+    if (m_workImage.isNull())
+        return;
 
+    PictureProperties& picture_properties = m_capture.master().pictureProperties();
 
-    // TODO, gamma after contrast?
-
-    PictureProperties& picture_properties = currentPicture().pictureProperties();
-    const Image& work_image = currentImage();
-
-    Lut lut (work_image.depth());
+    Lut lut (m_workImage.depth());
 
     int* red = lut.red();
     int* green = lut.green();
@@ -126,88 +107,44 @@ void ImageEditor::updateLut (void)
     float wb_green = picture_properties.wb_green;
     float wb_blue = picture_properties.wb_blue;
 
+    Image dest_image (m_workImage.size(), 3, 8);
     ImageProcessing::generateLut(brightness, contrast, gamma, wb_red, wb_green, wb_blue, lut);
-
     ui->lutView->setLut( lut );
 
-    Image dest_image (work_image.size(), work_image.channels(), work_image.size().width() * work_image.channels(), 8);
-
-    ImageProcessing::applyLut (&work_image, &dest_image, lut);
-
-//    if (work_image.depth() == 16 && ui->medianCheckBox->isChecked())
-//    {
-//#ifdef OPENCV
-//        Image tmp_image1 (work_image.size(), work_image.channels(), work_image.size().width() * work_image.channels() * 2, 16);
-
-//        ImageProcessing::medianFilter_16u(work_image, tmp_image1, 3);
-
-//        qDebug () << "applyLut:";
-
-//        ImageProcessing::applyLut (&tmp_image1, &dest_image, lut);
-//#else
-//        ImageProcessing::applyLut (&work_image, &dest_image, lut);
-//#endif
-//    } else
-//    {
-//        ImageProcessing::applyLut (&work_image, &dest_image, lut);
-//    }
-
-    qDebug () << "updateLut -> imageView->setImage:";
+    ImageProcessing::applyLut (&m_workImage, &dest_image, lut);
 
     ui->imageView->setImage(dest_image.toQImage());
-
-    qDebug () << "updateHistogram:";
 
     updateHistogram( dest_image );
 }
 
 void ImageEditor::loadPicture (void)
 {
-    Picture& current_picture = currentPicture();
-    current_picture.setPath ( m_currentPicture );
-
     Image image;
-    if (ui->imageDeveloper->currentIndex() == 0)
+
+    Picture& picture = m_capture.master();
+
+    if (!picture.loaded())
     {
-        current_picture.pictureProperties().clear();
+        Picture new_picture;
+        new_picture = m_pictureDao->read( picture.path() );
+        picture.setPictureProperties (new_picture.pictureProperties());
 
-        if (!current_picture.loaded())
-        {
-            image = m_imageProvider->loadPreview (m_currentPicture);
-            current_picture.setImage( image );
-        }
+        image = m_imageProvider->loadMaster( picture.path() );
 
-        if (m_workJpegMaster.isNull())
-        {
-            //m_workJpegMaster = ImageProcessing::fastScale (image, QSize(800,600));
-            m_workJpegMaster = image;
-        }
-    }
-    if (ui->imageDeveloper->currentIndex() == 1)
-    {
-        if (!current_picture.loaded())
-        {
-            Picture new_picture;
-            new_picture = m_pictureDao->read( current_picture.path() );
-            current_picture.setPictureProperties (new_picture.pictureProperties());
-
-            image = m_imageProvider->loadMaster (m_currentPicture);
-            current_picture.setImage( image );
-        }
-
-        if (m_workRawMaster.isNull())
-            m_workRawMaster = ImageProcessing::fastScale (image, QSize(800,600));
+        m_workImage = ImageProcessing::fastScale (image, QSize(800,600));
+        picture.setImage( image );
     }
 
-    loadGUI_pictureProperties (current_picture.pictureProperties());
+    loadGUI_pictureProperties (picture.pictureProperties());
 }
 
 void ImageEditor::guiChanged (void)
 {
-    PictureProperties& picture_adjustment = currentPicture().pictureProperties();
+    PictureProperties& picture_adjustment = m_capture.master().pictureProperties();
 
     picture_adjustment.brightness = float(ui->brightnessSlider->value()) / 100;
-    picture_adjustment.contrast = 1.f + (float(ui->contrastSlider->value()) / 100);
+    picture_adjustment.contrast = 1.f + (float(ui->contrastSlider->value()) / 10);
     picture_adjustment.gamma = 1.f / float(ui->gammaSpinBox->value());
 
     picture_adjustment.wb_red = ui->redSpinBox->value();
@@ -222,7 +159,7 @@ void ImageEditor::loadGUI_pictureProperties (PictureProperties pictureAdjustment
     blockSignals(true);
 
     float brightness = pictureAdjustments.brightness * 100;
-    float contrast = (pictureAdjustments.contrast - 1.f) * 100;
+    float contrast = (pictureAdjustments.contrast - 1.f) * 10;
 
     ui->brightnessSlider->setValue( brightness );
     ui->brightnessSpinBox->setValue( brightness );
@@ -238,37 +175,36 @@ void ImageEditor::loadGUI_pictureProperties (PictureProperties pictureAdjustment
     blockSignals (false);
 }
 
-Picture& ImageEditor::currentPicture (void)
-{
-    if (ui->imageDeveloper->currentIndex() == 0)
-        return m_capture.preview();
-
-    if (ui->imageDeveloper->currentIndex() == 1)
-        return m_capture.rawMaster();
-}
-
-Image& ImageEditor::currentImage (void)
-{
-    if (ui->imageDeveloper->currentIndex() == 0)
-        return m_workJpegMaster;
-
-    if (ui->imageDeveloper->currentIndex() == 1)
-        return m_workRawMaster;
-}
-
 void ImageEditor::on_saveButton_clicked()
 {
-    if (ui->imageDeveloper->currentIndex() == 0)
-    {
-        qDebug() << "TODO cannot change or modify published picture";
-        return;
-    }
+    Picture& picture = m_capture.master();
 
-    int id = m_pictureDao->read(currentPicture().path()).id();
+    int id = m_pictureDao->read(picture.path()).id();
     if ( id != -1  )
     {
-        currentPicture().setId (id);
-        m_pictureDao->update( currentPicture() );
+        picture.setId (id);
+        m_pictureDao->update( picture );
     } else
-        m_pictureDao->create ( currentPicture() );
+        m_pictureDao->create ( picture );
+}
+
+void ImageEditor::on_previewButton_pressed()
+{
+    Picture& picture = m_capture.preview();
+
+    Image image;
+    if (!picture.loaded())
+    {
+        image = m_imageProvider->loadPreview ( m_capture.master().path() );
+        picture.setImage( image );
+    } else
+        image = picture.image();
+
+    ui->imageView->setImage( image.toQImage() );
+}
+
+void ImageEditor::on_previewButton_released()
+{
+    loadPicture ();
+    updateLut ();
 }

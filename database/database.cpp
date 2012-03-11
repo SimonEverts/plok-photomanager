@@ -42,6 +42,7 @@ void Database::initialize()
     QSqlQuery create_sets (QString ("CREATE TABLE IF NOT EXISTS sets (") +
                             "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                             "name VARCHAR(30)," +
+                            "date VARCHAR(30)," +
                             "path VARCHAR(255));",
                             *m_database);
 

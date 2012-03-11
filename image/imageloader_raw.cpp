@@ -43,7 +43,6 @@ Image ImageLoader_raw_p::loadThumbnail ()
     while ((image.size().width() >> scale) > 480)
         scale++;
 
-
     QSize scaled_size( size.width() / scale,
                        size.height() / scale);
 
@@ -67,25 +66,27 @@ Image ImageLoader_raw_p::loadPreview ()
 
 Image ImageLoader_raw_p::loadMaster ()
 {
-    // Skip debayer for now
-    m_rawProcessor.imgdata.params.half_size = 1;
-    m_rawProcessor.imgdata.params.document_mode = 2;
+    /**
+      * Custom raw import:
+      * half_size = 1
+      * document_mode = 2
+      * gamma[0] gamma[1] = 1
+      */
 
-    m_rawProcessor.imgdata.params.use_camera_wb = 0;
+
+    // Skip debayer for now
+    m_rawProcessor.imgdata.params.half_size = 0;
+    m_rawProcessor.imgdata.params.document_mode = 0;
+
+    m_rawProcessor.imgdata.params.use_camera_wb = 1;
     m_rawProcessor.imgdata.params.use_auto_wb = 0;
     m_rawProcessor.imgdata.params.med_passes = 0;
     m_rawProcessor.imgdata.params.no_auto_bright = 1;
 
-    m_rawProcessor.imgdata.params.gamm[0] = 1;  // sRGB
-    m_rawProcessor.imgdata.params.gamm[1] = 1;      // sRGB
-
-//    m_rawProcessor.imgdata.params.output_color = 1; // sRGB
+    m_rawProcessor.imgdata.params.output_color = 1; // sRGB
     m_rawProcessor.imgdata.params.output_bps = 16;  // 16 bits
 
     m_rawProcessor.unpack();
-
-    // Use camera whitebalance
-    //m_rawProcessor.imgdata.params.use_camera_wb = 1;
 
     // Use AHC bayer interpolation
     m_rawProcessor.imgdata.params.user_qual = 1;
@@ -109,6 +110,8 @@ Image ImageLoader_raw_p::loadMaster ()
     qDebug () << mem_width << mem_height << mem_channels << mem_bits_per_pixel;
 
     Image image (size, mem_channels, size.width() * mem_channels * mem_bits_per_pixel, mem_bits_per_pixel);
+
+    image.setMaxValue( m_rawProcessor.imgdata.color.maximum );
 
     m_rawProcessor.copy_mem_image(image.pixels(), image.step(), 0);
 

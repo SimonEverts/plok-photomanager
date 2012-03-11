@@ -20,6 +20,10 @@ public:
 
     static Image fastScale (const Image& image, QSize minimumSize);
 
+    static void applyGamma_16u (const Image* src, Image* dest);
+
+    static void applyCameraMatrix_16u (const Image* src, Image* dest);
+
     static void fastDebayer_16u (const Image& src, Image& dest);
 
     static void medianFilter_16u (const Image& src, Image& dest, int kernel);

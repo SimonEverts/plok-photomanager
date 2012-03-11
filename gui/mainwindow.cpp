@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_setDao(&m_database),
     m_pictureDao (&m_database),
     m_createSetDialog( &m_setDao, &m_imageThumbnailer ),
-    m_imageEditor (&m_imageProvider, &m_pictureDao)
+    m_imageEditor (&m_imageProvider, &m_pictureDao, this)
 {
     ui->setupUi(this);
 
@@ -125,7 +125,7 @@ void MainWindow::loadGUI (void)
     QList<QObject*> dataList;
     for (int i=0; i<sets.size(); i++)
     {
-        dataList.append( new SetViewModelItem( sets.at(i).name() ) );
+        dataList.append( new SetViewModelItem( sets.at(i).name(), sets.at(i).date(), "" ) );
     }
 
     QDeclarativeContext *context = ui->setView->rootContext();
