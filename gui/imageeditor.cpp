@@ -9,6 +9,8 @@
 #include <QFileInfo>
 #include <QDebug>
 
+#include <cassert>
+
 ImageEditor::ImageEditor(ImageProvider* imageProvider, PictureDao* pictureDao, QWidget *parent) :
     QWidget(parent, Qt::Tool),
     ui(new Ui::ImageEditor),
@@ -16,8 +18,6 @@ ImageEditor::ImageEditor(ImageProvider* imageProvider, PictureDao* pictureDao, Q
     m_pictureDao (pictureDao)
 {
     ui->setupUi(this);
-
-    updateLut();
 
     connect (ui->brightnessSlider, SIGNAL(valueChanged(int)), this, SLOT(guiChanged()));
     connect (ui->contrastSlider, SIGNAL(valueChanged(int)), this, SLOT(guiChanged()));
@@ -52,10 +52,17 @@ void ImageEditor::setCapture(Capture capture)
     for (int i=0; i<photo_list.size(); i++)
         photo_list[i] = QFileInfo( photo_list[i] ).fileName();
 
+    blockSignals(true);
+
     ui->masterSelection->clear();
     ui->masterSelection->addItems( photo_list );
 
+    blockSignals(false);
+
     m_workImage.clear();
+
+    if (m_capture.master().path().isEmpty())
+        m_capture.selectMaster();
 
     loadPicture ();
     updateLut ();
@@ -68,6 +75,8 @@ void ImageEditor::on_masterSelection_currentIndexChanged(const int &currentIndex
     if (currentIndex < photo_list.size() && currentIndex != -1)
     {
         m_capture.selectMaster( photo_list.at(currentIndex) );
+
+        m_workImage.clear();
 
         loadPicture ();
         updateLut ();
@@ -85,8 +94,7 @@ void ImageEditor::updateHistogram ( const Image& image )
 
 void ImageEditor::updateLut (void)
 {
-    if (m_workImage.isNull())
-        return;
+    assert (!m_workImage.isNull());
 
     PictureProperties& picture_properties = m_capture.master().pictureProperties();
 
@@ -120,8 +128,6 @@ void ImageEditor::updateLut (void)
 
 void ImageEditor::loadPicture (void)
 {
-    Image image;
-
     Picture& picture = m_capture.master();
 
     if (!picture.loaded())
@@ -130,11 +136,12 @@ void ImageEditor::loadPicture (void)
         new_picture = m_pictureDao->read( picture.path() );
         picture.setPictureProperties (new_picture.pictureProperties());
 
-        image = m_imageProvider->loadMaster( picture.path() );
-
-        m_workImage = ImageProcessing::fastScale (image, QSize(800,600));
+        Image image = m_imageProvider->loadMaster( picture.path() );
         picture.setImage( image );
     }
+
+    if (m_workImage.isNull() && !picture.image().isNull())
+         m_workImage = ImageProcessing::fastScale (picture.image(), QSize(800,600));
 
     loadGUI_pictureProperties (picture.pictureProperties());
 }

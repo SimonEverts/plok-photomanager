@@ -56,6 +56,10 @@ int Capture::photoCount (void) const
 void Capture::selectMaster (QString path)
 {
     m_master.clearImage();
+
+    if (path.isEmpty())
+        path = previewPhoto();
+
     m_master.setPath( path );
 
 }

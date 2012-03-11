@@ -24,7 +24,7 @@ public:
     void setPhotos (QList<QString> photos);
     QList <QString> photoList (void);
 
-    void selectMaster (QString path);
+    void selectMaster (QString path = "");
 
     Picture& master (void) {return m_master;}
 
