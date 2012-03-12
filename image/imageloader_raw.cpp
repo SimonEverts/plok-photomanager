@@ -55,13 +55,20 @@ Image ImageLoader_raw_p::loadPreview ()
 
     QSize size (m_rawProcessor.imgdata.thumbnail.twidth, m_rawProcessor.imgdata.thumbnail.theight);
 
-    QImage image;
-    image.loadFromData(
-                reinterpret_cast <unsigned char*> (m_rawProcessor.imgdata.thumbnail.thumb),
-                m_rawProcessor.imgdata.thumbnail.tlength,
-                "JPG");
+    Image result;
+    if (m_rawProcessor.imgdata.thumbnail.thumb &&
+            m_rawProcessor.imgdata.thumbnail.twidth)
+    {
+        QImage image;
+        image.loadFromData(
+                    reinterpret_cast <unsigned char*> (m_rawProcessor.imgdata.thumbnail.thumb),
+                    m_rawProcessor.imgdata.thumbnail.tlength,
+                    "JPG");
 
-    return image.convertToFormat(QImage::Format_RGB888);
+        result = Image ( image.convertToFormat(QImage::Format_RGB888) );
+    }
+
+    return result;
 }
 
 Image ImageLoader_raw_p::loadMaster ()

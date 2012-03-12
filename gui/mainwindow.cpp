@@ -211,13 +211,13 @@ void MainWindow::loadThumbnailsFromCaptures (void)
 
 void MainWindow::loadImage (QString fileName)
 {
-//    m_currentPath = fileName;
-//    m_currentImage = QFileInfo (fileName).baseName();
-
     QObject* image_view = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("previewImage");
     QObject* image_frame = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("imageFrame");
 
     ImageLoader* image_loader = m_imageProvider.imageLoaderFromFormat( QFileInfo(fileName).suffix() );
+
+    if (!image_loader)
+        return;
 
     image_loader->openImage(fileName);
     QMap <QString, QVariant> info = image_loader->loadInfo();

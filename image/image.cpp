@@ -74,7 +74,9 @@ Image::Image (QImage image) :
     m_size (image.size()),
     m_step (image.bytesPerLine()),
     m_owner (false)
-{
+{    
+    // TODO what if image isNull()?
+
     m_channels = 0;
     m_depth = 0;
 
