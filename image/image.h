@@ -23,6 +23,7 @@ public:
     Image& operator= (const Image& image);
 
     Image copy (void);
+
     QImage toQImage (void) const;
 
     void clear (void);

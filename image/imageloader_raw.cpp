@@ -56,8 +56,7 @@ Image ImageLoader_raw_p::loadPreview ()
     QSize size (m_rawProcessor.imgdata.thumbnail.twidth, m_rawProcessor.imgdata.thumbnail.theight);
 
     Image result;
-    if (m_rawProcessor.imgdata.thumbnail.thumb &&
-            m_rawProcessor.imgdata.thumbnail.twidth)
+    if (m_rawProcessor.imgdata.thumbnail.tlength)
     {
         QImage image;
         image.loadFromData(
