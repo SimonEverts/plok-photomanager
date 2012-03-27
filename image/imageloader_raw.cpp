@@ -46,7 +46,9 @@ Image ImageLoader_raw_p::loadThumbnail ()
     QSize scaled_size( size.width() / scale,
                        size.height() / scale);
 
-    return Image (image.scaled (scaled_size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+    QImage scaled_image = image.scaled (scaled_size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+
+    return Image::fromQImage( scaled_image );
 }
 
 Image ImageLoader_raw_p::loadPreview ()
@@ -64,7 +66,9 @@ Image ImageLoader_raw_p::loadPreview ()
                     m_rawProcessor.imgdata.thumbnail.tlength,
                     "JPG");
 
-        result = Image ( image.convertToFormat(QImage::Format_RGB888) );
+        QImage converted_image = image.convertToFormat(QImage::Format_RGB888);
+
+        result = Image::fromQImage( converted_image );
     }
 
     return result;

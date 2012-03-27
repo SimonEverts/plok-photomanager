@@ -16,7 +16,7 @@ public:
 
     Image (const Image& image);
 
-    Image (QImage image);
+//    Image (QImage image);
 
     virtual ~Image (void);
 
@@ -25,6 +25,7 @@ public:
     Image copy (void);
 
     QImage toQImage (void) const;
+    static Image fromQImage (QImage image);
 
     void clear (void);
     bool isNull (void) const;

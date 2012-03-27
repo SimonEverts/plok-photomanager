@@ -70,54 +70,54 @@ Image::Image (const Image& image) :
         m_ref->ref();
 }
 
-Image::Image (QImage image) :
-    m_size (image.size()),
-    m_step (image.bytesPerLine()),
-    m_owner (false)
-{    
-    // TODO what if image isNull()?
+//Image::Image (QImage image) :
+//    m_size (image.size()),
+//    m_step (image.bytesPerLine()),
+//    m_owner (false)
+//{
+//    // TODO what if image isNull()?
 
-    m_channels = 0;
-    m_depth = 0;
+//    m_channels = 0;
+//    m_depth = 0;
 
-    switch (image.format()) {
-        case QImage::Format_RGB32: {
-            m_channels = 4;
-            m_depth = 8;
-        }; break;
-        case QImage::Format_ARGB32: {
-            m_channels = 4;
-            m_depth = 8;
-        }; break;
-        case QImage::Format_RGB888: {
-            m_channels = 3;
-            m_depth = 8;
-        }; break;
-        default: {
-            qDebug() << "Unknown image format: " << image.format();
-        }
-    }
+//    switch (image.format()) {
+//        case QImage::Format_RGB32: {
+//            m_channels = 4;
+//            m_depth = 8;
+//        }; break;
+//        case QImage::Format_ARGB32: {
+//            m_channels = 4;
+//            m_depth = 8;
+//        }; break;
+//        case QImage::Format_RGB888: {
+//            m_channels = 3;
+//            m_depth = 8;
+//        }; break;
+//        default: {
+//            qDebug() << "Unknown image format: " << image.format();
+//        }
+//    }
 
-    if (m_channels && m_depth)
-    {
-        qDebug () << "COPY construct copy qimage";
+//    if (m_channels && m_depth)
+//    {
+//        qDebug () << "COPY construct copy qimage";
 
-        m_pixels = new unsigned char [m_size.height() * m_step];
+//        m_pixels = new unsigned char [m_size.height() * m_step];
 
-        memcpy (m_pixels, image.bits(), size_t(image.size().height()) * m_step);
+//        memcpy (m_pixels, image.bits(), size_t(image.size().height()) * m_step);
 
-        m_ref = new QAtomicInt();
-        m_ref->ref();
-    } else
-    {
-        m_pixels = NULL;
-        m_ref = NULL;
-        m_channels = 0;
-        m_step = 0;
-        m_depth = 0;
-        m_owner = false;
-    }
-}
+//        m_ref = new QAtomicInt();
+//        m_ref->ref();
+//    } else
+//    {
+//        m_pixels = NULL;
+//        m_ref = NULL;
+//        m_channels = 0;
+//        m_step = 0;
+//        m_depth = 0;
+//        m_owner = false;
+//    }
+//}
 
 Image::~Image (void)
 {
@@ -201,6 +201,36 @@ QImage Image::toQImage () const
         image = QImage (m_pixels, m_size.width(), m_size.height(), m_step, QImage::Format_RGB32).copy();
 
     return image;
+}
+
+Image Image::fromQImage (QImage image)
+{
+    int channels = 0;
+    int depth = 0;
+
+    switch (image.format()) {
+        case QImage::Format_RGB32: {
+            channels = 4;
+            depth = 8;
+        }; break;
+        case QImage::Format_ARGB32: {
+            channels = 4;
+            depth = 8;
+        }; break;
+        case QImage::Format_RGB888: {
+            channels = 3;
+            depth = 8;
+        }; break;
+    }
+
+    if (!channels || !depth)
+        return Image();
+
+    Image result (image.size(),channels, depth);
+
+    memcpy (result.pixels(), image.bits(), size_t(result.size().height()) * result.step());
+
+    return result;
 }
 
 bool Image::isNull (void) const

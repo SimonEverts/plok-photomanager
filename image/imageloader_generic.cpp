@@ -50,13 +50,15 @@ Image ImageLoader_generic_p::loadThumbnail ()
 
     QImage image = m_imageReader.read();
 
-    return image.convertToFormat(QImage::Format_RGB888);
+    QImage converted_image = image.convertToFormat(QImage::Format_RGB888);
+
+    return Image::fromQImage( converted_image );
 }
 
 Image ImageLoader_generic_p::loadPreview ()
 {
     if (!m_imageReader.canRead())
-        return QImage();
+        return Image();
 
     m_imageReader.setQuality(100);
 
@@ -66,7 +68,9 @@ Image ImageLoader_generic_p::loadPreview ()
 
     QImage image = m_imageReader.read();
 
-    return image.convertToFormat(QImage::Format_RGB888);
+    QImage converted_image = image.convertToFormat(QImage::Format_RGB888);
+
+    return Image::fromQImage( converted_image );
 }
 
 Image ImageLoader_generic_p::loadMaster ()
