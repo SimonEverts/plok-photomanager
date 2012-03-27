@@ -25,7 +25,7 @@ void LutView::draw (void)
     if (!red || !green || !blue)
         return;
 
-    int max_value = 1 << m_lut.depth();
+    int max_value = (1 << m_lut.depth()) - 1;
     if (!max_value)
         return;
 
