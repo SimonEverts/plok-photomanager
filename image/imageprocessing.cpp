@@ -292,9 +292,9 @@ void ImageProcessing::applyGamma_16u (const Image* src, Image* dest)
              float g = float(src_pixel[1]) / max_value_16b;
              float b = float(src_pixel[2]) / max_value_16b;
 
-             dest_pixel[0] = pow( r, 1.f / 2.2) * max_value_16b;
-             dest_pixel[1] = pow( g, 1.f / 2.2) * max_value_16b;
-             dest_pixel[2] = pow( b, 1.f / 2.2) * max_value_16b;
+             dest_pixel[0] = powf( r, 1.f / 2.2) * max_value_16b;
+             dest_pixel[1] = powf( g, 1.f / 2.2) * max_value_16b;
+             dest_pixel[2] = powf( b, 1.f / 2.2) * max_value_16b;
         }
     }
 }
@@ -649,20 +649,20 @@ void ImageProcessing::applyProperties_16u8u (const Image* src, Image* dest, floa
             float g = static_cast<float> (src_pixel[1]) / norm_value;
             float b = static_cast<float> (src_pixel[2]) / norm_value;
 
-            float x, y, z;
-            convertRGBtoXYZ(r, g, b, x, y, z);
+            float cx, y, z;
+            convertRGBtoXYZ(r, g, b, cx, y, z);
 
             float l, a, lab_b;
-            convertXYZtoLAB(x, y, z, l, a, lab_b);
+            convertXYZtoLAB(cx, y, z, l, a, lab_b);
 
             l = l * contrast + (brightness * 100);
 
             a = a * wbRed * wbGreen;
             lab_b = lab_b * wbRed * wbBlue;
 
-            convertLABtoXYZ(l, a, lab_b, x, y, z);
+            convertLABtoXYZ(l, a, lab_b, cx, y, z);
 
-            convertXYZtoRGB(x, y, z, r, g, b);
+            convertXYZtoRGB(cx, y, z, r, g, b);
 
             r = r * 255.f;
             g = g * 255.f;
@@ -692,17 +692,17 @@ void ImageProcessing::applyProperties_16u8u (const Image* src, Image* dest, floa
 void ImageProcessing::convertRGBtoXYZ (float r, float g, float b, float& x, float& y, float& z)
 {
     if ( r > 0.04045 )
-        r = pow( (( r + 0.055 ) / 1.055 ), 2.4);
+        r = powf( (( r + 0.055 ) / 1.055 ), 2.4);
     else
         r = r / 12.92;
 
     if ( g > 0.04045 )
-        g = pow( (( g + 0.055 ) / 1.055 ), 2.4);
+        g = powf( (( g + 0.055 ) / 1.055 ), 2.4);
     else
         g = g / 12.92;
 
     if ( b > 0.04045 )
-        b = pow( (( b + 0.055 ) / 1.055 ), 2.4);
+        b = powf( (( b + 0.055 ) / 1.055 ), 2.4);
     else
         b = b / 12.92;
 
@@ -727,17 +727,17 @@ void ImageProcessing::convertXYZtoRGB (float x, float y, float z, float& r, floa
     b = x *  0.0557 + y * -0.2040 + z *  1.0570;
 
     if ( r > 0.0031308 )
-        r = 1.055 * ( pow (r, ( 1 / 2.4 )) ) - 0.055;
+        r = 1.055 * ( powf (r, ( 1 / 2.4 )) ) - 0.055;
     else
         r = 12.92 * r;
 
     if ( g > 0.0031308 )
-        g = 1.055 * ( pow (g, ( 1 / 2.4 )) ) - 0.055;
+        g = 1.055 * ( powf (g, ( 1 / 2.4 )) ) - 0.055;
     else
         g = 12.92 * g;
 
     if ( b > 0.0031308 )
-        b = 1.055 * ( pow (b, ( 1 / 2.4 )) ) - 0.055;
+        b = 1.055 * ( powf (b, ( 1 / 2.4 )) ) - 0.055;
     else
         b = 12.92 * b;
 }
@@ -748,18 +748,18 @@ void ImageProcessing::convertLABtoXYZ (float l, float a, float b, float& x, floa
     x = (a / 500.f) + y;
     z = y - (b / 200.f);
 
-    if ( pow (y,3) > 0.008856 )
-        y= pow(y,3);
+    if ( powf (y,3) > 0.008856 )
+        y= powf(y,3);
     else
         y = ( y - (16.f / 116.f) ) / 7.787;
 
-    if ( pow (x,3) > 0.008856 )
-        x = pow (x, 3);
+    if ( powf (x,3) > 0.008856 )
+        x = powf (x, 3);
     else
         x = ( x - (16.f / 116.f) ) / 7.787;
 
-    if ( pow (z,3) > 0.008856 )
-        z = pow(z, 3);
+    if ( powf (z,3) > 0.008856 )
+        z = powf(z, 3);
     else
         z = ( z - (16.f / 116.f) ) / 7.787;
 
@@ -775,17 +775,17 @@ void ImageProcessing::convertXYZtoLAB (float x, float y, float z, float& l, floa
     z = z / 108.883;          //ref_Z =
 
     if ( x > 0.008856 )
-        x = pow (x, ( 1.f/3.f ));
+        x = powf (x, ( 1.f/3.f ));
     else
         x = ( 7.787 * x ) + ( 16.f / 116.f );
 
     if ( y > 0.008856 )
-        y = pow (y, ( 1.f/3.f ));
+        y = powf (y, ( 1.f/3.f ));
     else
         y = ( 7.787 * y ) + ( 16.f / 116.f );
 
     if ( z > 0.008856 )
-        z = pow (z, ( 1.f/3.f ));
+        z = powf (z, ( 1.f/3.f ));
     else
         z = ( 7.787 * z ) + ( 16.f / 116.f );
 

@@ -194,16 +194,13 @@ QImage Image::toQImage () const
 
     QImage image;
 
-
     if (m_channels == 3)
-        image = QImage (m_pixels, m_size.width(), m_size.height(), m_step, QImage::Format_RGB888);
+        image = QImage (m_pixels, m_size.width(), m_size.height(), m_step, QImage::Format_RGB888).copy();
 
     if (m_channels == 4)
-        image = QImage (m_pixels, m_size.width(), m_size.height(), m_step, QImage::Format_RGB32);
+        image = QImage (m_pixels, m_size.width(), m_size.height(), m_step, QImage::Format_RGB32).copy();
 
-
-
-    return image.copy();
+    return image;
 }
 
 bool Image::isNull (void) const
