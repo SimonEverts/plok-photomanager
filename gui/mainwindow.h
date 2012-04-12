@@ -66,9 +66,6 @@ public slots:
 
     void currentSetChanged( void );
 
-    void setBrowserPage (void);
-    void setPreviewPage (void);
-
 protected slots:
     void on_fileBrowserTreeView_activated ( const QModelIndex & index );
 
@@ -80,21 +77,18 @@ private slots:
     void on_actionStack_triggered();
     void on_actionDestack_triggered();
 
-    void on_actionThumbnails_triggered();
-
-    void on_actionPreview_triggered();
-
     void on_actionDelete_triggered();
 
     void on_actionCreate_set_triggered();
 
-    void on_actionFiles_triggered();
-
-    void on_actionAlbums_triggered();
+    void on_actionImport_triggered();
+    void on_actionLibrary_triggered();
 
     void on_actionDelete_set_triggered();
 
     void on_actionEdit_triggered();
+
+
 
 private:
 
@@ -112,8 +106,7 @@ private:
     CreateSetDialog m_createSetDialog;
     ImageEditor m_imageEditor;
 
-    QActionGroup* m_sourceActionGroup;
-    QActionGroup* m_imageViewActionGroup;
+    QActionGroup m_modeActionGroup;
 
     QList<QObject*> m_modelList;
 

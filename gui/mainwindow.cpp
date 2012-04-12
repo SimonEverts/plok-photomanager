@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_thumbnailNavigator (0),
     m_thumbnailView (0),
     m_imageProvider(),
+    m_modeActionGroup (this),
     m_imageThumbnailer (&m_imageProvider),
     m_directoryImporter (&m_imageProvider),
     m_database (),
@@ -33,13 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_imageViewActionGroup = new QActionGroup (this);
-    m_imageViewActionGroup->addAction (ui->actionThumbnails);
-    m_imageViewActionGroup->addAction (ui->actionPreview);
-
-    m_sourceActionGroup = new QActionGroup (this);
-    m_sourceActionGroup->addAction (ui->actionFiles);
-    m_sourceActionGroup->addAction (ui->actionAlbums);
+    m_modeActionGroup.addAction (ui->actionImport);
+    m_modeActionGroup.addAction (ui->actionLibrary);
 
     m_thumbnailNavigator = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("thumbnailNavigator");
 
@@ -73,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
     nav_context->setContextProperty("qml_model", m_fileSystemModel);
 
 
-    ui->navStackedWidget->setCurrentWidget(ui->setBrowserPage);
+    ui->mainStackedWidget->setCurrentWidget(ui->mainStackedThumbnailPage);
 
     m_database.initialize();
 
@@ -90,10 +86,6 @@ MainWindow::~MainWindow()
     m_workThread.stop();
 
     delete ui;
-
-    delete m_imageViewActionGroup;
-    delete m_sourceActionGroup;
-
     delete m_fileSystemModel;
 }
 
@@ -143,8 +135,6 @@ void MainWindow::on_fileBrowserTreeView_activated ( const QModelIndex & index )
     {
         m_captures = m_directoryImporter.importCapturesFromDir( path );
         loadThumbnailsFromCaptures();
-
-        setBrowserPage();
     } else
     {
         m_captures = m_directoryImporter.importCapturesFromDir( file_info.absolutePath() );
@@ -157,8 +147,6 @@ void MainWindow::on_fileBrowserTreeView_activated ( const QModelIndex & index )
         }
 
         loadImage( path );
-
-        setPreviewPage();
     }
 }
 
@@ -293,8 +281,6 @@ void MainWindow::currentImageChanged( int currentIndex )
 
     QString current_path = QUrl (m_thumbnailModel.at( currentIndex )->path()).toString(QUrl::RemoveScheme);
     loadImage ( current_path );
-
-    setPreviewPage();
 }
 
 void MainWindow::currentSetChanged( void )
@@ -316,29 +302,6 @@ void MainWindow::currentSetChanged( void )
             loadThumbnailsFromCaptures();
         }
     }
-
-    setBrowserPage();
-}
-
-void MainWindow::setBrowserPage (void)
-{
-    blockSignals( true );
-
-    ui->mainStackedWidget->setCurrentWidget(ui->mainStackedThumbnailPage);
-    ui->actionThumbnails->setChecked(true);
-
-
-    blockSignals( false );
-}
-
-void MainWindow::setPreviewPage (void)
-{
-    blockSignals (true);
-
-    ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
-    ui->actionPreview->setChecked(true);
-
-    blockSignals (false);
 }
 
 void MainWindow::on_actionStack_triggered()
@@ -425,16 +388,6 @@ void MainWindow::on_actionDestack_triggered()
     }
 }
 
-void MainWindow::on_actionThumbnails_triggered()
-{
-    setBrowserPage();
-}
-
-void MainWindow::on_actionPreview_triggered()
-{
-    setPreviewPage();
-}
-
 void MainWindow::on_actionDelete_triggered()
 {
     QStringList selected_items;
@@ -515,14 +468,14 @@ void MainWindow::on_actionDelete_set_triggered()
     loadGUI();
 }
 
-void MainWindow::on_actionAlbums_triggered()
+void MainWindow::on_actionImport_triggered()
 {
-    ui->navStackedWidget->setCurrentWidget(ui->setBrowserPage);
+    ui->mainStackedWidget->setCurrentWidget(ui->mainStackedThumbnailPage);
 }
 
-void MainWindow::on_actionFiles_triggered()
+void MainWindow::on_actionLibrary_triggered()
 {
-    ui->navStackedWidget->setCurrentWidget(ui->fileBrowserPage);
+    ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
 }
 
 void MainWindow::on_actionEdit_triggered()
@@ -531,3 +484,5 @@ void MainWindow::on_actionEdit_triggered()
 
     m_imageEditor.setCapture( m_currentCapture );
 }
+
+

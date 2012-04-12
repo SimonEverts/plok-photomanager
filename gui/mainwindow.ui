@@ -6,52 +6,36 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1024</width>
-    <height>600</height>
+    <width>933</width>
+    <height>602</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Plok Photo Manager</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout_4">
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QSplitter" name="splitter">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+     <widget class="QStackedWidget" name="mainStackedWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>3</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-      <widget class="QStackedWidget" name="navStackedWidget">
-       <property name="currentIndex">
-        <number>1</number>
-       </property>
-       <widget class="QWidget" name="setBrowserPage">
-        <layout class="QVBoxLayout" name="verticalLayout_5">
-         <property name="margin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QDeclarativeView" name="setView">
-           <property name="resizeMode">
-            <enum>QDeclarativeView::SizeRootObjectToView</enum>
-           </property>
-           <property name="source">
-            <url>
-             <string>qrc:/standard/setview.qml</string>
-            </url>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="fileBrowserPage">
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <property name="margin">
-          <number>0</number>
-         </property>
-         <item>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="mainStackedThumbnailPage">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QSplitter" name="splitter_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
           <widget class="QTreeView" name="fileBrowserTreeView">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -60,23 +44,6 @@
             <bool>false</bool>
            </property>
           </widget>
-         </item>
-        </layout>
-       </widget>
-      </widget>
-      <widget class="QStackedWidget" name="mainStackedWidget">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>3</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <widget class="QWidget" name="mainStackedThumbnailPage">
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <property name="margin">
-          <number>0</number>
-         </property>
-         <item>
           <widget class="QDeclarativeView" name="thumbnailView">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -102,47 +69,55 @@
             </url>
            </property>
           </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="mainStackedPreviewPage">
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <property name="margin">
-          <number>0</number>
-         </property>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <widget class="QDeclarativeView" name="thumbnailNavigator">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>150</height>
-              </size>
-             </property>
-             <property name="interactive">
-              <bool>true</bool>
-             </property>
-             <property name="resizeMode">
-              <enum>QDeclarativeView::SizeRootObjectToView</enum>
-             </property>
-             <property name="source">
-              <url>
-               <string>qrc:/standard/thumbnailNavigator.qml</string>
-              </url>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="mainStackedPreviewPage">
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QSplitter" name="splitter">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="QDeclarativeView" name="setView">
+           <property name="resizeMode">
+            <enum>QDeclarativeView::SizeRootObjectToView</enum>
+           </property>
+           <property name="source">
+            <url>
+             <string>qrc:/standard/setview.qml</string>
+            </url>
+           </property>
+          </widget>
+          <widget class="QDeclarativeView" name="thumbnailNavigator">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>150</height>
+            </size>
+           </property>
+           <property name="interactive">
+            <bool>true</bool>
+           </property>
+           <property name="resizeMode">
+            <enum>QDeclarativeView::SizeRootObjectToView</enum>
+           </property>
+           <property name="source">
+            <url>
+             <string>qrc:/standard/thumbnailNavigator.qml</string>
+            </url>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -153,8 +128,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1024</width>
-     <height>22</height>
+     <width>933</width>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -191,8 +166,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionAlbums"/>
-   <addaction name="actionFiles"/>
+   <addaction name="actionImport"/>
+   <addaction name="actionLibrary"/>
    <addaction name="separator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -221,9 +196,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionThumbnails"/>
-   <addaction name="actionPreview"/>
-   <addaction name="separator"/>
    <addaction name="actionDelete"/>
    <addaction name="separator"/>
    <addaction name="actionEdit"/>
@@ -233,26 +205,8 @@
     <string>Upload image</string>
    </property>
   </action>
-  <action name="actionFiles">
+  <action name="actionLibrary">
    <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../icons.qrc">
-     <normaloff>:/standard/icons/folder.png</normaloff>:/standard/icons/folder.png</iconset>
-   </property>
-   <property name="text">
-    <string>Files</string>
-   </property>
-   <property name="toolTip">
-    <string>Files</string>
-   </property>
-  </action>
-  <action name="actionAlbums">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="icon">
@@ -260,34 +214,10 @@
      <normaloff>:/standard/icons/application-epub+zip.png</normaloff>:/standard/icons/application-epub+zip.png</iconset>
    </property>
    <property name="text">
-    <string>Albums</string>
+    <string>Library</string>
    </property>
-  </action>
-  <action name="actionThumbnails">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../icons.qrc">
-     <normaloff>:/standard/icons/22x22/view-list-icons.png</normaloff>:/standard/icons/22x22/view-list-icons.png</iconset>
-   </property>
-   <property name="text">
-    <string>Thumbnails</string>
-   </property>
-  </action>
-  <action name="actionPreview">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../icons.qrc">
-     <normaloff>:/standard/icons/22x22/view-preview.png</normaloff>:/standard/icons/22x22/view-preview.png</iconset>
-   </property>
-   <property name="text">
-    <string>Preview</string>
+   <property name="toolTip">
+    <string>Library</string>
    </property>
   </action>
   <action name="actionStack">
@@ -340,6 +270,21 @@
    </property>
    <property name="toolTip">
     <string>Edit</string>
+   </property>
+  </action>
+  <action name="actionImport">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../icons.qrc">
+     <normaloff>:/standard/icons/camera-photo.png</normaloff>:/standard/icons/camera-photo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Import</string>
    </property>
   </action>
  </widget>
