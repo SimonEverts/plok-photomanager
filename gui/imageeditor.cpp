@@ -115,7 +115,7 @@ void ImageEditor::updateLut (void)
     float wb_green = picture_properties.wb_green;
     float wb_blue = picture_properties.wb_blue;
 
-    Image dest_image (m_workImage.size(), 3, 8);
+    Image dest_image (m_workImage.size(), m_workImage.channels(), 8);
     ImageProcessing::generateLut(brightness, contrast, gamma, wb_red, wb_green, wb_blue, lut);
     ui->lutView->setLut( lut );
 

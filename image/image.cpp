@@ -221,6 +221,10 @@ Image Image::fromQImage (QImage image)
             channels = 3;
             depth = 8;
         }; break;
+        default:
+        {
+            qFatal("Image format not supported!");
+        }
     }
 
     if (!channels || !depth)

@@ -66,9 +66,7 @@ Image ImageLoader_raw_p::loadPreview ()
                     m_rawProcessor.imgdata.thumbnail.tlength,
                     "JPG");
 
-        QImage converted_image = image.convertToFormat(QImage::Format_RGB888);
-
-        result = Image::fromQImage( converted_image );
+        result = Image::fromQImage( image );
     }
 
     return result;

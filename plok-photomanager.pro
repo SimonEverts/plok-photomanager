@@ -9,6 +9,7 @@ QT       += core gui declarative network sql
 TARGET = plok-photomanager
 TEMPLATE = app
 
+# CONFIG += simon
 # CONFIG += opencv
 
 SOURCES += main.cpp\
@@ -94,6 +95,11 @@ RESOURCES += \
 
 unix {
     LIBS += -lraw -lgomp
+}
+
+CONFIG (simon) {
+    INCLUDEPATH += /home/simon/Projects/plok-photomanager/photo-backend
+    LIBS +=  -lphotostore -L/home/simon/Projects/plok-photomanager/photo-backend/photostore-build-desktop-Qt_4_8_0_in_PATH__System__Release
 }
 
 CONFIG (opencv) {

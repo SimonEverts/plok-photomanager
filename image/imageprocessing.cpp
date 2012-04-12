@@ -579,20 +579,20 @@ void ImageProcessing::applyProperties_8u (const Image* src, Image* dest, float b
             float g = static_cast<float> (src_pixels[index+1]) / norm_value;
             float b = static_cast<float> (src_pixels[index+2]) / norm_value;
 
-            float x, y, z;
-            convertRGBtoXYZ(r, g, b, x, y, z);
+            float cx, y, z;
+            convertRGBtoXYZ(r, g, b, cx, y, z);
 
             float l, a, lab_b;
-            convertXYZtoLAB(x, y, z, l, a, lab_b);
+            convertXYZtoLAB(cx, y, z, l, a, lab_b);
 
             l = l * contrast + (brightness * 100);
 
             a = a * wbRed * wbGreen;
             lab_b = lab_b * wbRed * wbBlue;
 
-            convertLABtoXYZ(l, a, lab_b, x, y, z);
+            convertLABtoXYZ(l, a, lab_b, cx, y, z);
 
-            convertXYZtoRGB(x, y, z, r, g, b);
+            convertXYZtoRGB(cx, y, z, r, g, b);
 
             r = r * 255.f;
             g = g * 255.f;
