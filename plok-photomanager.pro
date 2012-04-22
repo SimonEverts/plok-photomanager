@@ -9,8 +9,12 @@ QT       += core gui declarative network sql
 TARGET = plok-photomanager
 TEMPLATE = app
 
+CONFIG += crypto
+
 # CONFIG += simon
 # CONFIG += opencv
+
+include(3rdparty/qoauth/qoauth.pri)
 
 SOURCES += main.cpp\
         gui/mainwindow.cpp \

@@ -39,7 +39,7 @@ void SetCreator::createSet (QString name)
 //    multiPart->append(filenamePart);
 //    multiPart->append(imagePart);
 
-    QUrl url("http://plok.org/set");
+    QUrl url("http://www.plok.org/rest/sets");
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
@@ -53,7 +53,7 @@ void SetCreator::createSet (QString name)
 //    map["params"] = params;
 
     QVariantMap map;
-    map["name"] = "MySetName";
+    map["setName"] = "MySetName";
 
 //    QVariantMap params;
 //    params["name"] = "MySetName";

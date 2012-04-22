@@ -13,6 +13,8 @@ class ImageUploader : public QObject
 public:
     ImageUploader();
 
+    void authenticate (void);
+
     void uploadImage (QString fileName);
 
 public slots:
