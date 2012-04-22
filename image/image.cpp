@@ -223,7 +223,8 @@ Image Image::fromQImage (QImage image)
         }; break;
         default:
         {
-            qFatal("Image format not supported!");
+            qCritical("Image format not supported!");
+            return Image();
         }
     }
 
