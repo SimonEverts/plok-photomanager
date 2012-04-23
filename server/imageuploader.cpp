@@ -5,37 +5,37 @@
 
 #include <QDebug>
 
-#include <3rdparty/qoauth/interface.h>
+//#include <3rdparty/qoauth/interface.h>
 
 ImageUploader::ImageUploader()
 {
 }
 
-void ImageUploader::authenticate (void)
-{
-    QByteArray token;
-    QByteArray tokenSecret;
+//void ImageUploader::authenticate (void)
+//{
+//    QByteArray token;
+//    QByteArray tokenSecret;
 
-    QOAuth::Interface oauth_interface;
+//    QOAuth::Interface oauth_interface;
 
-    oauth_interface.setConsumerKey( "75b3d557c9268c49cfdf041a" );
-    oauth_interface.setConsumerSecret( "fd12803fbf0760d34cd2ceb9955199ce" );
-    // set a timeout for requests (in msecs)
-    oauth_interface.setRequestTimeout( 10000 );
+//    oauth_interface.setConsumerKey( "75b3d557c9268c49cfdf041a" );
+//    oauth_interface.setConsumerSecret( "fd12803fbf0760d34cd2ceb9955199ce" );
+//    // set a timeout for requests (in msecs)
+//    oauth_interface.setRequestTimeout( 10000 );
 
-    // send a request for an unauthorized token
-    QOAuth::ParamMap reply =
-        oauth_interface.requestToken( "http://www.plok.org/rest/oauth",
-                              QOAuth::GET, QOAuth::HMAC_SHA1 );
+//    // send a request for an unauthorized token
+//    QOAuth::ParamMap reply =
+//        oauth_interface.requestToken( "http://www.plok.org/rest/oauth",
+//                              QOAuth::GET, QOAuth::HMAC_SHA1 );
 
-    // if no error occurred, read the received token and token secret
-    if ( oauth_interface.error() == QOAuth::NoError ) {
-      //token = reply.value( QOAuth::ParamToken );
-      //tokenSecret = reply.value( QOAuth::ParamTokenSecret );
-    }
+//    // if no error occurred, read the received token and token secret
+//    if ( oauth_interface.error() == QOAuth::NoError ) {
+//      //token = reply.value( QOAuth::ParamToken );
+//      //tokenSecret = reply.value( QOAuth::ParamTokenSecret );
+//    }
 
-    qDebug() << reply;
-}
+//    qDebug() << reply;
+//}
 
 void ImageUploader::uploadImage (QString fileName)
 {
