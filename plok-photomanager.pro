@@ -16,7 +16,10 @@ CONFIG += crypto
 
 include(3rdparty/qoauth/qoauth.pri)
 
+include (3rdparty/3rdparty.pri)
+include (model/model.pri)
 include (gui/gui.pri)
+
 
 SOURCES += main.cpp\
     server/imageuploader.cpp \
@@ -39,7 +42,6 @@ SOURCES += main.cpp\
     image/image.cpp \
     image/lut.cpp \
     model/picturedao.cpp \
-    3rdparty/json.cpp \
     import/directoryimporter.cpp
 
 HEADERS  += \
@@ -63,7 +65,6 @@ HEADERS  += \
     image/image.h \
     image/lut.h \
     model/picturedao.h \
-    3rdparty/json.h \
     import/directoryimporter.h
 
 RESOURCES += \
@@ -88,6 +89,10 @@ win32 {
     INCLUDEPATH += G:\Projects\LibRaw-0.14.4
     LIBS += -LG:\Projects\LibRaw-0.14.4\lib -llibraw
 }
+
+OTHER_FILES += \
+    3rdparty/3rdparty.pri \
+    model/model.pri
 
 
 
