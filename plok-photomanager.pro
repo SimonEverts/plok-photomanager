@@ -18,41 +18,22 @@ TEMPLATE = app
 
 include (3rdparty/3rdparty.pri)
 include (model/model.pri)
+include (database/database.pri)
+include (image/image.pri)
 include (gui/gui.pri)
-
 
 SOURCES += main.cpp\
     server/imageuploader.cpp \
     server/setcreator.cpp \
-    image/imageloader.cpp \
-    image/imageprovider.cpp \
-    image/imageloader_raw.cpp \
-    image/imageloader_generic.cpp \
-    database/database.cpp \
-    image/thumbnailer.cpp \
     common/miscutils.cpp \
-    image/thumbnailcache.cpp \
     worker/workthread.cpp \
-    image/imageprocessing.cpp \
-    image/image.cpp \
-    image/lut.cpp \
     import/directoryimporter.cpp
 
 HEADERS  += \
     server/imageuploader.h \
     server/setcreator.h \
-    image/imageloader.h \
-    image/imageprovider.h \
-    image/imageloader_raw.h \
-    image/imageloader_generic.h \
-    database/database.h \
-    image/thumbnailer.h \
     common/miscutils.h \
-    image/thumbnailcache.h \
     worker/workthread.h \
-    image/imageprocessing.h \
-    image/image.h \
-    image/lut.h \
     import/directoryimporter.h
 
 RESOURCES += \
@@ -77,9 +58,6 @@ win32 {
     INCLUDEPATH += G:\Projects\LibRaw-0.14.4
     LIBS += -LG:\Projects\LibRaw-0.14.4\lib -llibraw
 }
-
-
-
 
 
 

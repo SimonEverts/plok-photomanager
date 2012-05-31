@@ -1,3 +1,3 @@
 
-SOURCES += 3rdparty/json.cpp
-HEADERS += 3rdparty/json.h
+SOURCES += $$PWD/json.cpp
+HEADERS += $$PWD/json.h

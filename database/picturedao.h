@@ -1,7 +1,7 @@
 #ifndef PICTUREDAO_H
 #define PICTUREDAO_H
 
-#include "picture.h"
+#include "model/picture.h"
 
 #include <QList>
 

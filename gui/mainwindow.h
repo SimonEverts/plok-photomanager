@@ -13,8 +13,8 @@
 
 #include "model/capture.h"
 
-#include "model/setdao.h"
-#include "model/picturedao.h"
+#include "database/setdao.h"
+#include "database/picturedao.h"
 //#include "model/setmanager.h"
 
 #include "database/database.h"
@@ -81,16 +81,20 @@ private slots:
 
     void on_actionCreate_set_triggered();
 
-    void on_actionImport_triggered();
-    void on_actionLibrary_triggered();
-
     void on_actionDelete_set_triggered();
 
     void on_actionEdit_triggered();
 
-
+    void on_listWidget_currentRowChanged(int currentRow);
 
 private:
+
+    void selectSourceLibrary (void);
+    void selectSourceCamera (void);
+    void selectSourceFiles (void);
+
+    void selectPreview (void);
+    void selectThumbnails (void);
 
 //    void loadThumbnailsFromDir (QString dirName);
     void loadThumbnailsFromCaptures (void);

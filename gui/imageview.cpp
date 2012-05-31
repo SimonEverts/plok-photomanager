@@ -44,13 +44,7 @@ void ImageView::draw (void)
 
     painter.fillRect(rect(), brush);
 
-    // TODO use paintEngine here?
-
-#ifdef WIN32
-    painter.paintEngine()->drawImage (rect(), m_scaled_image, rect());
-#else
     painter.drawImage (rect(), m_scaled_image, rect());
-#endif
 }
 
 void ImageView::resizeImage(void)

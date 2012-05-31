@@ -4,7 +4,7 @@
 #include "image/imageprovider.h"
 #include "image/imageprocessing.h"
 
-#include "model/picturedao.h"
+#include "database/picturedao.h"
 
 #include <QFileInfo>
 #include <QDebug>

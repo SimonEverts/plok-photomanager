@@ -20,6 +20,7 @@ public:
 public slots:
     void uploadError (QNetworkReply::NetworkError code);
     void uploadProgress (qint64 bytesSent, qint64 bytesTotal );
+    void uploadFinished (QNetworkReply* reply);
     void uploadFinished (void);
 
 private:

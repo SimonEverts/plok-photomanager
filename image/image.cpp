@@ -10,16 +10,14 @@ Image::Image (void) :
     m_size (0,0),
     m_channels (0),
     m_step (0),
-    m_depth (0),
-    m_owner (false)
+    m_depth (0)
 {
 }
 
 Image::Image(QSize size, unsigned int channels, unsigned int depth) :
     m_size (size),
     m_channels (channels),
-    m_depth (depth),
-    m_owner (true)
+    m_depth (depth)
 {
     m_step = size.width() * channels * depth/8;
 
@@ -27,23 +25,18 @@ Image::Image(QSize size, unsigned int channels, unsigned int depth) :
 
     m_ref = new QAtomicInt();
     m_ref->ref();
-
-    qDebug () << "construct image";
 }
 
 Image::Image(QSize size, unsigned int channels, unsigned int step, unsigned int depth) :
     m_size (size),
     m_channels (channels),
     m_step (step),
-    m_depth (depth),
-    m_owner (true)
+    m_depth (depth)
 {
     m_pixels = new unsigned char [size_t(size.height()) * step];
 
     m_ref = new QAtomicInt();
     m_ref->ref();
-
-    qDebug () << "construct image";
 }
 
 Image::Image(unsigned char* pixels, QSize size, unsigned int channels, unsigned int step, unsigned int depth) :
@@ -52,8 +45,7 @@ Image::Image(unsigned char* pixels, QSize size, unsigned int channels, unsigned 
     m_size (size),
     m_channels (channels),
     m_step (step),
-    m_depth (depth),
-    m_owner (false)
+    m_depth (depth)
 {
 }
 
@@ -61,63 +53,13 @@ Image::Image (const Image& image) :
     m_size (image.size()),
     m_channels (image.channels()),
     m_step (image.step()),
-    m_depth (image.depth()),
-    m_owner (true)
+    m_depth (image.depth())
 {
-    m_pixels = image.pixels(); //new unsigned char [m_size.height()  * m_step];
+    m_pixels = image.pixels();
     m_ref = image.m_ref;
     if (m_ref)
         m_ref->ref();
 }
-
-//Image::Image (QImage image) :
-//    m_size (image.size()),
-//    m_step (image.bytesPerLine()),
-//    m_owner (false)
-//{
-//    // TODO what if image isNull()?
-
-//    m_channels = 0;
-//    m_depth = 0;
-
-//    switch (image.format()) {
-//        case QImage::Format_RGB32: {
-//            m_channels = 4;
-//            m_depth = 8;
-//        }; break;
-//        case QImage::Format_ARGB32: {
-//            m_channels = 4;
-//            m_depth = 8;
-//        }; break;
-//        case QImage::Format_RGB888: {
-//            m_channels = 3;
-//            m_depth = 8;
-//        }; break;
-//        default: {
-//            qDebug() << "Unknown image format: " << image.format();
-//        }
-//    }
-
-//    if (m_channels && m_depth)
-//    {
-//        qDebug () << "COPY construct copy qimage";
-
-//        m_pixels = new unsigned char [m_size.height() * m_step];
-
-//        memcpy (m_pixels, image.bits(), size_t(image.size().height()) * m_step);
-
-//        m_ref = new QAtomicInt();
-//        m_ref->ref();
-//    } else
-//    {
-//        m_pixels = NULL;
-//        m_ref = NULL;
-//        m_channels = 0;
-//        m_step = 0;
-//        m_depth = 0;
-//        m_owner = false;
-//    }
-//}
 
 Image::~Image (void)
 {
@@ -126,8 +68,6 @@ Image::~Image (void)
 
     if (m_pixels && !m_ref->deref())
     {
-        qDebug () << "destruct image";
-
         delete[] m_pixels;
         m_pixels = 0;
 
@@ -139,8 +79,6 @@ void Image::clear (void)
 {
     if (m_pixels && !m_ref->deref())
     {
-        qDebug () << "destruct image";
-
         delete[] m_pixels;
         delete m_ref;
     }
@@ -155,8 +93,6 @@ Image& Image::operator= (const Image& image)
     {
         if (m_pixels && !m_ref->deref())
         {
-            qDebug () << "assign: cleanup image";
-
             delete[] m_pixels;
             delete m_ref;
         }
@@ -166,7 +102,6 @@ Image& Image::operator= (const Image& image)
     m_channels = image.channels();
     m_step = image.step();
     m_depth = image.depth();
-    m_owner = true;
 
     m_pixels = image.m_pixels;
     m_ref = image.m_ref;
@@ -182,16 +117,11 @@ Image Image::copy (void)
     Image image (m_size, m_channels, m_step, m_depth);
 
     memcpy (image.pixels(), m_pixels, size_t(m_size.height()) * m_step);
-
-    qDebug () << "COPY image";
-
     return image;
 }
 
 QImage Image::toQImage () const
 {
-    qDebug () << "copy to qimage";
-
     QImage image;
 
     if (m_channels == 3)

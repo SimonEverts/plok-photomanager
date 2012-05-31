@@ -16,8 +16,6 @@ public:
 
     Image (const Image& image);
 
-//    Image (QImage image);
-
     virtual ~Image (void);
 
     Image& operator= (const Image& image);
@@ -46,8 +44,6 @@ private:
     unsigned int m_channels;
     unsigned int m_step;
     unsigned int m_depth;
-    bool m_owner; // TODO obsolete
-
 };
 
 #endif // IMAGE_H

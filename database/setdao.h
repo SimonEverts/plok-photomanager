@@ -1,7 +1,7 @@
 #ifndef SETDAO_H
 #define SETDAO_H
 
-#include "set.h"
+#include "model/set.h"
 
 #include <QList>
 

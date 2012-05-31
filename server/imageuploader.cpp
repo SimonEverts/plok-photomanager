@@ -11,8 +11,8 @@ ImageUploader::ImageUploader()
 {
 }
 
-//void ImageUploader::authenticate (void)
-//{
+void ImageUploader::authenticate (void)
+{
 //    QByteArray token;
 //    QByteArray tokenSecret;
 
@@ -35,7 +35,22 @@ ImageUploader::ImageUploader()
 //    }
 
 //    qDebug() << reply;
-//}
+
+    QUrl url("https://www.plok.org:8181/rest/oauth2");
+    QNetworkRequest request(url);
+    request.setRawHeader("wrap_client_id", "photomanager.plok.org");
+
+    QNetworkReply *reply = m_networkAccessManager.get(request);
+    reply->ignoreSslErrors();
+
+    qDebug() << reply->rawHeaderList();
+    qDebug() << reply->readAll();
+
+    // here connect signals etc.
+    connect( reply, SIGNAL( error(QNetworkReply::NetworkError)), this, SLOT(uploadError(QNetworkReply::NetworkError)));
+    connect( reply, SIGNAL( uploadProgress (qint64, qint64)), this, SLOT(uploadProgress (qint64, qint64)));
+    connect( &m_networkAccessManager, SIGNAL( finished(QNetworkReply*)), this, SLOT(uploadFinished(QNetworkReply*)));
+}
 
 void ImageUploader::uploadImage (QString fileName)
 {
@@ -89,7 +104,13 @@ void ImageUploader::uploadProgress (qint64 bytesSent, qint64 bytesTotal )
     qDebug() << "Bytes send: " << bytesSent << "\t Bytes total: " << bytesTotal;
 }
 
-void ImageUploader::uploadFinished (void)
+void ImageUploader::uploadFinished (QNetworkReply* reply)
+{
+        qDebug() << reply->rawHeaderList();
+    qDebug() << "Upload finished: " << reply->readAll();
+}
+
+void ImageUploader::uploadFinished ()
 {
     qDebug() << "Upload finished!";
 }

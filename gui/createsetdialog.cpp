@@ -3,7 +3,7 @@
 
 #include <QFileDialog>
 
-#include "model/setdao.h"
+#include "database/setdao.h"
 
 #include "image/thumbnailer.h"
 

@@ -34,9 +34,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_modeActionGroup.addAction (ui->actionImport);
-    m_modeActionGroup.addAction (ui->actionLibrary);
-
     m_thumbnailNavigator = ui->thumbnailNavigator->rootObject()->findChild<QObject*> ("thumbnailNavigator");
 
     QObject* setView = ui->setView->rootObject()->findChild<QObject*> ("listButtons");
@@ -68,7 +65,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QDeclarativeContext *nav_context = ui->thumbnailNavigator->rootContext();
     nav_context->setContextProperty("qml_model", m_fileSystemModel);
 
-
+    ui->sourceStackedWidget->setCurrentWidget(ui->librarySourcePage);
     ui->mainStackedWidget->setCurrentWidget(ui->mainStackedThumbnailPage);
 
     m_database.initialize();
@@ -135,6 +132,8 @@ void MainWindow::on_fileBrowserTreeView_activated ( const QModelIndex & index )
     {
         m_captures = m_directoryImporter.importCapturesFromDir( path );
         loadThumbnailsFromCaptures();
+
+        selectThumbnails();
     } else
     {
         m_captures = m_directoryImporter.importCapturesFromDir( file_info.absolutePath() );
@@ -218,7 +217,11 @@ void MainWindow::loadImage (QString fileName)
 
     m_workThread.loadPictures(QStringList() << fileName);
 
-    qDebug() << "loadImage: "  << fileName;
+//    qDebug() << "loadImage: "  << fileName;
+
+//    m_imageUploader.authenticate();
+
+    selectPreview ();
 }
 
 void MainWindow::updateImage (void)
@@ -302,6 +305,8 @@ void MainWindow::currentSetChanged( void )
             loadThumbnailsFromCaptures();
         }
     }
+
+    selectThumbnails();
 }
 
 void MainWindow::on_actionStack_triggered()
@@ -468,16 +473,6 @@ void MainWindow::on_actionDelete_set_triggered()
     loadGUI();
 }
 
-void MainWindow::on_actionImport_triggered()
-{
-    ui->mainStackedWidget->setCurrentWidget(ui->mainStackedThumbnailPage);
-}
-
-void MainWindow::on_actionLibrary_triggered()
-{
-    ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
-}
-
 void MainWindow::on_actionEdit_triggered()
 {
     m_imageEditor.show();
@@ -486,3 +481,45 @@ void MainWindow::on_actionEdit_triggered()
 }
 
 
+
+void MainWindow::on_listWidget_currentRowChanged(int currentRow)
+{
+    switch (currentRow)
+    {
+    case 0: selectSourceLibrary(); break;
+    case 1: selectSourceCamera(); break;
+    case 2: selectSourceFiles(); break;
+    default: {
+        qFatal("Unknown source Page!");
+    }
+    }
+}
+
+void MainWindow::selectSourceLibrary (void)
+{
+    ui->sourceStackedWidget->setCurrentWidget(ui->librarySourcePage);
+
+    selectThumbnails();
+}
+
+void MainWindow::selectSourceCamera (void)
+{
+    selectSourceFiles();
+}
+
+void MainWindow::selectSourceFiles (void)
+{
+    ui->sourceStackedWidget->setCurrentWidget(ui->filesSourcePage);
+
+    selectThumbnails();
+}
+
+void MainWindow::selectPreview (void)
+{
+    ui->mainStackedWidget->setCurrentWidget(ui->mainStackedPreviewPage);
+}
+
+void MainWindow::selectThumbnails (void)
+{
+    ui->mainStackedWidget->setCurrentWidget(ui->mainStackedThumbnailPage);
+}

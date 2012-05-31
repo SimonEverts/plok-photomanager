@@ -1,4 +1,6 @@
 
+INCLUDEPATH += $$PWD
+
 SOURCES += \
     $$PWD//mainwindow.cpp \
     $$PWD/imageview.cpp \
@@ -8,7 +10,8 @@ SOURCES += \
     $$PWD/createsetdialog.cpp \
     $$PWD/imageeditor.cpp \
     $$PWD/histogramview.cpp \
-    $$PWD/lutview.cpp
+    $$PWD/lutview.cpp \
+    $$PWD/sourcemenu.cpp
 
 
 HEADERS += \
@@ -20,7 +23,8 @@ HEADERS += \
     $$PWD/createsetdialog.h \
     $$PWD/imageeditor.h \
     $$PWD/histogramview.h \
-    $$PWD/lutview.h
+    $$PWD/lutview.h \
+    $$PWD/sourcemenu.h
 
 FORMS += \
     $$PWD/mainwindow.ui \
