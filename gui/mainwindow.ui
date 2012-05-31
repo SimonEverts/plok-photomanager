@@ -15,9 +15,6 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
-    <property name="spacing">
-     <number>4</number>
-    </property>
     <item>
      <widget class="SourceMenu" name="listWidget">
       <property name="maximumSize">

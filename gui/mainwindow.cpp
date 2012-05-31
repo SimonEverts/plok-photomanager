@@ -146,6 +146,8 @@ void MainWindow::on_fileBrowserTreeView_activated ( const QModelIndex & index )
         }
 
         loadImage( path );
+
+        selectPreview ();
     }
 }
 
@@ -220,8 +222,6 @@ void MainWindow::loadImage (QString fileName)
 //    qDebug() << "loadImage: "  << fileName;
 
 //    m_imageUploader.authenticate();
-
-    selectPreview ();
 }
 
 void MainWindow::updateImage (void)
@@ -284,6 +284,8 @@ void MainWindow::currentImageChanged( int currentIndex )
 
     QString current_path = QUrl (m_thumbnailModel.at( currentIndex )->path()).toString(QUrl::RemoveScheme);
     loadImage ( current_path );
+
+    selectPreview ();
 }
 
 void MainWindow::currentSetChanged( void )
