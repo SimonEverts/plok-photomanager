@@ -8,12 +8,16 @@
 #include "imageloader_generic.h"
 #include "imageloader_raw.h"
 
+#include "metadata/exifloader.h"
+
 #include "thumbnailcache.h"
 
 ImageProvider::ImageProvider(QObject *parent)
 {
     m_imageLoaders.append( new ImageLoader_generic() );
     m_imageLoaders.append( new ImageLoader_raw() );
+
+    m_exifLoader = new ExifLoader();
 }
 
 ImageProvider::~ImageProvider ()
@@ -23,6 +27,10 @@ ImageProvider::~ImageProvider ()
         delete m_imageLoaders.first();
         m_imageLoaders.removeFirst();
     }
+
+    if (m_exifLoader)
+        delete m_exifLoader;
+    m_exifLoader = NULL;
 }
 
 
@@ -45,6 +53,8 @@ QImage ImageProvider::requestThumbnail ( const QString& id, QSize* size, const Q
         {
             image_loader->openImage( id );
             thumb = image_loader->loadThumbnail().toQImage();
+
+            correctOrientation( id, thumb );
         }
     }
 
@@ -81,6 +91,8 @@ Image ImageProvider::loadThumbnail (QString fileName)
     {
         image_loader->openImage( fileName );
         thumb = image_loader->loadThumbnail();
+
+        correctOrientation( fileName, thumb );
     }
 
     return thumb;
@@ -97,6 +109,8 @@ Image ImageProvider::loadPreview (QString fileName)
     {
         image_loader->openImage( fileName );
         image = image_loader->loadPreview();
+
+        correctOrientation( fileName, image );
     }
 
     return image;
@@ -113,6 +127,8 @@ Image ImageProvider::loadMaster (QString fileName)
     {
         image_loader->openImage( fileName );
         image = image_loader->loadMaster();
+
+        correctOrientation( fileName, image );
     }
 
     return image;
@@ -145,4 +161,40 @@ QStringList ImageProvider::supportedSuffixes (void)
     }
 
     return result;
+}
+
+// TODO: do not load exif twice
+void ImageProvider::correctOrientation (QString fileName, QImage &thumb)
+{
+    QMap <QString, QVariant> info = m_exifLoader->loadInfo( fileName );
+    QString orientation = info["orientation"].toString();
+
+    if (orientation == "8")
+    {
+        QTransform transform;
+        transform.rotate( 270 );
+        thumb = thumb.transformed( transform );
+    }
+    if (orientation == "6")
+    {
+        QTransform transform;
+        transform.rotate( 90 );
+        thumb = thumb.transformed( transform );
+    }
+    if (orientation == "3")
+    {
+        QTransform transform;
+        transform.rotate( 180 );
+        thumb = thumb.transformed( transform );
+    }
+}
+
+
+// TODO: very inefficient!!
+void ImageProvider::correctOrientation (QString fileName, Image &thumb)
+{
+    QImage temp_image = thumb.toQImage();
+    correctOrientation( fileName, temp_image);
+
+    thumb = Image::fromQImage( temp_image );
 }

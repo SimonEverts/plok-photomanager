@@ -209,7 +209,8 @@ void MainWindow::loadImage (QString fileName)
         return;
 
     image_loader->openImage(fileName);
-    QMap <QString, QVariant> info = image_loader->loadInfo();
+
+    QMap <QString, QVariant> info = m_exifLoader.loadInfo( fileName );
 
     if (image_frame)
         image_frame->setProperty("infoMap", info);

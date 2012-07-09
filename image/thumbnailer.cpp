@@ -12,7 +12,7 @@ Thumbnailer::Thumbnailer( ImageProvider* imageProvider ) :
 {
 }
 
-// TODO use captures instead of filenames
+// TODO: use captures instead of filenames
 void Thumbnailer::generateThumbnails (QStringList photos, QString thumbnailPath)
 {
     QString thumbnail_path = MiscUtils::plokpmDir() + "/thumbnails/" + thumbnailPath + "/";

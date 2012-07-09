@@ -26,6 +26,8 @@
 
 #include "import/directoryimporter.h"
 
+#include "metadata/exifloader.h"
+
 // Qt includes
 #include <QMainWindow>
 #include <QGraphicsScene>
@@ -127,6 +129,8 @@ private:
     Thumbnailer m_imageThumbnailer;
 
     DirectoryImporter m_directoryImporter;
+
+    ExifLoader m_exifLoader;
 
     Capture m_currentCapture;
 

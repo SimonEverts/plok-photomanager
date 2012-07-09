@@ -14,6 +14,8 @@ TEMPLATE = app
 # CONFIG += simon
 # CONFIG += opencv
 
+CONFIG += exiv2
+
 #include(3rdparty/qoauth/qoauth.pri)
 
 include (3rdparty/3rdparty.pri)
@@ -21,6 +23,8 @@ include (model/model.pri)
 include (database/database.pri)
 include (image/image.pri)
 include (gui/gui.pri)
+
+include (metadata/metadata.pri)
 
 SOURCES += main.cpp\
     server/imageuploader.cpp \
@@ -52,6 +56,12 @@ CONFIG (opencv) {
     DEFINES += OPENCV
 
     LIBS += -lopencv_imgproc -lopencv_core
+}
+
+CONFIG (exiv2) {
+    DEFINES += EXIV2
+
+    LIBS += -lexiv2
 }
 
 win32 {

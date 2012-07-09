@@ -7,6 +7,7 @@
 #include "image.h"
 
 class ImageLoader;
+class ExifLoader;
 
 class ImageProvider
 {
@@ -26,6 +27,11 @@ public:
 
 private:
     QList <ImageLoader*> m_imageLoaders;
+
+    ExifLoader* m_exifLoader;
+
+    void correctOrientation (QString fileName, QImage& thumb);
+    void correctOrientation (QString fileName, Image& thumb);
 };
 
 #endif // IMAGEPROVIDER_H

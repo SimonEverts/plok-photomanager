@@ -19,10 +19,10 @@ Rectangle {
             objectName: "imageFrame"
 
             property variant infoMap : {
-                "iso_speed" : 0,
-                        "aperture" : 0,
-                        "shutter" : 0,
-                        "focal_len" : 0,
+                "iso_speed" : "",
+                        "aperture" : "",
+                        "shutter" : "",
+                        "focal_len" : "",
                         "make" : "unknown",
                         "model" : "unknown",
                         "lens" : "unknown",
@@ -67,12 +67,12 @@ Rectangle {
                 Text {
                     font.bold: true
 
-                    text: '<i>ƒ</i>/' + imageFrame.infoMap.aperture.toFixed(1)
+                    text: '<i>ƒ</i>/' + imageFrame.infoMap.aperture
                 }
                 Text {
                     font.bold: true
 
-                    text: '1/' + (1/ imageFrame.infoMap.shutter).toFixed(0)
+                    text: '1/' + (1/ imageFrame.infoMap.shutter)
                 }
                 Text {
                     font.bold: true
