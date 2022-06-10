@@ -1,0 +1,12 @@
+[package]
+name = "plok-photomanager"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+gtk4 = "0.4.7"
+async-std = "1.11.0" 
+futures-lite = "1.12.0"
+dirs = "1.0.4"
