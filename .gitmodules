@@ -1,3 +1,9 @@
 [submodule "external/katla"]
 	path = external/katla
 	url = https://github.com/plok/katla.git
+[submodule "external/googletest"]
+	path = external/googletest
+	url = https://github.com/google/googletest.git
+[submodule "external/fmt"]
+	path = external/fmt
+	url = https://github.com/fmtlib/fmt.git
